@@ -25,7 +25,6 @@ Consignes :
 - "message" est ta réaction vivante et courte (1 à 2 phrases) au goût de cet aliment.
 Aliment : ${foodQuery}`;
 
-      // Utilisation du modèle Llama 3.2 3B Instruct actif
       const aiResponse = await env.AI.run('@cf/meta/llama-3.2-3b-instruct', {
         messages: [{ role: "user", content: prompt }]
       });
@@ -33,18 +32,31 @@ Aliment : ${foodQuery}`;
       let taste = "inconnu";
       let message = `Mmm, ${foodQuery}... Je n'arrive pas bien à définir ce goût !`;
 
-      if (aiResponse && aiResponse.response) {
-        const rawText = aiResponse.response;
+      if (aiResponse) {
+        // Normalisation de la réponse sous forme de texte brut
+        let rawText = "";
+        if (typeof aiResponse.response === "string") {
+          rawText = aiResponse.response;
+        } else if (Array.isArray(aiResponse.response)) {
+          rawText = aiResponse.response.map(r => typeof r === "object" ? JSON.stringify(r) : String(r)).join(" ");
+        } else if (typeof aiResponse.response === "object") {
+          rawText = JSON.stringify(aiResponse.response);
+        } else {
+          rawText = String(aiResponse);
+        }
+
+        // Extraction du bloc JSON
         const jsonMatch = rawText.match(/\{[\s\S]*\}/);
 
         if (jsonMatch) {
           try {
             const parsed = JSON.parse(jsonMatch[0]);
-            if (parsed.taste) taste = parsed.taste.toLowerCase();
-            if (parsed.message) message = parsed.message;
+            if (parsed.taste) taste = String(parsed.taste).toLowerCase();
+            if (parsed.message) message = String(parsed.message);
           } catch (e) {}
         }
 
+        // Système de secours si taste reste inconnu
         if (taste === "inconnu") {
           const lowerText = rawText.toLowerCase();
           if (lowerText.includes("umami")) taste = "umami";
