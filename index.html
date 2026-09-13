@@ -1,1 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de la Semaine du Goût</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .game-card {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+        }
+
+        p.subtitle {
+            color: #7f8c8d;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .avatar-container {
+            position: relative;
+            background-color: #f8fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px dashed #cbd5e1;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .avatar {
+            font-size: 80px;
+            transition: transform 0.3s ease;
+        }
+
+        .bubble {
+            position: relative;
+            background: #ffffff;
+            border: 2px solid #334155;
+            border-radius: 15px;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #1e293b;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bubble::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px;
+            border-style: solid;
+            border-color: #334155 transparent;
+            display: block;
+            width: 0;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .food-btn {
+            background-color: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px 10px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .food-btn span.label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .food-btn:hover {
+            transform: translateY(-3px);
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .food-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .anim-bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        .anim-shake {
+            animation: shake 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-card">
+        <h1>Semaine du Goût 🍎</h1>
+        <p class="subtitle">Clique sur un aliment pour le faire goûter !</p>
+
+        <div class="avatar-container">
+            <div id="avatar" class="avatar">😐</div>
+            <div id="bubble" class="bubble">Donne-moi quelque chose à goûter !</div>
+        </div>
+
+        <div class="food-grid">
+            <button class="food-btn" onclick="tasting('🍩', 'Mmmhhh c\'est sucré !', '😋', '#fbcfe8', 'bounce')">
+                🍩 <span class="label">Donut</span>
+            </button>
+            <button class="food-btn" onclick="tasting('🍋', 'Ugh ! C\'est trop acide !', '😖', '#fef08a', 'shake')">
+                🍋 <span class="label">Citron</span>
+            </button>
+            <button class="food-btn" onclick="tasting('🌶️', 'Au feu ! C\'est très piquant !', '🥵', '#fecaca', 'shake')">
+                🌶️ <span class="label">Piment</span>
+            </button>
+            <button class="food-btn" onclick="tasting('🥨', 'C\'est bien salé et croquant !', '🤓', '#fed7aa', 'bounce')">
+                🥨 <span class="label">Pretzel</span>
+            </button>
+            <button class="food-btn" onclick="tasting('☕', 'Pouah, c\'est amer...', '🤢', '#e2e8f0', 'shake')">
+                ☕ <span class="label">Café noir</span>
+            </button>
+            <button class="food-btn" onclick="tasting('🥦', 'C\'est plein de vitamines !', '🧐', '#bbf7d0', 'bounce')">
+                🥦 <span class="label">Brocoli</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function tasting(food, message, emoji, bgColor, animClass) {
+            const avatar = document.getElementById('avatar');
+            const bubble = document.getElementById('bubble');
+            const container = document.querySelector('.avatar-container');
+
+            // Réinitialisation des classes d'animation
+            avatar.className = 'avatar';
+            
+            // Forcer le redessin pour relancer l'animation
+            void avatar.offsetWidth;
+
+            // Mettre à jour l'emoji et le texte
+            avatar.textContent = emoji;
+            bubble.textContent = `${food} ${message}`;
+            
+            // Appliquer le style et l'animation
+            avatar.classList.add(`anim-${animClass}`);
+            container.style.backgroundColor = bgColor;
+        }
+    </script>
+
+</body>
+</html>
 
