@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaine du Goût - IA Intelligente</title>
+    <title>Semaine du Goût - Vraie IA Sécurisée</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background-color: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
@@ -18,6 +18,7 @@
         .food-input { flex-grow: 1; border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
         .food-input:focus { border-color: #3b82f6; }
         .send-btn { background-color: #3b82f6; color: white; border: none; border-radius: 12px; padding: 12px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .send-btn:disabled { background-color: #cbd5e1; cursor: not-allowed; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
         .anim-bounce { animation: bounce 0.5s ease; }
@@ -28,7 +29,7 @@
 
     <div class="game-card">
         <h1>Semaine du Goût 🍎</h1>
-        <p class="subtitle">Moteur d'analyse gustative instantané</p>
+        <p class="subtitle">Analyse instantanée par l'IA Llama-3</p>
 
         <div id="avatarContainer" class="avatar-container">
             <div id="avatar" class="avatar">😐</div>
@@ -36,40 +37,19 @@
         </div>
 
         <form class="input-form" onsubmit="handleFoodSubmit(event)">
-            <input type="text" id="foodInput" class="food-input" placeholder="Ex: pomme, frites, piment, tarte aux fraises..." autocomplete="off" required>
-            <button type="submit" class="send-btn">Manger</button>
+            <input type="text" id="foodInput" class="food-input" placeholder="Ex: pomme, frites, piment, ramen..." autocomplete="off" required>
+            <button type="submit" id="sendBtn" class="send-btn">Manger</button>
         </form>
     </div>
 
     <script>
-        let idleTimer;
+        // Remplace par l'URL générée après ton `npx wrangler deploy`
+        const WORKER_URL = "https://semaine-gout.TON-SOUS-DOMAINE.workers.dev";
 
-        // Base d'analyse sémantique gustative
-        const tasteDictionary = {
-            sucre: ['pomme', 'banane', 'fraise', 'bonbon', 'chocolat', 'glace', 'gateau', 'gâteau', 'miel', 'sucre', 'nutella', 'confiture', 'mangue', 'poire', 'cerise', 'orange', 'crepe', 'crêpe', 'tiramisu', 'tarte', 'sucre', 'sucré', 'biscuit', 'caramel', 'vanille'],
-            sale: ['frite', 'frites', 'chips', 'pizza', 'fromage', 'bacon', 'pretzel', 'popcorn', 'jambon', 'saucisson', 'olive', 'sel', 'salé', 'burger', 'ramen', 'graine', 'tournesol', 'cacahuete', 'cacahuète', 'pistache', 'pain'],
-            acide: ['citron', 'vinaigre', 'cornichon', 'kiwi', 'pamplemousse', 'rhubarbe', 'bonbon acide', 'citron vert', 'acide'],
-            amer: ['café', 'cafe', 'endive', 'brocoli', 'cacao', 'chou', 'thé noir', 'chocolat noir', 'biere', 'bière', 'amer'],
-            piquant: ['piment', 'poivre', 'harissa', 'wasabi', 'moutarde', 'tabasco', 'ail', 'oignon', 'epice', 'épice', 'curry', 'piquant', 'épicé']
-        };
-
-        function analyzeTaste(input) {
-            const cleanInput = input.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-            for (const [taste, keywords] of Object.entries(tasteDictionary)) {
-                for (const keyword of keywords) {
-                    const cleanKeyword = keyword.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                    if (cleanInput.includes(cleanKeyword)) {
-                        return taste;
-                    }
-                }
-            }
-            return 'inconnu';
-        }
-
-        function handleFoodSubmit(event) {
+        async function handleFoodSubmit(event) {
             event.preventDefault();
             const input = document.getElementById('foodInput');
+            const btn = document.getElementById('sendBtn');
             const userQuery = input.value.trim();
 
             if (!userQuery) return;
@@ -77,18 +57,30 @@
             const avatar = document.getElementById('avatar');
             const bubble = document.getElementById('bubble');
 
-            // Phase de réflexion / analyse
             avatar.textContent = '🧠';
-            bubble.textContent = `Analyse du goût de "${userQuery}"...`;
+            bubble.textContent = `L'IA analyse le goût de "${userQuery}"...`;
 
             input.value = '';
-            resetIdleTimer();
+            input.disabled = true;
+            btn.disabled = true;
 
-            // Simulation du temps de calcul (500ms)
-            setTimeout(() => {
-                const taste = analyzeTaste(userQuery);
-                applyResponse(userQuery, taste);
-            }, 500);
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ food: userQuery })
+                });
+
+                const data = await response.json();
+                applyResponse(userQuery, data.taste || 'inconnu');
+            } catch (error) {
+                console.error("Erreur d'analyse:", error);
+                applyResponse(userQuery, 'inconnu');
+            } finally {
+                input.disabled = false;
+                btn.disabled = false;
+                input.focus();
+            }
         }
 
         function applyResponse(foodName, taste) {
@@ -101,31 +93,24 @@
 
             let emoji, bg, anim, text;
 
-            switch (taste) {
-                case 'sucre':
-                    emoji = '😋'; bg = '#fbcfe8'; anim = 'bounce';
-                    text = `Mmmhhh, ${foodName} ! C'est bien sucré !`;
-                    break;
-                case 'acide':
-                    emoji = '😖'; bg = '#fef08a'; anim = 'shake';
-                    text = `Ouh là ! ${foodName}, c'est hyper acide !`;
-                    break;
-                case 'sale':
-                    emoji = '🤓'; bg = '#fed7aa'; anim = 'bounce';
-                    text = `Mmm, ${foodName} ! Un bon goût salé !`;
-                    break;
-                case 'amer':
-                    emoji = '🤢'; bg = '#e2e8f0'; anim = 'shake';
-                    text = `Pouah ! ${foodName}, c'est plutôt amer...`;
-                    break;
-                case 'piquant':
-                    emoji = '🥵'; bg = '#fecaca'; anim = 'shake';
-                    text = `Au feu ! ${foodName}, ça pique fort !`;
-                    break;
-                default:
-                    emoji = '🧐'; bg = '#f1f5f9'; anim = 'bounce';
-                    text = `Mmm, ${foodName}... C'est un goût particulier !`;
-                    break;
+            if (taste.includes('sucré')) {
+                emoji = '😋'; bg = '#fbcfe8'; anim = 'bounce';
+                text = `Mmmhhh, ${foodName} ! C'est bien sucré !`;
+            } else if (taste.includes('acide')) {
+                emoji = '😖'; bg = '#fef08a'; anim = 'shake';
+                text = `Ouh là ! ${foodName}, c'est hyper acide !`;
+            } else if (taste.includes('salé')) {
+                emoji = '🤓'; bg = '#fed7aa'; anim = 'bounce';
+                text = `Mmm, ${foodName} ! Un bon goût salé !`;
+            } else if (taste.includes('amer')) {
+                emoji = '🤢'; bg = '#e2e8f0'; anim = 'shake';
+                text = `Pouah ! ${foodName}, c'est plutôt amer...`;
+            } else if (taste.includes('piquant')) {
+                emoji = '🥵'; bg = '#fecaca'; anim = 'shake';
+                text = `Au feu ! ${foodName}, ça pique fort !`;
+            } else {
+                emoji = '🧐'; bg = '#f1f5f9'; anim = 'bounce';
+                text = `Mmm, ${foodName}... C'est un goût bien particulier !`;
             }
 
             avatar.textContent = emoji;
@@ -133,17 +118,6 @@
             container.style.backgroundColor = bg;
             bubble.textContent = text;
         }
-
-        function resetIdleTimer() {
-            clearTimeout(idleTimer);
-            idleTimer = setTimeout(() => {
-                document.getElementById('avatar').textContent = '🤔';
-                document.getElementById('bubble').textContent = "Donne-moi un autre aliment !";
-                resetIdleTimer();
-            }, 8000);
-        }
-
-        resetIdleTimer();
     </script>
 </body>
 </html>
