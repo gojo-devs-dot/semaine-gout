@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaine du Goût - IA Bavarde</title>
-    <!-- Chargement de la bibliothèque IA (Transformers.js) -->
-    <script type="module">
-        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.14.0';
-        window.pipeline = pipeline;
-    </script>
+    <title>Semaine du Goût</title>
     <style>
         * {
             box-sizing: border-box;
@@ -176,11 +171,11 @@
 
     <div class="game-card">
         <h1>Semaine du Goût 🍎</h1>
-        <p class="subtitle">Nourris le gourmand et écoute ce qu'il a à dire !</p>
+        <p class="subtitle">Fais-moi goûter quelque chose !</p>
 
         <div id="avatarContainer" class="avatar-container">
             <div id="avatar" class="avatar">😐</div>
-            <div id="bubble" class="bubble">J'ai le ventre vide... Donne-moi un truc à goûter !</div>
+            <div id="bubble" class="bubble">Mmmh, j'ai une petite faim... Qu'est-ce qu'on mange ?</div>
         </div>
 
         <button class="open-pantry-btn" onclick="togglePantry(true)">
@@ -218,10 +213,14 @@
                     <div class="food-item" onclick="eat('🍿', 'Popcorn', 'salé', '🍿', '#fed7aa', 'bounce')"><span class="emoji">🍿</span><span class="name">Popcorn</span></div>
                 </div>
 
-                <div class="category-title">☕ Amer & Piquant</div>
+                <div class="category-title">☕ Amer</div>
                 <div class="food-grid">
                     <div class="food-item" onclick="eat('☕', 'Café noir', 'amer', '🤢', '#e2e8f0', 'shake')"><span class="emoji">☕</span><span class="name">Café</span></div>
                     <div class="food-item" onclick="eat('🥦', 'Brocoli', 'amer', '🧐', '#e2e8f0', 'bounce')"><span class="emoji">🥦</span><span class="name">Brocoli</span></div>
+                </div>
+
+                <div class="category-title">🌶️ Épicé</div>
+                <div class="food-grid">
                     <div class="food-item" onclick="eat('🌶️', 'Piment', 'piquant', '🥵', '#fecaca', 'shake')"><span class="emoji">🌶️</span><span class="name">Piment</span></div>
                     <div class="food-item" onclick="eat('🧄', 'Ail', 'piquant', '🥵', '#fecaca', 'shake')"><span class="emoji">🧄</span><span class="name">Ail</span></div>
                 </div>
@@ -231,43 +230,42 @@
 
     <script>
         let idleTimer;
-        let generator = null;
 
-        // Réponses IA pré-générées pour la vitesse + fallback
-        const iaResponses = {
+        // Réponses ultra-naturelles et directes selon le goût
+        const responses = {
             sucré: [
-                "Mmmhh ! C'est doux, sucré et ça me donne plein d'énergie !",
-                "Yum ! Le sucre active mes papilles de la douceur !",
-                "Mon cerveau adore le sucré, c'est tellement réconfortant !"
+                "Mmmhhh... C'est délicieux, bien sucré !",
+                "Yum ! J'adore ce petit goût doux et sucré !",
+                "Mmmhh c'est trop bon, c'est gourmand !"
             ],
             acide: [
-                "Ouhhh ! Mes joues se serrent, c'est hyper acide !",
-                "Wouah, ça picote sur les côtés de la langue !",
-                "Ugh ! C'est piquant et frais, mon visage se crispe !"
+                "Ouh là ! C'est hyper acide, ça fait grimacer !",
+                "Brrr ! Ça pique les joues, c'est très acide !",
+                "Aïe, ça secoue ! C'est très acide !"
             ],
             salé: [
-                "Mmm, un bon goût salé ! Ça me donne envie de boire de l'eau.",
-                "C'est croustillant et salé, parfait pour mes papilles !",
-                "Le sel fait ressortir tous les arômes, j'adore !"
+                "Mmmhhh c'est bien salé et croustillant !",
+                "Ah, un bon goût salé ! J'adore ça !",
+                "Mmm, c'est savoureux et salé juste comme il faut !"
             ],
             amer: [
-                "Pouah... C'est amer, mes papilles de secours crient 'Attention' !",
-                "Brrr, un goût amer très fort ! C'est spécial...",
-                "Oof, l'amertume c'est difficile au début mais c'est bon pour la santé !"
+                "Pouah... C'est drôle comme goût, c'est amer !",
+                "Beurk, c'est un peu fort et amer pour moi...",
+                "Oof, l'amertume c'est particulier !"
             ],
             piquant: [
-                "AU FEU ! Ma langue brûle, ça pique fort !",
-                "Ouch ! La capsaïcine me fait chauffer la bouche !",
-                "Hop hop hop ! C'est super épicé, vite de l'eau !"
+                "Ouch ! Ça brûle la langue, c'est piquant !",
+                "Au feu ! C'est super épicé !",
+                "Wouah ! Ça chauffe fort dans la bouche !"
             ]
         };
 
         const idlePhrases = [
-            "Hé ho... Tu m'as oublié ? J'ai encore faim !",
-            "Tu sais que nous avons environ 10 000 papilles gustatives ?",
-            "Mon nez et ma langue travaillent ensemble pour le goût !",
-            "Psst ! Clique sur le bouton pour me donner un aliment !",
-            "Je me demande quel goût aura le prochain truc..."
+            "Hé ho ! Tu m'as oublié ? J'ai encore faim !",
+            "Psst... Choisis-moi un nouvel aliment !",
+            "Tu penses que le prochain sera sucré ou salé ?",
+            "Mon ventre commence à grouiller...",
+            "Regarde dans le garde-manger !"
         ];
 
         function togglePantry(show) {
@@ -283,25 +281,23 @@
             const container = document.getElementById('avatarContainer');
 
             avatar.className = 'avatar';
-            void avatar.offsetWidth; // Force re-render
+            void avatar.offsetWidth; // Force le rafraîchissement de l'animation
 
             avatar.textContent = avatarEmoji;
             avatar.classList.add(`anim-${anim}`);
             container.style.backgroundColor = color;
 
-            // Sélectionne une réaction IA aléatoire liée au goût
-            const options = iaResponses[gout];
-            const reaction = options[Math.floor(Math.random() * options.length)];
+            const list = responses[gout];
+            const reaction = list[Math.floor(Math.random() * list.length)];
             
-            bubble.textContent = `${emoji} (${nom}) : "${reaction}"`;
+            bubble.textContent = `${emoji} ${reaction}`;
 
             resetIdleTimer();
         }
 
-        // Système "Bavard" quand l'utilisateur ne fait rien
         function resetIdleTimer() {
             clearTimeout(idleTimer);
-            idleTimer = setTimeout(talkWhenIdle, 7000); // Parle après 7 secondes d'inactivité
+            idleTimer = setTimeout(talkWhenIdle, 6000); // Réagit après 6 secondes d'inactivité
         }
 
         function talkWhenIdle() {
@@ -315,7 +311,6 @@
             resetIdleTimer();
         }
 
-        // Démarrage du minuteur bavard dès le chargement
         resetIdleTimer();
     </script>
 </body>
