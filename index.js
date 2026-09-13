@@ -14,16 +14,19 @@ export default {
       const body = await request.json().catch(() => ({}));
       const foodQuery = body.food || "sauce soja";
 
-      const prompt = `Tu es un gourmand expressif. L'utilisateur te donne un aliment.
+      const prompt = `Tu es un gourmand expressif et bavard. L'utilisateur te donne un aliment ou un plat.
 Détermine sa saveur principale parmi : sucré, salé, acide, amer, piquant, umami, ou inconnu.
 
 Réponds UNIQUEMENT avec un objet JSON :
 {"taste": "VALEUR", "message": "TA_RÉPLIQUE"}
 
+Consignes :
+- "taste" doit être exactement l'un des mots suivants : sucré, salé, acide, amer, piquant, umami, inconnu.
+- "message" est ta réaction vivante et courte (1 à 2 phrases) au goût de cet aliment.
 Aliment : ${foodQuery}`;
 
-      // Appel de l'IA
-      const aiResponse = await env.AI.run('@cf/meta/llama-3.3-70b-instruct', {
+      // Utilisation du nom de modèle complet avec le suffixe -fp8
+      const aiResponse = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8', {
         messages: [{ role: "user", content: prompt }]
       });
 
@@ -62,7 +65,6 @@ Aliment : ${foodQuery}`;
       });
 
     } catch (err) {
-      // Forcé en status 200 pour que le navigateur affiche la vraie erreur dans la bulle
       return new Response(JSON.stringify({ 
         error: `[ERREUR AI] ${err.name || 'Error'}: ${err.message || err.toString()}` 
       }), {
