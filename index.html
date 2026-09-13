@@ -12,7 +12,7 @@
         .subtitle { color: #64748b; margin: 0 0 20px 0; font-size: 0.95rem; }
         .avatar-container { background-color: #f8fafc; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 2px dashed #cbd5e1; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: background-color 0.3s ease; }
         .avatar { font-size: 85px; line-height: 1; margin-bottom: 15px; transition: transform 0.3s ease; }
-        .bubble { background: #ffffff; border: 2px solid #334155; border-radius: 16px; padding: 12px 20px; font-weight: 600; font-size: 1.05rem; color: #0f172a; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); max-width: 90%; position: relative; min-height: 60px; display: flex; align-items: center; justify-content: center; }
+        .bubble { background: #ffffff; border: 2px solid #334155; border-radius: 16px; padding: 12px 20px; font-weight: 600; font-size: 1.05rem; color: #0f172a; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); max-width: 90%; position: relative; min-height: 60px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
         .bubble::after { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border-width: 0 10px 10px; border-style: solid; border-color: #334155 transparent; }
         .input-form { display: flex; gap: 10px; margin-top: 10px; }
         .food-input { flex-grow: 1; border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
@@ -49,17 +49,17 @@
             event.preventDefault();
             const input = document.getElementById('foodInput');
             const btn = document.getElementById('sendBtn');
+            const avatar = document.getElementById('avatar');
+            const bubble = document.getElementById('bubble');
+            const container = document.getElementById('avatarContainer');
             const userQuery = input.value.trim();
 
             if (!userQuery) return;
 
-            const avatar = document.getElementById('avatar');
-            const bubble = document.getElementById('bubble');
-
             avatar.textContent = '🧠';
-            bubble.textContent = `L'IA analyse le goût de "${userQuery}"...`;
-
-            input.value = '';
+            bubble.textContent = `L'IA analyse "${userQuery}"...`;
+            container.style.backgroundColor = '#f8fafc';
+            
             input.disabled = true;
             btn.disabled = true;
 
@@ -70,12 +70,23 @@
                     body: JSON.stringify({ food: userQuery })
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Code HTTP ${response.status}`);
+                }
+
                 const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
                 applyResponse(userQuery, data.taste || 'inconnu');
             } catch (error) {
-                console.error("Erreur d'analyse:", error);
-                applyResponse(userQuery, 'inconnu');
+                avatar.textContent = '⚠️';
+                container.style.backgroundColor = '#fee2e2';
+                bubble.textContent = `Erreur : ${error.message}`;
             } finally {
+                input.value = '';
                 input.disabled = false;
                 btn.disabled = false;
                 input.focus();
