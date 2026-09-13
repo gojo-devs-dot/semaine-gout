@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaine du Goût - Grande Base de Données</title>
+    <title>Semaine du Goût</title>
     <style>
         * {
             box-sizing: border-box;
@@ -123,15 +123,15 @@
 
     <div class="game-card">
         <h1>Semaine du Goût 🍎</h1>
-        <p class="subtitle">Recherche parmi des millions d'aliments !</p>
+        <p class="subtitle">Écris un aliment pour découvrir son goût !</p>
 
         <div id="avatarContainer" class="avatar-container">
             <div id="avatar" class="avatar">😐</div>
-            <div id="bubble" class="bubble">Donne-moi n'importe quel aliment !</div>
+            <div id="bubble" class="bubble">Donne-moi un aliment à goûter !</div>
         </div>
 
         <form class="input-form" onsubmit="handleFoodSubmit(event)">
-            <input type="text" id="foodInput" class="food-input" placeholder="Ex: Nutella, Haribo, M&Ms, Kassler..." autocomplete="off" required>
+            <input type="text" id="foodInput" class="food-input" placeholder="Ex: graine de tournesol, pomme, piment..." autocomplete="off" required>
             <button type="submit" class="send-btn">Manger</button>
         </form>
     </div>
@@ -141,7 +141,7 @@
 
         const idlePhrases = [
             "Hé ho ! Tu cherches quoi à manger ?",
-            "Même les marques bizarres marchent, essaye !",
+            "Même les graines ou snacks marchent, essaye !",
             "J'attends ta prochaine idée d'aliment...",
             "Tape n'importe quelle nourriture !",
             "Mon ventre attend le prochain plat !"
@@ -150,39 +150,53 @@
         async function handleFoodSubmit(event) {
             event.preventDefault();
             const input = document.getElementById('foodInput');
-            const foodQuery = input.value.trim();
+            const userQuery = input.value.trim();
 
-            if (!foodQuery) return;
+            if (!userQuery) return;
 
             const avatar = document.getElementById('avatar');
             const bubble = document.getElementById('bubble');
             
             avatar.textContent = '🔍';
-            bubble.textContent = `Recherche de "${foodQuery}" dans la grande base...`;
+            bubble.textContent = `Recherche du goût de "${userQuery}"...`;
 
             input.value = '';
             resetIdleTimer();
 
-            // Recherche en direct via l'API Open Food Facts
+            // 1. Analyse locale directe des mots clés connus
+            const localTaste = checkLocalTaste(userQuery.toLowerCase());
+            if (localTaste) {
+                applyResponse(userQuery, localTaste);
+                return;
+            }
+
+            // 2. Si non trouvé localement, interrogation de la base de données
             try {
-                const response = await fetch(`https://fr.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(foodQuery)}&search_simple=1&action=process&json=1&page_size=1`);
+                const response = await fetch(`https://fr.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(userQuery)}&search_simple=1&action=process&json=1&page_size=1`);
                 const data = await response.json();
 
                 if (data.products && data.products.length > 0) {
                     const product = data.products[0];
-                    const productName = product.product_name_fr || product.product_name || foodQuery;
                     const taste = analyzeProductTaste(product);
-                    applyResponse(productName, taste);
+                    applyResponse(userQuery, taste); // On garde toujours le nom de l'utilisateur
                 } else {
-                    applyResponse(foodQuery, 'inconnu');
+                    applyResponse(userQuery, 'inconnu');
                 }
             } catch (error) {
-                // Secours local si pas de connexion internet
-                applyResponse(foodQuery, 'inconnu');
+                applyResponse(userQuery, 'inconnu');
             }
         }
 
-        // Analyse la catégorie et les ingrédients renvoyés par la base de données
+        // Vérification directe des ingrédients courants
+        function checkLocalTaste(query) {
+            if (query.match(/graine|tournesol|noisette|amande|noix|cacahuète|pistache|pignon/)) return 'salé';
+            if (query.match(/sucre|sucré|bonbon|chocolat|pomme|fraise|banane|gateau|gâteau|miel|glace/)) return 'sucré';
+            if (query.match(/citron|vinaigre|cornichon|kiwi|pamplemousse/)) return 'acide';
+            if (query.match(/piment|poivre|harissa|wasabi|moutarde/)) return 'piquant';
+            if (query.match(/café|cafe|endive|cacao|chou/)) return 'amer';
+            return null;
+        }
+
         function analyzeProductTaste(product) {
             const categories = (product.categories || '').toLowerCase();
             const ingredients = (product.ingredients_text || '').toLowerCase();
@@ -190,7 +204,7 @@
 
             if (text.match(/sucre|sucré|chocolat|bonbon|biscuit|confiserie|dessert|gâteau|fruit|miel|glace/)) return 'sucré';
             if (text.match(/citron|vinaigre|cornichon|acide|pamplemousse/)) return 'acide';
-            if (text.match(/sel|salé|chips|fromage|charcuterie|pizza|pretzel|snack/)) return 'salé';
+            if (text.match(/sel|salé|chips|fromage|charcuterie|pizza|pretzel|snack|graine/)) return 'salé';
             if (text.match(/piment|poivre|épice|epice|moutarde|wasabi|harissa/)) return 'piquant';
             if (text.match(/café|cafe|cacao|endive|amer/)) return 'amer';
 
@@ -210,27 +224,27 @@
             switch (taste) {
                 case 'sucré':
                     emoji = '😋'; bg = '#fbcfe8'; anim = 'bounce';
-                    text = `Mmmhhh, ${foodName} ! C'est bien sucré !`;
+                    text = `Mmmhhh, les ${foodName} ! C'est bien sucré !`;
                     break;
                 case 'acide':
                     emoji = '😖'; bg = '#fef08a'; anim = 'shake';
-                    text = `Ouh là ! ${foodName}, c'est hyper acide !`;
+                    text = `Ouh là ! Les ${foodName}, c'est très acide !`;
                     break;
                 case 'salé':
                     emoji = '🤓'; bg = '#fed7aa'; anim = 'bounce';
-                    text = `Mmm, ${foodName} ! Un bon goût salé !`;
+                    text = `Mmm, les ${foodName} ! Un bon goût salé !`;
                     break;
                 case 'amer':
                     emoji = '🤢'; bg = '#e2e8f0'; anim = 'shake';
-                    text = `Pouah ! ${foodName}, c'est amer...`;
+                    text = `Pouah ! Les ${foodName}, c'est plutôt amer...`;
                     break;
                 case 'piquant':
                     emoji = '🥵'; bg = '#fecaca'; anim = 'shake';
-                    text = `Au feu ! ${foodName}, ça pique fort !`;
+                    text = `Au feu ! Les ${foodName}, ça pique fort !`;
                     break;
                 default:
                     emoji = '🧐'; bg = '#f1f5f9'; anim = 'bounce';
-                    text = `Mmm, ${foodName}... C'est un goût spécial !`;
+                    text = `Mmm, les ${foodName}... C'est un goût particulier !`;
                     break;
             }
 
