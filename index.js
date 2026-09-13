@@ -11,10 +11,15 @@ export default {
     }
 
     if (request.method !== "POST") {
-      return new Response("Méthode non autorisée", { status: 405 });
+      return new Response("Méthode non autorisée", { status: 405, headers: corsHeaders });
     }
 
     try {
+      // Vérification que le binding AI est bien présent
+      if (!env.AI) {
+        throw new Error("Le binding 'AI' est introuvable. Vérifie ton fichier wrangler.jsonc.");
+      }
+
       const body = await request.json();
       const foodQuery = body.food;
 
@@ -25,12 +30,12 @@ export default {
         });
       }
 
-      // Interrogation du modèle Llama 3 via Cloudflare Workers AI
+      // Appel à l'IA
       const aiResponse = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
         messages: [
           {
             role: "system",
-            content: "Tu es un expert en gastronomie. L'utilisateur te donne un aliment ou un plat. Réponds UNIQUEMENT par UN SEUL MOT parmi cette liste : sucré, salé, acide, amer, piquant, ou inconnu. Ne fais aucune phrase."
+            content: "Tu es un expert en gastronomie. L'utilisateur te donne un aliment. Réponds UNIQUEMENT par UN SEUL MOT parmi : sucré, salé, acide, amer, piquant, inconnu."
           },
           {
             role: "user",
@@ -39,13 +44,14 @@ export default {
         ]
       });
 
-      const taste = aiResponse.response.trim().toLowerCase();
+      const taste = aiResponse && aiResponse.response ? aiResponse.response.trim().toLowerCase() : 'inconnu';
 
       return new Response(JSON.stringify({ taste }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
 
     } catch (error) {
+      // Renvoie le message d'erreur précis pour le voir dans le jeu
       return new Response(JSON.stringify({ error: error.message }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
