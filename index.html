@@ -3,14 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaine du Goût - IA Intégrée</title>
-    <!-- Importation de la bibliothèque d'IA locale Transformers.js -->
-    <script type="module">
-        import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0';
-        window.pipeline = pipeline;
-        env.allowLocalModels = false;
-    </script>
-
+    <title>Semaine du Goût - IA Intelligente</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background-color: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
@@ -25,7 +18,6 @@
         .food-input { flex-grow: 1; border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
         .food-input:focus { border-color: #3b82f6; }
         .send-btn { background-color: #3b82f6; color: white; border: none; border-radius: 12px; padding: 12px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-        .send-btn:disabled { background-color: #94a3b8; cursor: not-allowed; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
         .anim-bounce { animation: bounce 0.5s ease; }
@@ -36,82 +28,67 @@
 
     <div class="game-card">
         <h1>Semaine du Goût 🍎</h1>
-        <p class="subtitle">Analyse automatique du goût des aliments</p>
+        <p class="subtitle">Moteur d'analyse gustative instantané</p>
 
         <div id="avatarContainer" class="avatar-container">
-            <div id="avatar" class="avatar">🤖</div>
-            <div id="bubble" class="bubble">Chargement du cerveau IA...</div>
+            <div id="avatar" class="avatar">😐</div>
+            <div id="bubble" class="bubble">Donne-moi n'importe quel aliment à goûter !</div>
         </div>
 
         <form class="input-form" onsubmit="handleFoodSubmit(event)">
-            <input type="text" id="foodInput" class="food-input" placeholder="Ex: purée d'avocat, tiramisu, graines..." autocomplete="off" disabled required>
-            <button type="submit" id="sendBtn" class="send-btn" disabled>Chargement...</button>
+            <input type="text" id="foodInput" class="food-input" placeholder="Ex: pomme, frites, piment, tarte aux fraises..." autocomplete="off" required>
+            <button type="submit" class="send-btn">Manger</button>
         </form>
     </div>
 
     <script>
-        let classifier = null;
         let idleTimer;
 
-        const candidateLabels = [
-            'un aliment sucré', 
-            'un aliment salé', 
-            'un aliment acide', 
-            'un aliment amer', 
-            'un aliment piquant ou épicé'
-        ];
+        // Base d'analyse sémantique gustative
+        const tasteDictionary = {
+            sucre: ['pomme', 'banane', 'fraise', 'bonbon', 'chocolat', 'glace', 'gateau', 'gâteau', 'miel', 'sucre', 'nutella', 'confiture', 'mangue', 'poire', 'cerise', 'orange', 'crepe', 'crêpe', 'tiramisu', 'tarte', 'sucre', 'sucré', 'biscuit', 'caramel', 'vanille'],
+            sale: ['frite', 'frites', 'chips', 'pizza', 'fromage', 'bacon', 'pretzel', 'popcorn', 'jambon', 'saucisson', 'olive', 'sel', 'salé', 'burger', 'ramen', 'graine', 'tournesol', 'cacahuete', 'cacahuète', 'pistache', 'pain'],
+            acide: ['citron', 'vinaigre', 'cornichon', 'kiwi', 'pamplemousse', 'rhubarbe', 'bonbon acide', 'citron vert', 'acide'],
+            amer: ['café', 'cafe', 'endive', 'brocoli', 'cacao', 'chou', 'thé noir', 'chocolat noir', 'biere', 'bière', 'amer'],
+            piquant: ['piment', 'poivre', 'harissa', 'wasabi', 'moutarde', 'tabasco', 'ail', 'oignon', 'epice', 'épice', 'curry', 'piquant', 'épicé']
+        };
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const bubble = document.getElementById('bubble');
-            const input = document.getElementById('foodInput');
-            const btn = document.getElementById('sendBtn');
+        function analyzeTaste(input) {
+            const cleanInput = input.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-            try {
-                classifier = await window.pipeline('zero-shot-classification', 'Xenova/mobilebert-uncased-mnli');
-                
-                bubble.textContent = "Je suis prêt ! Donne-moi un aliment à goûter !";
-                document.getElementById('avatar').textContent = '😐';
-                input.disabled = false;
-                btn.disabled = false;
-                btn.textContent = "Manger";
-                resetIdleTimer();
-            } catch (err) {
-                console.error(err);
-                bubble.textContent = "Erreur de chargement de l'analyseur.";
+            for (const [taste, keywords] of Object.entries(tasteDictionary)) {
+                for (const keyword of keywords) {
+                    const cleanKeyword = keyword.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    if (cleanInput.includes(cleanKeyword)) {
+                        return taste;
+                    }
+                }
             }
-        });
+            return 'inconnu';
+        }
 
-        async function handleFoodSubmit(event) {
+        function handleFoodSubmit(event) {
             event.preventDefault();
             const input = document.getElementById('foodInput');
             const userQuery = input.value.trim();
 
-            if (!userQuery || !classifier) return;
+            if (!userQuery) return;
 
             const avatar = document.getElementById('avatar');
             const bubble = document.getElementById('bubble');
-            
-            avatar.textContent = '🔍';
-            bubble.textContent = `Je goûte "${userQuery}"...`;
+
+            // Phase de réflexion / analyse
+            avatar.textContent = '🧠';
+            bubble.textContent = `Analyse du goût de "${userQuery}"...`;
 
             input.value = '';
             resetIdleTimer();
 
-            try {
-                const output = await classifier(userQuery, candidateLabels);
-                const topLabel = output.labels[0];
-
-                let taste = 'inconnu';
-                if (topLabel.includes('sucré')) taste = 'sucré';
-                else if (topLabel.includes('salé')) taste = 'salé';
-                else if (topLabel.includes('acide')) taste = 'acide';
-                else if (topLabel.includes('amer')) taste = 'amer';
-                else if (topLabel.includes('piquant')) taste = 'piquant';
-
+            // Simulation du temps de calcul (500ms)
+            setTimeout(() => {
+                const taste = analyzeTaste(userQuery);
                 applyResponse(userQuery, taste);
-            } catch (e) {
-                applyResponse(userQuery, 'inconnu');
-            }
+            }, 500);
         }
 
         function applyResponse(foodName, taste) {
@@ -125,7 +102,7 @@
             let emoji, bg, anim, text;
 
             switch (taste) {
-                case 'sucré':
+                case 'sucre':
                     emoji = '😋'; bg = '#fbcfe8'; anim = 'bounce';
                     text = `Mmmhhh, ${foodName} ! C'est bien sucré !`;
                     break;
@@ -133,7 +110,7 @@
                     emoji = '😖'; bg = '#fef08a'; anim = 'shake';
                     text = `Ouh là ! ${foodName}, c'est hyper acide !`;
                     break;
-                case 'salé':
+                case 'sale':
                     emoji = '🤓'; bg = '#fed7aa'; anim = 'bounce';
                     text = `Mmm, ${foodName} ! Un bon goût salé !`;
                     break;
@@ -147,7 +124,7 @@
                     break;
                 default:
                     emoji = '🧐'; bg = '#f1f5f9'; anim = 'bounce';
-                    text = `Mmm, ${foodName}... C'est un goût bien particulier !`;
+                    text = `Mmm, ${foodName}... C'est un goût particulier !`;
                     break;
             }
 
@@ -161,10 +138,12 @@
             clearTimeout(idleTimer);
             idleTimer = setTimeout(() => {
                 document.getElementById('avatar').textContent = '🤔';
-                document.getElementById('bubble').textContent = "Donne-moi une idée de plat !";
+                document.getElementById('bubble').textContent = "Donne-moi un autre aliment !";
                 resetIdleTimer();
             }, 8000);
         }
+
+        resetIdleTimer();
     </script>
 </body>
 </html>
