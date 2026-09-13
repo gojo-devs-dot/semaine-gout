@@ -10,25 +10,44 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
+    if (request.method !== "POST") {
+      return new Response("Méthode non autorisée", { status: 405, headers: corsHeaders });
+    }
+
     try {
-      if (!env.AI) {
-        throw new Error("Binding AI non configuré dans wrangler.jsonc");
+      const body = await request.json();
+      const foodQuery = body.food;
+
+      if (!foodQuery) {
+        return new Response(JSON.stringify({ error: "Aliment manquant" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
       }
 
-      const body = await request.json();
-      
-      const aiResponse = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-        messages: [{ role: "user", content: body.food || "pomme" }]
+      // Utilisation de Llama 3.1 8B Instruct (modèle à jour)
+      const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+        messages: [
+          {
+            role: "system",
+            content: "Tu es un expert en gastronomie. L'utilisateur te donne un aliment ou un plat. Réponds UNIQUEMENT par UN SEUL MOT parmi cette liste : sucré, salé, acide, amer, piquant, ou inconnu. Ne fais aucune phrase."
+          },
+          {
+            role: "user",
+            content: foodQuery
+          }
+        ]
       });
 
-      return new Response(JSON.stringify({ taste: aiResponse.response }), {
+      const taste = aiResponse && aiResponse.response ? aiResponse.response.trim().toLowerCase() : 'inconnu';
+
+      return new Response(JSON.stringify({ taste }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
 
-    } catch (err) {
-      // Renvoie l'erreur sous forme de texte lisible
-      return new Response(JSON.stringify({ error: err.message || err.toString() }), {
-        status: 200, // Forcé à 200 pour lire le message directement dans la bulle
+    } catch (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
