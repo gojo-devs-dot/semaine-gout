@@ -10,44 +10,31 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    if (request.method !== "POST") {
-      return new Response("Méthode non autorisée", { status: 405, headers: corsHeaders });
-    }
-
     try {
-      const body = await request.json();
-      const foodQuery = body.food;
-
-      if (!foodQuery) {
-        return new Response(JSON.stringify({ error: "Aliment manquant" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
+      // 1. Verification du binding AI
+      if (!env.AI) {
+        throw new Error("Binding AI absente dans env. Vérifie wrangler.jsonc.");
       }
 
-      // Utilisation de Llama 3.1 8B Instruct (modèle à jour)
+      // 2. Extraction du corps de la requete
+      const body = await request.json().catch(() => ({}));
+      const foodQuery = body.food || "pomme";
+
+      // 3. Appel du modele Llama 3.1
       const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
         messages: [
-          {
-            role: "system",
-            content: "Tu es un expert en gastronomie. L'utilisateur te donne un aliment ou un plat. Réponds UNIQUEMENT par UN SEUL MOT parmi cette liste : sucré, salé, acide, amer, piquant, ou inconnu. Ne fais aucune phrase."
-          },
-          {
-            role: "user",
-            content: foodQuery
-          }
+          { role: "user", content: foodQuery }
         ]
       });
 
-      const taste = aiResponse && aiResponse.response ? aiResponse.response.trim().toLowerCase() : 'inconnu';
-
-      return new Response(JSON.stringify({ taste }), {
+      return new Response(JSON.stringify({ taste: aiResponse.response }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
 
-    } catch (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
+    } catch (err) {
+      // Renvoie l'erreur sous forme de texte dans la bulle pour identifier la cause
+      return new Response(JSON.stringify({ error: `[DIAGNOSTIC] ${err.name}: ${err.message}` }), {
+        status: 200, 
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
