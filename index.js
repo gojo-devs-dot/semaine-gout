@@ -25,7 +25,6 @@ export default {
         });
       }
 
-      // Prompt optimisé pour la détection des saveurs et le ton bavard
       const prompt = `Tu es un gourmand expressif et bavard. L'utilisateur te donne un aliment ou un plat.
 Détermine sa saveur principale parmi : sucré, salé, acide, amer, piquant, umami, ou inconnu.
 
@@ -37,7 +36,8 @@ Consignes :
 - "message" est ta réaction vivante et courte (1 à 2 phrases) au goût de cet aliment.
 Aliment : ${foodQuery}`;
 
-      const aiResponse = await env.AI.run('@cf/meta/llama-3.2-3b-instruct', {
+      // Utilisation de Llama 3.3 70B
+      const aiResponse = await env.AI.run('@cf/meta/llama-3.3-70b-instruct', {
         messages: [
           { role: "user", content: prompt }
         ]
@@ -49,7 +49,6 @@ Aliment : ${foodQuery}`;
       if (aiResponse && aiResponse.response) {
         const rawText = aiResponse.response;
 
-        // 1. Tente d'extraire et de parser le bloc JSON
         const jsonMatch = rawText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           try {
@@ -57,11 +56,10 @@ Aliment : ${foodQuery}`;
             if (parsed.taste) taste = parsed.taste.toLowerCase();
             if (parsed.message) message = parsed.message;
           } catch (e) {
-            // Si le parse échoue, on continue avec les vérifications texte ci-dessous
+            // Ignorer l'erreur de parsing
           }
         }
 
-        // 2. Sécurité : si la saveur est restée 'inconnue', on recherche directement les mots clés
         if (taste === "inconnu") {
           const lowerText = rawText.toLowerCase();
           if (lowerText.includes("umami")) taste = "umami";
@@ -71,7 +69,6 @@ Aliment : ${foodQuery}`;
           else if (lowerText.includes("amer")) taste = "amer";
           else if (lowerText.includes("piquant")) taste = "piquant";
 
-          // Si l'IA n'a pas produit de message structuré, on utilise son texte nettoyé
           if (message.includes("Je n'arrive pas bien")) {
             message = rawText.replace(/```json|```|\{|\}/g, '').trim();
           }
