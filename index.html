@@ -6,19 +6,97 @@
     <title>Semaine du Goût - IA Llama</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .game-card { background-color: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 30px; max-width: 480px; width: 100%; text-align: center; }
+        body { background-color: #f1f5f9; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        
+        .game-card, .pantry-card { 
+            background-color: white; 
+            border-radius: 24px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            padding: 30px; 
+            max-width: 480px; 
+            width: 100%; 
+            text-align: center; 
+        }
+        
+        .pantry-card { margin-top: 20px; padding: 20px 30px; }
+        
         h1 { color: #1e293b; margin: 0 0 5px 0; font-size: 1.8rem; }
+        h2 { color: #1e293b; margin: 0 0 5px 0; font-size: 1.3rem; }
         .subtitle { color: #64748b; margin: 0 0 20px 0; font-size: 0.95rem; }
-        .avatar-container { background-color: #f8fafc; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 2px dashed #cbd5e1; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: background-color 0.3s ease; }
+        .pantry-subtitle { color: #64748b; margin: 0 0 15px 0; font-size: 0.85rem; }
+        
+        .avatar-container { 
+            background-color: #f8fafc; 
+            border-radius: 20px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border: 2px dashed #cbd5e1; 
+            min-height: 220px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            transition: background-color 0.3s ease; 
+        }
+        
         .avatar { font-size: 85px; line-height: 1; margin-bottom: 15px; transition: transform 0.3s ease; }
-        .bubble { background: #ffffff; border: 2px solid #334155; border-radius: 16px; padding: 12px 20px; font-weight: 600; font-size: 1.05rem; color: #0f172a; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); max-width: 90%; position: relative; min-height: 60px; display: flex; align-items: center; justify-content: center; word-break: break-word; }
-        .bubble::after { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border-width: 0 10px 10px; border-style: solid; border-color: #334155 transparent; }
+        
+        .bubble { 
+            background: #ffffff; 
+            border: 2px solid #334155; 
+            border-radius: 16px; 
+            padding: 12px 20px; 
+            font-weight: 600; 
+            font-size: 1.05rem; 
+            color: #0f172a; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+            max-width: 90%; 
+            position: relative; 
+            min-height: 60px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            word-break: break-word; 
+        }
+        .bubble::after { 
+            content: ''; 
+            position: absolute; 
+            top: -10px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            border-width: 0 10px 10px; 
+            border-style: solid; 
+            border-color: #334155 transparent; 
+        }
+        
         .input-form { display: flex; gap: 10px; margin-top: 10px; }
         .food-input { flex-grow: 1; border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
         .food-input:focus { border-color: #3b82f6; }
+        
         .send-btn { background-color: #3b82f6; color: white; border: none; border-radius: 12px; padding: 12px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; }
         .send-btn:disabled { background-color: #cbd5e1; cursor: not-allowed; }
+        
+        .pantry-grid { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; 
+            justify-content: center; 
+            max-height: 180px; 
+            overflow-y: auto; 
+            padding: 5px;
+        }
+        .pantry-item { 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 0.85rem; 
+            font-weight: bold; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            color: #0f172a;
+        }
+
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
         .anim-bounce { animation: bounce 0.5s ease; }
@@ -42,8 +120,26 @@
         </form>
     </div>
 
+    <div class="pantry-card">
+        <h2>Mon Garde-Manger 🧺</h2>
+        <p id="pantryCount" class="pantry-subtitle">0 aliment découvert</p>
+        <div id="pantryGrid" class="pantry-grid"></div>
+    </div>
+
     <script>
         const WORKER_URL = "https://semaine-gout.x-kaboom-x02.workers.dev";
+
+        const TASTE_CONFIG = {
+            'sucré': { emoji: '😋', bg: '#fbcfe8', anim: 'bounce' },
+            'acide': { emoji: '😖', bg: '#fef08a', anim: 'shake' },
+            'salé': { emoji: '🤓', bg: '#fed7aa', anim: 'bounce' },
+            'amer': { emoji: '🤢', bg: '#e2e8f0', anim: 'shake' },
+            'piquant': { emoji: '🥵', bg: '#fecaca', anim: 'shake' },
+            'umami': { emoji: '🤤', bg: '#ddd6fe', anim: 'bounce' },
+            'inconnu': { emoji: '🧐', bg: '#f1f5f9', anim: 'bounce' }
+        };
+
+        document.addEventListener('DOMContentLoaded', updatePantryUI);
 
         async function handleFoodSubmit(event) {
             event.preventDefault();
@@ -80,7 +176,10 @@
                     throw new Error(data.error);
                 }
 
-                applyResponse(data.taste || 'inconnu', data.message);
+                const taste = data.taste || 'inconnu';
+                applyResponse(taste, data.message);
+                saveToPantry(userQuery, taste);
+
             } catch (error) {
                 avatar.textContent = '⚠️';
                 container.style.backgroundColor = '#fee2e2';
@@ -101,29 +200,46 @@
             avatar.className = 'avatar';
             void avatar.offsetWidth;
 
-            let emoji, bg, anim;
-            const t = taste.toLowerCase();
+            const config = TASTE_CONFIG[taste.toLowerCase()] || TASTE_CONFIG['inconnu'];
 
-            if (t.includes('sucré')) {
-                emoji = '😋'; bg = '#fbcfe8'; anim = 'bounce';
-            } else if (t.includes('acide')) {
-                emoji = '😖'; bg = '#fef08a'; anim = 'shake';
-            } else if (t.includes('salé')) {
-                emoji = '🤓'; bg = '#fed7aa'; anim = 'bounce';
-            } else if (t.includes('amer')) {
-                emoji = '🤢'; bg = '#e2e8f0'; anim = 'shake';
-            } else if (t.includes('piquant')) {
-                emoji = '🥵'; bg = '#fecaca'; anim = 'shake';
-            } else if (t.includes('umami')) {
-                emoji = '🤤'; bg = '#ddd6fe'; anim = 'bounce'; // Violet clair pour l'umami
+            avatar.textContent = config.emoji;
+            avatar.classList.add(`anim-${config.anim}`);
+            container.style.backgroundColor = config.bg;
+            bubble.textContent = message || "Mmm, goût intéressant !";
+        }
+
+        function saveToPantry(food, taste) {
+            let pantry = JSON.parse(localStorage.getItem('pantry') || '[]');
+            
+            const existingIndex = pantry.findIndex(item => item.food.toLowerCase() === food.toLowerCase());
+            if (existingIndex !== -1) {
+                pantry[existingIndex].taste = taste;
             } else {
-                emoji = '🧐'; bg = '#f1f5f9'; anim = 'bounce';
+                pantry.unshift({ food, taste });
             }
 
-            avatar.textContent = emoji;
-            avatar.classList.add(`anim-${anim}`);
-            container.style.backgroundColor = bg;
-            bubble.textContent = message || "Mmm, goût intéressant !";
+            localStorage.setItem('pantry', JSON.stringify(pantry));
+            updatePantryUI();
+        }
+
+        function updatePantryUI() {
+            const pantry = JSON.parse(localStorage.getItem('pantry') || '[]');
+            const grid = document.getElementById('pantryGrid');
+            const count = document.getElementById('pantryCount');
+
+            if (!grid || !count) return;
+
+            count.textContent = `${pantry.length} aliment${pantry.length > 1 ? 's' : ''} découvert${pantry.length > 1 ? 's' : ''}`;
+            grid.innerHTML = '';
+
+            pantry.forEach(item => {
+                const config = TASTE_CONFIG[item.taste.toLowerCase()] || TASTE_CONFIG['inconnu'];
+                const tag = document.createElement('div');
+                tag.className = 'pantry-item';
+                tag.style.backgroundColor = config.bg;
+                tag.innerHTML = `<span>${config.emoji}</span> <span>${item.food}</span>`;
+                grid.appendChild(tag);
+            });
         }
     </script>
 </body>
