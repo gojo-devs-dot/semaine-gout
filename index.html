@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaine du Goût</title>
+    <title>Semaine du Goût - IA locale</title>
     <style>
         * {
             box-sizing: border-box;
@@ -28,8 +28,6 @@
             max-width: 480px;
             width: 100%;
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
 
         h1 { color: #1e293b; margin: 0 0 5px 0; font-size: 1.8rem; }
@@ -41,7 +39,7 @@
             padding: 20px;
             margin-bottom: 20px;
             border: 2px dashed #cbd5e1;
-            min-height: 230px;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -50,7 +48,7 @@
         }
 
         .avatar {
-            font-size: 90px;
+            font-size: 85px;
             line-height: 1;
             margin-bottom: 15px;
             transition: transform 0.3s ease;
@@ -84,83 +82,37 @@
             border-color: #334155 transparent;
         }
 
-        .open-pantry-btn {
+        .input-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .food-input {
+            flex-grow: 1;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .food-input:focus { border-color: #3b82f6; }
+
+        .send-btn {
             background-color: #3b82f6;
             color: white;
             border: none;
-            border-radius: 14px;
-            padding: 16px 24px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-            transition: all 0.2s ease;
-        }
-
-        .open-pantry-btn:hover { background-color: #2563eb; transform: translateY(-2px); }
-
-        .pantry-drawer {
-            position: absolute;
-            bottom: -100%;
-            left: 0;
-            width: 100%;
-            height: 85%;
-            background-color: #ffffff;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.15);
-            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            z-index: 10;
-        }
-
-        .pantry-drawer.open { bottom: 0; }
-
-        .pantry-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 10px;
-        }
-
-        .close-btn {
-            background: #f1f5f9;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            color: #64748b;
-            font-weight: bold;
-        }
-
-        .food-scroll-area { overflow-y: auto; flex-grow: 1; }
-        .category-title { text-align: left; font-size: 0.85rem; font-weight: bold; color: #64748b; margin: 15px 0 8px 0; text-transform: uppercase; }
-        .food-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-
-        .food-item {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 10px 5px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
         }
 
-        .food-item:hover { transform: scale(1.05); background-color: #f1f5f9; }
-        .food-item .emoji { font-size: 1.8rem; }
-        .food-item .name { font-size: 0.75rem; color: #334155; font-weight: 600; }
+        .send-btn:hover { background-color: #2563eb; }
 
-        /* Animations */
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
         .anim-bounce { animation: bounce 0.5s ease; }
@@ -171,133 +123,172 @@
 
     <div class="game-card">
         <h1>Semaine du Goût 🍎</h1>
-        <p class="subtitle">Fais-moi goûter quelque chose !</p>
+        <p class="subtitle">Écris un aliment, l'IA cherche son goût !</p>
 
         <div id="avatarContainer" class="avatar-container">
             <div id="avatar" class="avatar">😐</div>
-            <div id="bubble" class="bubble">Mmmh, j'ai une petite faim... Qu'est-ce qu'on mange ?</div>
+            <div id="bubble" class="bubble">Donne-moi un aliment à goûter !</div>
         </div>
 
-        <button class="open-pantry-btn" onclick="togglePantry(true)">
-            🍽️ Ouvrir le garde-manger
-        </button>
-
-        <div id="pantryDrawer" class="pantry-drawer">
-            <div class="pantry-header">
-                <span style="font-weight: bold; color: #1e293b;">Bibliothèque d'aliments</span>
-                <button class="close-btn" onclick="togglePantry(false)">✕</button>
-            </div>
-
-            <div class="food-scroll-area">
-                <div class="category-title">🍭 Sucré</div>
-                <div class="food-grid">
-                    <div class="food-item" onclick="eat('🍩', 'Donut', 'sucré', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍩</span><span class="name">Donut</span></div>
-                    <div class="food-item" onclick="eat('🍦', 'Glace', 'sucré', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍦</span><span class="name">Glace</span></div>
-                    <div class="food-item" onclick="eat('🍫', 'Chocolat', 'sucré', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍫</span><span class="name">Chocolat</span></div>
-                    <div class="food-item" onclick="eat('🍓', 'Fraise', 'sucré', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍓</span><span class="name">Fraise</span></div>
-                </div>
-
-                <div class="category-title">🍋 Acide</div>
-                <div class="food-grid">
-                    <div class="food-item" onclick="eat('🍋', 'Citron', 'acide', '😖', '#fef08a', 'shake')"><span class="emoji">🍋</span><span class="name">Citron</span></div>
-                    <div class="food-item" onclick="eat('🍏', 'Pomme verte', 'acide', '😖', '#fef08a', 'shake')"><span class="emoji">🍏</span><span class="name">Pomme</span></div>
-                    <div class="food-item" onclick="eat('🥝', 'Kiwi', 'acide', '😖', '#fef08a', 'shake')"><span class="emoji">🥝</span><span class="name">Kiwi</span></div>
-                    <div class="food-item" onclick="eat('🫒', 'Cornichon', 'acide', '😖', '#fef08a', 'shake')"><span class="emoji">🫒</span><span class="name">Cornichon</span></div>
-                </div>
-
-                <div class="category-title">🥨 Salé</div>
-                <div class="food-grid">
-                    <div class="food-item" onclick="eat('🥨', 'Pretzel', 'salé', '🤓', '#fed7aa', 'bounce')"><span class="emoji">🥨</span><span class="name">Pretzel</span></div>
-                    <div class="food-item" onclick="eat('🍟', 'Frites', 'salé', '😋', '#fed7aa', 'bounce')"><span class="emoji">🍟</span><span class="name">Frites</span></div>
-                    <div class="food-item" onclick="eat('🧀', 'Fromage', 'salé', '🧀', '#fed7aa', 'bounce')"><span class="emoji">🧀</span><span class="name">Fromage</span></div>
-                    <div class="food-item" onclick="eat('🍿', 'Popcorn', 'salé', '🍿', '#fed7aa', 'bounce')"><span class="emoji">🍿</span><span class="name">Popcorn</span></div>
-                </div>
-
-                <div class="category-title">☕ Amer</div>
-                <div class="food-grid">
-                    <div class="food-item" onclick="eat('☕', 'Café noir', 'amer', '🤢', '#e2e8f0', 'shake')"><span class="emoji">☕</span><span class="name">Café</span></div>
-                    <div class="food-item" onclick="eat('🥦', 'Brocoli', 'amer', '🧐', '#e2e8f0', 'bounce')"><span class="emoji">🥦</span><span class="name">Brocoli</span></div>
-                </div>
-
-                <div class="category-title">🌶️ Épicé</div>
-                <div class="food-grid">
-                    <div class="food-item" onclick="eat('🌶️', 'Piment', 'piquant', '🥵', '#fecaca', 'shake')"><span class="emoji">🌶️</span><span class="name">Piment</span></div>
-                    <div class="food-item" onclick="eat('🧄', 'Ail', 'piquant', '🥵', '#fecaca', 'shake')"><span class="emoji">🧄</span><span class="name">Ail</span></div>
-                </div>
-            </div>
-        </div>
+        <form class="input-form" onsubmit="handleFoodSubmit(event)">
+            <input type="text" id="foodInput" class="food-input" placeholder="Ex: pomme, bonbon, piment..." autocomplete="off" required>
+            <button type="submit" class="send-btn">Manger</button>
+        </form>
     </div>
 
     <script>
         let idleTimer;
 
-        // Réponses ultra-naturelles et directes selon le goût
-        const responses = {
-            sucré: [
-                "Mmmhhh... C'est délicieux, bien sucré !",
-                "Yum ! J'adore ce petit goût doux et sucré !",
-                "Mmmhh c'est trop bon, c'est gourmand !"
-            ],
-            acide: [
-                "Ouh là ! C'est hyper acide, ça fait grimacer !",
-                "Brrr ! Ça pique les joues, c'est très acide !",
-                "Aïe, ça secoue ! C'est très acide !"
-            ],
-            salé: [
-                "Mmmhhh c'est bien salé et croustillant !",
-                "Ah, un bon goût salé ! J'adore ça !",
-                "Mmm, c'est savoureux et salé juste comme il faut !"
-            ],
-            amer: [
-                "Pouah... C'est drôle comme goût, c'est amer !",
-                "Beurk, c'est un peu fort et amer pour moi...",
-                "Oof, l'amertume c'est particulier !"
-            ],
-            piquant: [
-                "Ouch ! Ça brûle la langue, c'est piquant !",
-                "Au feu ! C'est super épicé !",
-                "Wouah ! Ça chauffe fort dans la bouche !"
-            ]
-        };
-
-        const idlePhrases = [
-            "Hé ho ! Tu m'as oublié ? J'ai encore faim !",
-            "Psst... Choisis-moi un nouvel aliment !",
-            "Tu penses que le prochain sera sucré ou salé ?",
-            "Mon ventre commence à grouiller...",
-            "Regarde dans le garde-manger !"
+        // Base de connaissance de l'IA locale
+        const foodDatabase = [
+            // Sucré
+            { names: ['pomme', 'banane', 'fraise', 'bonbon', 'chocolat', 'glace', 'gateau', 'gâteau', 'donut', 'miel', 'sucre', 'nutella', 'confiture', 'mangue', 'poire', 'cerise', 'orange', 'crepe', 'crêpe'], taste: 'sucré' },
+            // Acide
+            { names: ['citron', 'vinaigre', 'cornichon', 'kiwi', 'pamplemousse', 'rhubarbe', 'bonbon acide', 'citron vert'], taste: 'acide' },
+            // Salé
+            { names: ['frite', 'frites', 'chips', 'pizza', 'fromage', 'bacon', 'pretzel', 'popcorn', 'jambon', 'saucisson', 'olive', 'sel', 'burger', 'ramen'], taste: 'salé' },
+            // Amer
+            { names: ['café', 'cafe', 'endive', 'brocoli', 'cacao', 'chou', 'thé noir', 'chocolat noir', 'biere', 'bière'], taste: 'amer' },
+            // Piquant
+            { names: ['piment', 'poivre', 'harissa', 'wasabi', 'moutarde', 'tabasco', 'ail', 'oignon', 'epice', 'épice', 'curry'], taste: 'piquant' }
         ];
 
-        function togglePantry(show) {
-            document.getElementById('pantryDrawer').classList.toggle('open', show);
+        const idlePhrases = [
+            "Hé ho ! Tu fais quoi ? J'ai faim !",
+            "Tape un nom d'aliment dans la barre !",
+            "Je m'ennuie... Donne-moi un truc à manger !",
+            "Tu penses à quoi comme nourriture ?",
+            "Mon ventre réclame à manger !"
+        ];
+
+        // Calcul de proximité de texte (IA de correspondance)
+        function getSimilarity(s1, s2) {
+            let longer = s1.length < s2.length ? s2 : s1;
+            let shorter = s1.length < s2.length ? s1 : s2;
+            if (longer.length === 0) return 1.0;
+            return (longer.length - editDistance(longer, shorter)) / parseFloat(longer.length);
+        }
+
+        function editDistance(s1, s2) {
+            s1 = s1.toLowerCase();
+            s2 = s2.toLowerCase();
+            let costs = [];
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i === 0) costs[j] = j;
+                    else {
+                        if (j > 0) {
+                            let newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) !== s2.charAt(j - 1))
+                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (i > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        function handleFoodSubmit(event) {
+            event.preventDefault();
+            const input = document.getElementById('foodInput');
+            const foodQuery = input.value.trim().toLowerCase();
+
+            if (!foodQuery) return;
+
+            // Phase de simulation de recherche IA
+            const avatar = document.getElementById('avatar');
+            const bubble = document.getElementById('bubble');
+            avatar.textContent = '🔍';
+            bubble.textContent = `Recherche du goût de "${foodQuery}"...`;
+
+            setTimeout(() => {
+                searchAndAnswer(foodQuery);
+            }, 600); // Petit délai pour faire "effet recherche"
+
+            input.value = '';
             resetIdleTimer();
         }
 
-        function eat(emoji, nom, gout, avatarEmoji, color, anim) {
-            togglePantry(false);
-            
+        function searchAndAnswer(query) {
+            let bestMatchTaste = null;
+            let highestScore = 0;
+
+            // Analyse IA de la requête utilisateur
+            for (const category of foodDatabase) {
+                for (const foodName of category.names) {
+                    if (query.includes(foodName) || foodName.includes(query)) {
+                        bestMatchTaste = category.taste;
+                        highestScore = 1;
+                        break;
+                    }
+                    let score = getSimilarity(query, foodName);
+                    if (score > highestScore && score > 0.6) {
+                        highestScore = score;
+                        bestMatchTaste = category.taste;
+                    }
+                }
+            }
+
+            // Détection directe par mot-clé de goût
+            if (query.includes('sucre')) bestMatchTaste = 'sucré';
+            else if (query.includes('acide')) bestMatchTaste = 'acide';
+            else if (query.includes('sale') || query.includes('salé')) bestMatchTaste = 'salé';
+            else if (query.includes('amer')) bestMatchTaste = 'amer';
+            else if (query.includes('pique') || query.includes('piquant') || query.includes('epice')) bestMatchTaste = 'piquant';
+
+            applyResponse(query, bestMatchTaste);
+        }
+
+        function applyResponse(foodName, taste) {
             const avatar = document.getElementById('avatar');
             const bubble = document.getElementById('bubble');
             const container = document.getElementById('avatarContainer');
 
             avatar.className = 'avatar';
-            void avatar.offsetWidth; // Force le rafraîchissement de l'animation
+            void avatar.offsetWidth;
 
-            avatar.textContent = avatarEmoji;
+            let emoji, bg, anim, text;
+
+            switch (taste) {
+                case 'sucré':
+                    emoji = '😋'; bg = '#fbcfe8'; anim = 'bounce';
+                    text = `Mmmhhh, ${foodName} ! C'est doux et sucré !`;
+                    break;
+                case 'acide':
+                    emoji = '😖'; bg = '#fef08a'; anim = 'shake';
+                    text = `Ouh là ! ${foodName}, c'est très acide !`;
+                    break;
+                case 'salé':
+                    emoji = '🤓'; bg = '#fed7aa'; anim = 'bounce';
+                    text = `Mmm, ${foodName} ! Un bon goût salé !`;
+                    break;
+                case 'amer':
+                    emoji = '🤢'; bg = '#e2e8f0'; anim = 'shake';
+                    text = `Pouah ! ${foodName}, c'est plutôt amer...`;
+                    break;
+                case 'piquant':
+                    emoji = '🥵'; bg = '#fecaca'; anim = 'shake';
+                    text = `Au feu ! ${foodName}, ça pique fort !`;
+                    break;
+                default:
+                    emoji = '🧐'; bg = '#f1f5f9'; anim = 'bounce';
+                    text = `Mmm, ${foodName}... C'est un goût particulier !`;
+                    break;
+            }
+
+            avatar.textContent = emoji;
             avatar.classList.add(`anim-${anim}`);
-            container.style.backgroundColor = color;
-
-            const list = responses[gout];
-            const reaction = list[Math.floor(Math.random() * list.length)];
-            
-            bubble.textContent = `${emoji} ${reaction}`;
-
-            resetIdleTimer();
+            container.style.backgroundColor = bg;
+            bubble.textContent = text;
         }
 
         function resetIdleTimer() {
             clearTimeout(idleTimer);
-            idleTimer = setTimeout(talkWhenIdle, 6000); // Réagit après 6 secondes d'inactivité
+            idleTimer = setTimeout(talkWhenIdle, 6000);
         }
 
         function talkWhenIdle() {
