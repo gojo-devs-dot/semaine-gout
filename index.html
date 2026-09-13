@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaine du Goût - IA Llama 3</title>
+    <title>Semaine du Goût - IA Llama</title>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background-color: #f1f5f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
@@ -29,7 +29,7 @@
 
     <div class="game-card">
         <h1>Semaine du Goût 🍎</h1>
-        <p class="subtitle">Analyse instantanée par l'IA Llama-3</p>
+        <p class="subtitle">Analyse instantanée par l'IA Llama</p>
 
         <div id="avatarContainer" class="avatar-container">
             <div id="avatar" class="avatar">😐</div>
@@ -37,7 +37,7 @@
         </div>
 
         <form class="input-form" onsubmit="handleFoodSubmit(event)">
-            <input type="text" id="foodInput" class="food-input" placeholder="Ex: pomme, frites, piment, ramen..." autocomplete="off" required>
+            <input type="text" id="foodInput" class="food-input" placeholder="Ex: sauce soja, chocolat, piment..." autocomplete="off" required>
             <button type="submit" id="sendBtn" class="send-btn">Manger</button>
         </form>
     </div>
@@ -57,7 +57,7 @@
             if (!userQuery) return;
 
             avatar.textContent = '🧠';
-            bubble.textContent = `L'IA analyse "${userQuery}"...`;
+            bubble.textContent = `L'IA goûte "${userQuery}"...`;
             container.style.backgroundColor = '#f8fafc';
             
             input.disabled = true;
@@ -80,7 +80,7 @@
                     throw new Error(data.error);
                 }
 
-                applyResponse(userQuery, data.taste || 'inconnu');
+                applyResponse(data.taste || 'inconnu', data.message);
             } catch (error) {
                 avatar.textContent = '⚠️';
                 container.style.backgroundColor = '#fee2e2';
@@ -93,7 +93,7 @@
             }
         }
 
-        function applyResponse(foodName, taste) {
+        function applyResponse(taste, message) {
             const avatar = document.getElementById('avatar');
             const bubble = document.getElementById('bubble');
             const container = document.getElementById('avatarContainer');
@@ -101,32 +101,29 @@
             avatar.className = 'avatar';
             void avatar.offsetWidth;
 
-            let emoji, bg, anim, text;
+            let emoji, bg, anim;
+            const t = taste.toLowerCase();
 
-            if (taste.includes('sucré')) {
+            if (t.includes('sucré')) {
                 emoji = '😋'; bg = '#fbcfe8'; anim = 'bounce';
-                text = `Mmmhhh, ${foodName} ! C'est bien sucré !`;
-            } else if (taste.includes('acide')) {
+            } else if (t.includes('acide')) {
                 emoji = '😖'; bg = '#fef08a'; anim = 'shake';
-                text = `Ouh là ! ${foodName}, c'est hyper acide !`;
-            } else if (taste.includes('salé')) {
+            } else if (t.includes('salé')) {
                 emoji = '🤓'; bg = '#fed7aa'; anim = 'bounce';
-                text = `Mmm, ${foodName} ! Un bon goût salé !`;
-            } else if (taste.includes('amer')) {
+            } else if (t.includes('amer')) {
                 emoji = '🤢'; bg = '#e2e8f0'; anim = 'shake';
-                text = `Pouah ! ${foodName}, c'est plutôt amer...`;
-            } else if (taste.includes('piquant')) {
+            } else if (t.includes('piquant')) {
                 emoji = '🥵'; bg = '#fecaca'; anim = 'shake';
-                text = `Au feu ! ${foodName}, ça pique fort !`;
+            } else if (t.includes('umami')) {
+                emoji = '🤤'; bg = '#ddd6fe'; anim = 'bounce'; // Violet clair pour l'umami
             } else {
                 emoji = '🧐'; bg = '#f1f5f9'; anim = 'bounce';
-                text = `Mmm, ${foodName}... C'est un goût bien particulier !`;
             }
 
             avatar.textContent = emoji;
             avatar.classList.add(`anim-${anim}`);
             container.style.backgroundColor = bg;
-            bubble.textContent = text;
+            bubble.textContent = message || "Mmm, goût intéressant !";
         }
     </script>
 </body>
