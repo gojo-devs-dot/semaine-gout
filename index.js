@@ -25,8 +25,8 @@ Consignes :
 - "message" est ta réaction vivante et courte (1 à 2 phrases) au goût de cet aliment.
 Aliment : ${foodQuery}`;
 
-      // Utilisation de llama-3.1-8b-instruct
-      const aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      // Utilisation du modèle Llama 3.2 3B Instruct actif
+      const aiResponse = await env.AI.run('@cf/meta/llama-3.2-3b-instruct', {
         messages: [{ role: "user", content: prompt }]
       });
 
