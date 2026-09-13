@@ -10,37 +10,21 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    if (request.method !== "POST") {
-      return new Response("Méthode non autorisée", { status: 405, headers: corsHeaders });
-    }
-
     try {
-      const body = await request.json();
-      const foodQuery = body.food;
+      const body = await request.json().catch(() => ({}));
+      const foodQuery = body.food || "sauce soja";
 
-      if (!foodQuery) {
-        return new Response(JSON.stringify({ error: "Aliment manquant" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      }
-
-      const prompt = `Tu es un gourmand expressif et bavard. L'utilisateur te donne un aliment ou un plat.
+      const prompt = `Tu es un gourmand expressif. L'utilisateur te donne un aliment.
 Détermine sa saveur principale parmi : sucré, salé, acide, amer, piquant, umami, ou inconnu.
 
-Réponds UNIQUEMENT avec un objet JSON au format exact suivant :
+Réponds UNIQUEMENT avec un objet JSON :
 {"taste": "VALEUR", "message": "TA_RÉPLIQUE"}
 
-Consignes :
-- "taste" doit être exactement l'un des mots suivants : sucré, salé, acide, amer, piquant, umami, inconnu.
-- "message" est ta réaction vivante et courte (1 à 2 phrases) au goût de cet aliment.
 Aliment : ${foodQuery}`;
 
-      // Utilisation de Llama 3.3 70B
+      // Appel de l'IA
       const aiResponse = await env.AI.run('@cf/meta/llama-3.3-70b-instruct', {
-        messages: [
-          { role: "user", content: prompt }
-        ]
+        messages: [{ role: "user", content: prompt }]
       });
 
       let taste = "inconnu";
@@ -48,16 +32,14 @@ Aliment : ${foodQuery}`;
 
       if (aiResponse && aiResponse.response) {
         const rawText = aiResponse.response;
-
         const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+
         if (jsonMatch) {
           try {
             const parsed = JSON.parse(jsonMatch[0]);
             if (parsed.taste) taste = parsed.taste.toLowerCase();
             if (parsed.message) message = parsed.message;
-          } catch (e) {
-            // Ignorer l'erreur de parsing
-          }
+          } catch (e) {}
         }
 
         if (taste === "inconnu") {
@@ -79,9 +61,12 @@ Aliment : ${foodQuery}`;
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
 
-    } catch (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500,
+    } catch (err) {
+      // Forcé en status 200 pour que le navigateur affiche la vraie erreur dans la bulle
+      return new Response(JSON.stringify({ 
+        error: `[ERREUR AI] ${err.name || 'Error'}: ${err.message || err.toString()}` 
+      }), {
+        status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
