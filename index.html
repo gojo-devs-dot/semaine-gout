@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jeu de la Semaine du Goût</title>
+    <title>Garde-manger de la Semaine du Goût</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #f0f4f8;
+            background-color: #f1f5f9;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,60 +22,60 @@
 
         .game-card {
             background-color: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             padding: 30px;
-            max-width: 500px;
+            max-width: 480px;
             width: 100%;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
         h1 {
-            color: #2c3e50;
-            margin-bottom: 5px;
+            color: #1e293b;
+            margin: 0 0 5px 0;
             font-size: 1.8rem;
         }
 
-        p.subtitle {
-            color: #7f8c8d;
-            margin-top: 0;
-            margin-bottom: 25px;
+        .subtitle {
+            color: #64748b;
+            margin: 0 0 20px 0;
+            font-size: 0.95rem;
         }
 
         .avatar-container {
-            position: relative;
             background-color: #f8fafc;
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border: 2px dashed #cbd5e1;
-            min-height: 200px;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            transition: background-color 0.3s ease;
         }
 
         .avatar {
-            font-size: 80px;
+            font-size: 90px;
+            line-height: 1;
+            margin-bottom: 15px;
             transition: transform 0.3s ease;
         }
 
         .bubble {
-            position: relative;
             background: #ffffff;
             border: 2px solid #334155;
-            border-radius: 15px;
+            border-radius: 16px;
             padding: 12px 20px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #1e293b;
-            margin-top: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #0f172a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            position: relative;
         }
 
         .bubble::after {
@@ -87,122 +87,263 @@
             border-width: 0 10px 10px;
             border-style: solid;
             border-color: #334155 transparent;
-            display: block;
-            width: 0;
+        }
+
+        /* Bouton principal pour ouvrir la bibliothèque */
+        .open-pantry-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 16px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .open-pantry-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* Tiroir / Modal de la bibliothèque d'aliments */
+        .pantry-drawer {
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 85%;
+            background-color: #ffffff;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.15);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .pantry-drawer.open {
+            bottom: 0;
+        }
+
+        .pantry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .pantry-title {
+            font-weight: bold;
+            color: #1e293b;
+            font-size: 1.1rem;
+        }
+
+        .close-btn {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .food-scroll-area {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-right: 5px;
+        }
+
+        .category-title {
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #64748b;
+            margin: 15px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .food-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
 
-        .food-btn {
-            background-color: #f1f5f9;
-            border: 2px solid #e2e8f0;
+        .food-item {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 15px 10px;
-            font-size: 1.8rem;
+            padding: 10px 5px;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
-        .food-btn span.label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .food-btn:hover {
-            transform: translateY(-3px);
-            background-color: #e2e8f0;
+        .food-item:hover {
+            transform: scale(1.05);
+            background-color: #f1f5f9;
             border-color: #cbd5e1;
         }
 
-        .food-btn:active {
-            transform: translateY(0);
+        .food-item .emoji {
+            font-size: 1.8rem;
         }
 
-        /* Animations */
+        .food-item .name {
+            font-size: 0.75rem;
+            color: #334155;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        /* Animations de l'avatar */
         @keyframes bounce {
             0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.1); }
+            50% { transform: translateY(-12px) scale(1.1); }
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
         }
 
-        .anim-bounce {
-            animation: bounce 0.5s ease;
-        }
-
-        .anim-shake {
-            animation: shake 0.4s ease;
-        }
+        .anim-bounce { animation: bounce 0.5s ease; }
+        .anim-shake { animation: shake 0.4s ease; }
     </style>
 </head>
 <body>
 
     <div class="game-card">
         <h1>Semaine du Goût 🍎</h1>
-        <p class="subtitle">Clique sur un aliment pour le faire goûter !</p>
+        <p class="subtitle">Ouvre le garde-manger et donne-lui à manger !</p>
 
-        <div class="avatar-container">
+        <div id="avatarContainer" class="avatar-container">
             <div id="avatar" class="avatar">😐</div>
-            <div id="bubble" class="bubble">Donne-moi quelque chose à goûter !</div>
+            <div id="bubble" class="bubble">J'ai faim ! Choisis un aliment.</div>
         </div>
 
-        <div class="food-grid">
-            <button class="food-btn" onclick="tasting('🍩', 'Mmmhhh c\'est sucré !', '😋', '#fbcfe8', 'bounce')">
-                🍩 <span class="label">Donut</span>
-            </button>
-            <button class="food-btn" onclick="tasting('🍋', 'Ugh ! C\'est trop acide !', '😖', '#fef08a', 'shake')">
-                🍋 <span class="label">Citron</span>
-            </button>
-            <button class="food-btn" onclick="tasting('🌶️', 'Au feu ! C\'est très piquant !', '🥵', '#fecaca', 'shake')">
-                🌶️ <span class="label">Piment</span>
-            </button>
-            <button class="food-btn" onclick="tasting('🥨', 'C\'est bien salé et croquant !', '🤓', '#fed7aa', 'bounce')">
-                🥨 <span class="label">Pretzel</span>
-            </button>
-            <button class="food-btn" onclick="tasting('☕', 'Pouah, c\'est amer...', '🤢', '#e2e8f0', 'shake')">
-                ☕ <span class="label">Café noir</span>
-            </button>
-            <button class="food-btn" onclick="tasting('🥦', 'C\'est plein de vitamines !', '🧐', '#bbf7d0', 'bounce')">
-                🥦 <span class="label">Brocoli</span>
-            </button>
+        <!-- Petit bouton principal -->
+        <button class="open-pantry-btn" onclick="togglePantry(true)">
+            <span>🍽️</span> Ouvrir le garde-manger
+        </button>
+
+        <!-- Tiroir coulissant (Bibliothèque complète d'aliments) -->
+        <div id="pantryDrawer" class="pantry-drawer">
+            <div class="pantry-header">
+                <span class="pantry-title">Bibliothèque d'aliments</span>
+                <button class="close-btn" onclick="togglePantry(false)">✕</button>
+            </div>
+
+            <div class="food-scroll-area">
+                
+                <div class="category-title">🍭 Sucré</div>
+                <div class="food-grid">
+                    <div class="food-item" onclick="eat('🍩', 'Mmmhhh c\'est sucré et gourmand !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍩</span><span class="name">Donut</span></div>
+                    <div class="food-item" onclick="eat('🍦', 'Mmmhhh c\'est sucré et glacé !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍦</span><span class="name">Glace</span></div>
+                    <div class="food-item" onclick="eat('🍫', 'Mmmhhh du chocolat sucré !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍫</span><span class="name">Chocolat</span></div>
+                    <div class="food-item" onclick="eat('🍯', 'Mmmhhh c\'est très sucré !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍯</span><span class="name">Miel</span></div>
+                    <div class="food-item" onclick="eat('🍓', 'Mmmhhh c\'est fruité et sucré !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍓</span><span class="name">Fraise</span></div>
+                    <div class="food-item" onclick="eat('🍉', 'Mmmhhh sucré et rafraîchissant !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍉</span><span class="name">Pastèque</span></div>
+                    <div class="food-item" onclick="eat('🍭', 'Mmmhhh une sucette bien sucrée !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍭</span><span class="name">Sucette</span></div>
+                    <div class="food-item" onclick="eat('🍌', 'Mmmhhh c\'est doux et sucré !', '😋', '#fbcfe8', 'bounce')"><span class="emoji">🍌</span><span class="name">Banane</span></div>
+                </div>
+
+                <div class="category-title">🍋 Acide</div>
+                <div class="food-grid">
+                    <div class="food-item" onclick="eat('🍋', 'Ugh ! C\'est très acide !', '😖', '#fef08a', 'shake')"><span class="emoji">🍋</span><span class="name">Citron</span></div>
+                    <div class="food-item" onclick="eat('🍏', 'Ouh ! C\'est une pomme acide !', '😖', '#fef08a', 'shake')"><span class="emoji">🍏</span><span class="name">Pomme verte</span></div>
+                    <div class="food-item" onclick="eat('Kiwi', 'Ouch, c\'est un peu acide !', '😖', '#fef08a', 'shake')"><span class="emoji">🥝</span><span class="name">Kiwi</span></div>
+                    <div class="food-item" onclick="eat('🫒', 'Brrr, c\'est acide et aigre !', '😖', '#fef08a', 'shake')"><span class="emoji">🫒</span><span class="name">Cornichon</span></div>
+                </div>
+
+                <div class="category-title">🥨 Salé</div>
+                <div class="food-grid">
+                    <div class="food-item" onclick="eat('🥨', 'C\'est bien salé et croquant !', '🤓', '#fed7aa', 'bounce')"><span class="emoji">🥨</span><span class="name">Pretzel</span></div>
+                    <div class="food-item" onclick="eat('🍟', 'Mmm c\'est salé et chaud !', '😋', '#fed7aa', 'bounce')"><span class="emoji">🍟</span><span class="name">Frites</span></div>
+                    <div class="food-item" onclick="eat('🧀', 'Un bon goût salé de fromage !', '🧀', '#fed7aa', 'bounce')"><span class="emoji">🧀</span><span class="name">Fromage</span></div>
+                    <div class="food-item" onclick="eat('🍿', 'C\'est du popcorn bien salé !', '🍿', '#fed7aa', 'bounce')"><span class="emoji">🍿</span><span class="name">Popcorn</span></div>
+                    <div class="food-item" onclick="eat('🍕', 'Mmmhhh une pizza salée !', '😋', '#fed7aa', 'bounce')"><span class="emoji">🍕</span><span class="name">Pizza</span></div>
+                    <div class="food-item" onclick="eat('🥓', 'C\'est très salé et grillé !', '🥓', '#fed7aa', 'bounce')"><span class="emoji">🥓</span><span class="name">Bacon</span></div>
+                </div>
+
+                <div class="category-title">☕ Amer</div>
+                <div class="food-grid">
+                    <div class="food-item" onclick="eat('☕', 'Pouah ! C\'est trop amer...', '🤢', '#e2e8f0', 'shake')"><span class="emoji">☕</span><span class="name">Café noir</span></div>
+                    <div class="food-item" onclick="eat('🥦', 'Un peu d\'amertume dans le brocoli !', '🧐', '#e2e8f0', 'bounce')"><span class="emoji">🥦</span><span class="name">Brocoli</span></div>
+                    <div class="food-item" onclick="eat('🥬', 'C\'est une salade assez amère...', '🤢', '#e2e8f0', 'shake')"><span class="emoji">🥬</span><span class="name">Roquette</span></div>
+                    <div class="food-item" onclick="eat('🍫', 'Le chocolat à 99% est très amer !', '🤢', '#e2e8f0', 'shake')"><span class="emoji">🍫</span><span class="name">Cacao pur</span></div>
+                </div>
+
+                <div class="category-title">🌶️ Épicé & Piquant</div>
+                <div class="food-grid">
+                    <div class="food-item" onclick="eat('🌶️', 'Au feu ! C\'est hyper piquant !', '🥵', '#fecaca', 'shake')"><span class="emoji">🌶️</span><span class="name">Piment</span></div>
+                    <div class="food-item" onclick="eat('🧄', 'Aïe ! Ça pique l\'ail !', '🥵', '#fecaca', 'shake')"><span class="emoji">🧄</span><span class="name">Ail cru</span></div>
+                    <div class="food-item" onclick="eat('🧅', 'Ça pique les yeux et la langue !', '🥺', '#fecaca', 'shake')"><span class="emoji">🧅</span><span class="name">Oignon</span></div>
+                    <div class="food-item" onclick="eat('🌮', 'Wouah ! Sauce piquante !', '🥵', '#fecaca', 'bounce')"><span class="emoji">🌮</span><span class="name">Taco épicé</span></div>
+                </div>
+
+                <div class="category-title">💧 Neutre / Umami</div>
+                <div class="food-grid">
+                    <div class="food-item" onclick="eat('🍞', 'Ça n\'a pas beaucoup de goût, c\'est doux.', '🙂', '#f8fafc', 'bounce')"><span class="emoji">🍞</span><span class="name">Pain</span></div>
+                    <div class="food-item" onclick="eat('🍚', 'C\'est très doux et neutre.', '🙂', '#f8fafc', 'bounce')"><span class="emoji">🍚</span><span class="name">Riz blanc</span></div>
+                    <div class="food-item" onclick="eat('🥑', 'C\'est doux et crémeux en bouche !', '🥑', '#bbf7d0', 'bounce')"><span class="emoji">🥑</span><span class="name">Avocat</span></div>
+                    <div class="food-item" onclick="eat('🍄', 'Un délicieux goût Umami !', '😋', '#fed7aa', 'bounce')"><span class="emoji">🍄</span><span class="name">Champignon</span></div>
+                </div>
+
+            </div>
         </div>
     </div>
 
     <script>
-        function tasting(food, message, emoji, bgColor, animClass) {
+        function togglePantry(show) {
+            const drawer = document.getElementById('pantryDrawer');
+            if (show) {
+                drawer.classList.add('open');
+            } else {
+                drawer.classList.remove('open');
+            }
+        }
+
+        function eat(food, text, emoji, color, anim) {
             const avatar = document.getElementById('avatar');
             const bubble = document.getElementById('bubble');
-            const container = document.querySelector('.avatar-container');
+            const container = document.getElementById('avatarContainer');
 
-            // Réinitialisation des classes d'animation
+            // Ferme le tiroir
+            togglePantry(false);
+
+            // Re-déclenche l'animation
             avatar.className = 'avatar';
-            
-            // Forcer le redessin pour relancer l'animation
             void avatar.offsetWidth;
 
-            // Mettre à jour l'emoji et le texte
+            // Met à jour les infos
             avatar.textContent = emoji;
-            bubble.textContent = `${food} ${message}`;
-            
-            // Appliquer le style et l'animation
-            avatar.classList.add(`anim-${animClass}`);
-            container.style.backgroundColor = bgColor;
+            bubble.textContent = `${food} ${text}`;
+            avatar.classList.add(`anim-${anim}`);
+            container.style.backgroundColor = color;
         }
     </script>
 
 </body>
 </html>
-
