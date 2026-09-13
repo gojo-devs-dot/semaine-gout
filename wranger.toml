@@ -1,0 +1,6 @@
+name = "semaine-gout"
+main = "src/index.js" # Ou le chemin vers ton fichier JS
+compatibility_date = "2024-09-01"
+
+[ai]
+binding = "AI"
