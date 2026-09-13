@@ -25,8 +25,8 @@ export default {
         });
       }
 
-      // Utilisation du modèle Llama 3.3 70B Instruct
-      const aiResponse = await env.AI.run('@cf/meta/llama-3.3-70b-instruct', {
+      // Utilisation du modèle Llama 3.2 (actif)
+      const aiResponse = await env.AI.run('@cf/meta/llama-3.2-3b-instruct', {
         messages: [
           {
             role: "system",
