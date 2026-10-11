@@ -324,4 +324,25 @@
 
             if (!grid || !count) return;
 
-            count.textContent = `${pantry.length} aliment${pantry.length > 1 ? 's' : ''} découvert
+            count.textContent = `${pantry.length} aliment${pantry.length > 1 ? 's' : ''} découvert${pantry.length > 1 ? 's' : ''}`;
+            grid.innerHTML = '';
+
+            pantry.forEach(item => {
+                const config = TASTE_CONFIG[item.taste.toLowerCase()] || TASTE_CONFIG['inconnu'];
+                const tag = document.createElement('div');
+                tag.className = 'pantry-item';
+                tag.style.backgroundColor = config.bg;
+                tag.innerHTML = `<span>${config.emoji}</span> <span>${item.food}</span>`;
+                grid.appendChild(tag);
+            });
+        }
+
+        function clearPantry() {
+            if (confirm("Voulez-vous vraiment vider votre garde-manger ?")) {
+                localStorage.removeItem('pantry');
+                updatePantryUI();
+            }
+        }
+    </script>
+</body>
+</html>
