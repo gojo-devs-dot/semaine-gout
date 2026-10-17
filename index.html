@@ -111,6 +111,14 @@
 
         .btn-delete:hover { opacity: 1; }
 
+        .empty-msg {
+            text-align: center;
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-top: 60px;
+            grid-column: 1 / -1;
+        }
+
         /* Barre supérieure du jeu ouvert */
         .game-header {
             background-color: #1e293b;
@@ -217,15 +225,15 @@
 
     <!-- Page d'accueil (Grille de jeux) -->
     <main id="home-view">
-        <h1 style="font-size: 2rem; margin-bottom: 10px;">Jeux de la Semaine du Goût</h1>
-        <p style="color: #94a3b8; margin-bottom: 30px;">Cliquez sur un rectangle pour lancer une expérience culinaire ou un jeu !</p>
+        <h1 style="font-size: 2rem; margin-bottom: 10px;">Mes Jeux</h1>
+        <p style="color: #94a3b8; margin-bottom: 30px;">Cliquez sur le bouton en haut à droite pour ajouter vos propres jeux !</p>
 
         <div class="games-grid" id="gamesGrid">
-            <!-- Les cartes sont générées dynamiquement ici -->
+            <!-- Les cartes apparaîtront ici -->
         </div>
     </main>
 
-    <!-- Vue Jeu Actif (Plein écran sous le header) -->
+    <!-- Vue Jeu Actif -->
     <div id="game-view">
         <div class="game-header">
             <button class="btn-back" onclick="showHome()">← Retour aux jeux</button>
@@ -247,10 +255,10 @@
 
                 <div id="gameFields" style="display: none;">
                     <label>Titre du Jeu</label>
-                    <input type="text" id="gameTitle" placeholder="Ex: Chef Pizza, Testeur de Saveurs...">
+                    <input type="text" id="gameTitle" placeholder="Ex: Mon Super Jeu...">
 
                     <label>Icône / Emoji d'aperçu</label>
-                    <input type="text" id="gameEmoji" placeholder="Ex: 🍕, 🍓, 🍔..." maxlength="2">
+                    <input type="text" id="gameEmoji" placeholder="Ex: 🎮, 🍕, 🚀..." maxlength="2">
 
                     <label>Source du Jeu</label>
                     <select id="sourceType" onchange="toggleSourceInput()">
@@ -281,27 +289,8 @@
         const ADMIN_PASSWORD = "GOUT2026";
         let isAuthenticated = false;
 
-        // Jeux de base
-        const defaultGames = [
-            {
-                id: 'game-gout',
-                title: 'Semaine du Goût 🍎',
-                emoji: '🍎',
-                bg: '#fbcfe8',
-                type: 'code',
-                content: `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><style>* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; } body { background: #f1f5f9; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; } .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; } h1 { color: #1e293b; margin-bottom: 10px; } input { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 10px; font-size: 1rem; } button { width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; } .res { margin-top: 15px; font-size: 1.2rem; font-weight: bold; color: #0f172a; }</style></head><body><div class="card"><h1>Semaine du Goût 🍎</h1><p style="color:#64748b; margin-bottom:15px;">Entrez un aliment pour le tester :</p><input type="text" id="food" placeholder="Ex: Citron, Chocolat..."><button onclick="test()">Goûter !</button><div id="res" class="res"></div></div><script>function test(){ const f = document.getElementById('food').value; if(!f) return; const t = ['😋 Sucré', '😖 Acide', '🤓 Salé', '🤢 Amer', '🥵 Piquant']; const r = t[Math.floor(Math.random()*t.length)]; document.getElementById('res').innerText = f + " -> " + r; }<\/script></body></html>`
-            },
-            {
-                id: 'game-parkour',
-                title: 'Parkour Gourmand 🏃',
-                emoji: '🏃',
-                bg: '#fed7aa',
-                type: 'code',
-                content: `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><style>* { box-sizing: border-box; margin: 0; padding: 0; } body { background: #0b0c10; font-family: sans-serif; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; } canvas { background: #1f2833; border: 3px solid #ff9f43; border-radius: 12px; }</style></head><body><canvas id="c" width="800" height="400"></canvas><script>const c=document.getElementById('c'),x=c.getContext('2d');let p={x:50,y:300,w:30,h:30,vy:0,g:0.8,j:false};let obs=[];setInterval(()=>{obs.push({x:800,w:20,h:40})},1500);function loop(){p.vy+=p.g;p.y+=p.vy;if(p.y>=320){p.y=320;p.vy=0;p.j=false;}x.fillStyle='#1f2833';x.fillRect(0,0,800,400);x.fillStyle='#ff9f43';x.fillRect(p.x,p.y,p.w,p.h);x.fillStyle='#ff4757';obs.forEach((o,i)=>{o.x-=5;x.fillRect(o.x,310,o.w,o.h);});requestAnimationFrame(loop);}window.onkeydown=e=>{if(e.code==='Space'&&!p.j){p.vy=-13;p.j=true;}};loop();<\/script></body></html>`
-            }
-        ];
-
-        let games = JSON.parse(localStorage.getItem('gourmand_games')) || defaultGames;
+        // On charge la liste vide par défaut si rien n'est sauvegardé
+        let games = JSON.parse(localStorage.getItem('gourmand_games_empty')) || [];
 
         document.addEventListener('DOMContentLoaded', renderGrid);
 
@@ -309,7 +298,12 @@
             const grid = document.getElementById('gamesGrid');
             grid.innerHTML = '';
 
-            games.forEach((game, index) => {
+            if (games.length === 0) {
+                grid.innerHTML = `<div class="empty-msg">Aucun jeu disponible pour le moment.<br>Cliquez sur <strong>"+ Ajouter un jeu"</strong> pour commencer !</div>`;
+                return;
+            }
+
+            games.forEach((game) => {
                 const card = document.createElement('div');
                 card.className = 'game-card';
                 card.onclick = () => launchGame(game.id);
@@ -320,7 +314,7 @@
                     </div>
                     <div class="card-info">
                         <div class="card-title">${game.title}</div>
-                        ${index >= 2 ? `<button class="btn-delete" onclick="deleteGame(event, '${game.id}')" title="Supprimer">🗑️</button>` : ''}
+                        <button class="btn-delete" onclick="deleteGame(event, '${game.id}')" title="Supprimer">🗑️</button>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -411,7 +405,7 @@
                 return;
             }
 
-            const colors = ['#fbcfe8', '#fed7aa', '#fef08a', '#ddd6fe', '#cbd5e1', '#bbf7d0'];
+            const colors = ['#fbcfe8', '#fed7aa', '#fef08a', '#ddd6fe', '#cbd5e1', '#bbf7d0', '#bfdbfe'];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
             const newGame = {
@@ -424,12 +418,12 @@
             };
 
             games.push(newGame);
-            localStorage.setItem('gourmand_games', JSON.stringify(games));
+            localStorage.setItem('gourmand_games_empty', JSON.stringify(games));
 
             renderGrid();
             closeModal();
 
-            // Reset
+            // Reset des champs
             document.getElementById('gameTitle').value = '';
             document.getElementById('gameEmoji').value = '';
             document.getElementById('gameUrl').value = '';
@@ -440,7 +434,7 @@
             event.stopPropagation();
             if (confirm("Voulez-vous supprimer ce jeu de la liste ?")) {
                 games = games.filter(g => g.id !== gameId);
-                localStorage.setItem('gourmand_games', JSON.stringify(games));
+                localStorage.setItem('gourmand_games_empty', JSON.stringify(games));
                 renderGrid();
             }
         }
