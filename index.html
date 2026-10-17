@@ -8,7 +8,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
 
-        /* En-tête Neal.fun Style */
+        /* En-tête */
         header {
             display: flex;
             justify-content: space-between;
@@ -184,7 +184,7 @@
             font-size: 0.9rem;
         }
 
-        .modal-card textarea { height: 100px; resize: vertical; font-family: monospace; }
+        .modal-card textarea { height: 120px; resize: vertical; font-family: monospace; }
 
         .modal-actions {
             display: flex;
@@ -247,41 +247,40 @@
     <div class="modal" id="addModal">
         <div class="modal-card">
             <h2>🔒 Accès Administrateur</h2>
-            <form onsubmit="handleAuthAndAdd(event)">
-                <div id="authSection">
-                    <label>Mot de passe Administrateur</label>
-                    <input type="password" id="adminPass" placeholder="Mot de passe..." required>
+            
+            <div id="authSection">
+                <label>Mot de passe Administrateur</label>
+                <input type="password" id="adminPass" placeholder="Mot de passe...">
+            </div>
+
+            <div id="gameFields" style="display: none;">
+                <label>Titre du Jeu</label>
+                <input type="text" id="gameTitle" placeholder="Ex: Semaine du Goût">
+
+                <label>Icône / Emoji d'aperçu</label>
+                <input type="text" id="gameEmoji" placeholder="Ex: 🍎, 🍕, 🏃..." maxlength="2">
+
+                <label>Source du Jeu</label>
+                <select id="sourceType" onchange="toggleSourceInput()">
+                    <option value="code">Code HTML / JS direct</option>
+                    <option value="url">Lien URL (ex: https://...)</option>
+                </select>
+
+                <div id="codeInputContainer" style="margin-top: 10px;">
+                    <label>Code HTML du jeu</label>
+                    <textarea id="gameCode" placeholder="Collez le code <!DOCTYPE html> ici..."></textarea>
                 </div>
 
-                <div id="gameFields" style="display: none;">
-                    <label>Titre du Jeu</label>
-                    <input type="text" id="gameTitle" placeholder="Ex: Mon Super Jeu...">
-
-                    <label>Icône / Emoji d'aperçu</label>
-                    <input type="text" id="gameEmoji" placeholder="Ex: 🎮, 🍕, 🚀..." maxlength="2">
-
-                    <label>Source du Jeu</label>
-                    <select id="sourceType" onchange="toggleSourceInput()">
-                        <option value="code">Code HTML / JS direct</option>
-                        <option value="url">Lien URL (ex: https://...)</option>
-                    </select>
-
-                    <div id="codeInputContainer" style="margin-top: 10px;">
-                        <label>Code HTML du jeu</label>
-                        <textarea id="gameCode" placeholder="<!DOCTYPE html>..."></textarea>
-                    </div>
-
-                    <div id="urlInputContainer" style="display: none; margin-top: 10px;">
-                        <label>URL Web du jeu</label>
-                        <input type="url" id="gameUrl" placeholder="https://exemple.com/jeu">
-                    </div>
+                <div id="urlInputContainer" style="display: none; margin-top: 10px;">
+                    <label>URL Web du jeu</label>
+                    <input type="url" id="gameUrl" placeholder="https://exemple.com/jeu">
                 </div>
+            </div>
 
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
-                    <button type="submit" class="btn-submit" id="submitBtn">Vérifier</button>
-                </div>
-            </form>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
+                <button type="button" class="btn-submit" id="submitBtn" onclick="handleAction()">Vérifier</button>
+            </div>
         </div>
     </div>
 
@@ -363,9 +362,7 @@
             document.getElementById('adminPass').value = '';
         }
 
-        function handleAuthAndAdd(event) {
-            event.preventDefault();
-            
+        function handleAction() {
             if (!isAuthenticated) {
                 const pass = document.getElementById('adminPass').value;
                 if (pass === ADMIN_PASSWORD) {
@@ -400,7 +397,7 @@
                 : document.getElementById('gameCode').value.trim();
 
             if (!title || !content) {
-                alert('Veuillez remplir tous les champs.');
+                alert('Veuillez remplir le titre et le code/URL du jeu !');
                 return;
             }
 
@@ -432,9 +429,9 @@
         function deleteGame(event, gameId) {
             event.stopPropagation();
             
-            const pass = prompt("Accès Administrateur requi pour supprimer ce jeu.\nEntrez le mot de passe admin :");
+            const pass = prompt("Accès Administrateur requis pour supprimer ce jeu.\nEntrez le mot de passe admin :");
             
-            if (pass === null) return; // Annulation
+            if (pass === null) return;
 
             if (pass === ADMIN_PASSWORD) {
                 games = games.filter(g => g.id !== gameId);
