@@ -3,344 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semaine du Goût - IA Llama</title>
+    <title>Plateforme de Jeux Gourmands</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: #f1f5f9; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        
-        .game-card, .pantry-card { 
-            background-color: white; 
-            border-radius: 24px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-            padding: 30px; 
-            max-width: 480px; 
-            width: 100%; 
-            text-align: center; 
-            position: relative;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: #0f172a; color: #fff; min-height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Barre de navigation supérieure */
+        .top-nav {
+            height: 60px;
+            background-color: #1e293b;
+            border-bottom: 2px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
         }
-        
-        .pantry-card { margin-top: 20px; padding: 20px 30px; }
-        
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        h1 { color: #1e293b; margin: 0; font-size: 1.8rem; }
-        h2 { color: #1e293b; margin: 0; font-size: 1.3rem; }
-        .subtitle { color: #64748b; margin: 5px 0 20px 0; font-size: 0.95rem; }
-        
-        .pantry-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .pantry-subtitle { color: #64748b; margin: 0; font-size: 0.85rem; }
-        
-        .icon-btn {
-            background: #f1f5f9;
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            align-items: center;
+            height: 100%;
+        }
+
+        .tab-btn {
+            background-color: #334155;
+            color: #cbd5e1;
             border: none;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
+            gap: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
         }
-        .icon-btn:hover { background: #e2e8f0; }
 
-        .text-btn {
+        .tab-btn:hover { background-color: #475569; color: #fff; }
+        .tab-btn.active { background-color: #3b82f6; color: #fff; }
+
+        .delete-btn {
             background: none;
             border: none;
             color: #ef4444;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             cursor: pointer;
-            text-decoration: underline;
-            padding: 0;
-        }
-        
-        .avatar-container { 
-            background-color: #f8fafc; 
-            border-radius: 20px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
-            border: 2px dashed #cbd5e1; 
-            min-height: 220px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            transition: background-color 0.3s ease; 
-        }
-        
-        .avatar { font-size: 85px; line-height: 1; margin-bottom: 15px; transition: transform 0.3s ease; }
-        
-        .bubble { 
-            background: #ffffff; 
-            border: 2px solid #334155; 
-            border-radius: 16px; 
-            padding: 12px 20px; 
-            font-weight: 600; 
-            font-size: 1.05rem; 
-            color: #0f172a; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
-            max-width: 90%; 
-            position: relative; 
-            min-height: 60px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            word-break: break-word; 
-        }
-        .bubble::after { 
-            content: ''; 
-            position: absolute; 
-            top: -10px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            border-width: 0 10px 10px; 
-            border-style: solid; 
-            border-color: #334155 transparent; 
-        }
-        
-        .input-form { display: flex; gap: 10px; margin-top: 10px; }
-        .food-input { flex-grow: 1; border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
-        .food-input:focus { border-color: #3b82f6; }
-        
-        .send-btn { background-color: #3b82f6; color: white; border: none; border-radius: 12px; padding: 12px 20px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-        .send-btn:disabled { background-color: #cbd5e1; cursor: not-allowed; }
-        
-        .pantry-grid { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 8px; 
-            justify-content: center; 
-            max-height: 180px; 
-            overflow-y: auto; 
-            padding: 5px;
-            margin-top: 10px;
-        }
-        .pantry-item { 
-            padding: 6px 12px; 
-            border-radius: 20px; 
-            font-size: 0.85rem; 
-            font-weight: bold; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-            color: #0f172a;
+            margin-left: 5px;
+            display: none;
         }
 
-        /* Modal d'aide */
+        .tab-btn:hover .delete-btn { display: inline; }
+
+        .add-game-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .add-game-btn:hover { background-color: #059669; }
+
+        /* Zones d'affichage des jeux */
+        .game-viewport {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 60px);
+        }
+
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+
+        .game-frame.active { display: block; }
+
+        /* Modal Sécurisé */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
             justify-content: center;
             align-items: center;
-            z-index: 100;
-        }
-        .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 20px;
-            max-width: 400px;
-            width: 90%;
-            text-align: left;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        .modal-content h3 { margin-top: 0; color: #1e293b; }
-        .modal-content ul { padding-left: 20px; color: #334155; font-size: 0.95rem; }
-        .modal-content li { margin-bottom: 8px; }
-        .close-btn {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 8px 16px;
-            float: right;
-            cursor: pointer;
-            font-weight: bold;
+            z-index: 2000;
         }
 
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
-        .anim-bounce { animation: bounce 0.5s ease; }
-        .anim-shake { animation: shake 0.4s ease; }
+        .modal-card {
+            background-color: #1e293b;
+            border: 2px solid #3b82f6;
+            border-radius: 20px;
+            padding: 25px;
+            width: 420px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-card h2 { margin-bottom: 15px; color: #3b82f6; font-size: 1.4rem; }
+        .modal-card label { font-size: 0.85rem; color: #94a3b8; display: block; margin-top: 10px; margin-bottom: 4px; text-align: left; }
+        
+        .modal-card input, .modal-card textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: #fff;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .modal-card textarea { height: 100px; resize: vertical; font-family: monospace; }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background-color: #475569;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="game-card">
-        <div class="top-bar">
-            <h1>Semaine du Goût 🍎</h1>
-            <button class="icon-btn" onclick="toggleHelp(true)" title="Aide">❓</button>
+    <!-- Barre de Navigation -->
+    <nav class="top-nav">
+        <div class="nav-tabs" id="tabsContainer">
+            <!-- Les onglets sont générés dynamiquement ici -->
         </div>
-        <p class="subtitle">Analyse instantanée par l'IA Llama</p>
+        <button class="add-game-btn" onclick="openAddGameModal()">+ Ajouter un jeu</button>
+    </nav>
 
-        <div id="avatarContainer" class="avatar-container">
-            <div id="avatar" class="avatar">😐</div>
-            <div id="bubble" class="bubble">Donne-moi n'importe quel aliment à goûter !</div>
-        </div>
-
-        <form class="input-form" onsubmit="handleFoodSubmit(event)">
-            <input type="text" id="foodInput" class="food-input" placeholder="Ex: sauce soja, chocolat, piment..." autocomplete="off" required>
-            <button type="submit" id="sendBtn" class="send-btn">Manger</button>
-        </form>
+    <!-- Zone de Jeu -->
+    <div class="game-viewport" id="viewport">
+        <!-- Les iFrames des jeux sont créées dynamiquement ici -->
     </div>
 
-    <div class="pantry-card">
-        <div class="pantry-header">
-            <h2>Mon Garde-Manger 🧺</h2>
-            <button class="text-btn" onclick="clearPantry()">Vider</button>
-        </div>
-        <p id="pantryCount" class="pantry-subtitle">0 aliment découvert</p>
-        <div id="pantryGrid" class="pantry-grid"></div>
-    </div>
+    <!-- Modal d'Ajout de Jeu (Protégé par Mot de Passe) -->
+    <div class="modal" id="addGameModal">
+        <div class="modal-card">
+            <h2>🔒 Accès Administrateur</h2>
+            <form onsubmit="handleAuthAndAdd(event)">
+                <label>Mot de passe Administrateur</label>
+                <input type="password" id="adminPass" placeholder="Mot de passe..." required>
 
-    <!-- Modal d'Aide -->
-    <div id="helpModal" class="modal" onclick="if(event.target === this) toggleHelp(false)">
-        <div class="modal-content">
-            <h3>Comment jouer ? 🎮</h3>
-            <ul>
-                <li>Entre un <strong>aliment</strong> ou un plat dans le champ de texte.</li>
-                <li>L'IA déguste le plat et détermine sa <strong>saveur principale</strong> :
-                    <ul>
-                        <li>😋 Sucré</li>
-                        <li>🤓 Salé</li>
-                        <li>😖 Acide</li>
-                        <li>🤢 Amer</li>
-                        <li>🥵 Piquant</li>
-                        <li>🤤 Umami</li>
-                    </ul>
-                </li>
-                <li>Chaque découverte est ajoutée à ton <strong>garde-manger</strong> !</li>
-            </ul>
-            <button class="close-btn" onclick="toggleHelp(false)">J'ai compris</button>
+                <div id="gameFields" style="display: none; margin-top: 15px;">
+                    <label>Nom du Jeu</label>
+                    <input type="text" id="gameTitle" placeholder="Ex: Pacman, Flappy Bird...">
+
+                    <label>Source du Jeu</label>
+                    <select id="sourceType" onchange="toggleSourceInput()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #475569; background-color: #0f172a; color: #fff; margin-bottom: 10px;">
+                        <option value="url">Lien URL (ex: https://...)</option>
+                        <option value="code">Code HTML / JS direct</option>
+                    </select>
+
+                    <div id="urlInputContainer">
+                        <label>URL du Jeu</label>
+                        <input type="url" id="gameUrl" placeholder="https://exple.com/game">
+                    </div>
+
+                    <div id="codeInputContainer" style="display: none;">
+                        <label>Code HTML complet du jeu</label>
+                        <textarea id="gameCode" placeholder="<!DOCTYPE html>..."></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
+                    <button type="submit" class="btn-submit" id="submitBtn">Valider</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        const WORKER_URL = "https://semaine-gout.x-kaboom-x02.workers.dev";
+        const ADMIN_PASSWORD = "GOUT2026"; // Mot de passe admin
+        let isAuthenticated = false;
 
-        const TASTE_CONFIG = {
-            'sucré': { emoji: '😋', bg: '#fbcfe8', anim: 'bounce' },
-            'acide': { emoji: '😖', bg: '#fef08a', anim: 'shake' },
-            'salé': { emoji: '🤓', bg: '#fed7aa', anim: 'bounce' },
-            'amer': { emoji: '🤢', bg: '#e2e8f0', anim: 'shake' },
-            'piquant': { emoji: '🥵', bg: '#fecaca', anim: 'shake' },
-            'umami': { emoji: '🤤', bg: '#ddd6fe', anim: 'bounce' },
-            'inconnu': { emoji: '🧐', bg: '#f1f5f9', anim: 'bounce' }
-        };
-
-        document.addEventListener('DOMContentLoaded', updatePantryUI);
-
-        function toggleHelp(show) {
-            document.getElementById('helpModal').style.display = show ? 'flex' : 'none';
-        }
-
-        async function handleFoodSubmit(event) {
-            event.preventDefault();
-            const input = document.getElementById('foodInput');
-            const btn = document.getElementById('sendBtn');
-            const avatar = document.getElementById('avatar');
-            const bubble = document.getElementById('bubble');
-            const container = document.getElementById('avatarContainer');
-            const userQuery = input.value.trim();
-
-            if (!userQuery) return;
-
-            avatar.textContent = '🧠';
-            bubble.textContent = `L'IA goûte "${userQuery}"...`;
-            container.style.backgroundColor = '#f8fafc';
-            
-            input.disabled = true;
-            btn.disabled = true;
-
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ food: userQuery })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Code HTTP ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                const taste = data.taste || 'inconnu';
-                applyResponse(taste, data.message);
-                saveToPantry(userQuery, taste);
-
-            } catch (error) {
-                avatar.textContent = '⚠️';
-                container.style.backgroundColor = '#fee2e2';
-                bubble.textContent = `Erreur : ${error.message}`;
-            } finally {
-                input.value = '';
-                input.disabled = false;
-                btn.disabled = false;
-                input.focus();
+        // Jeux par défaut intégrés au démarrage
+        const defaultGames = [
+            {
+                id: 'game-gout',
+                title: '🍎 Semaine du Goût',
+                type: 'code',
+                content: `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><style>* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; } body { background: #f1f5f9; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; } .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 100%; } h1 { color: #1e293b; margin-bottom: 10px; } input { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; margin-bottom: 10px; font-size: 1rem; } button { width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; } .res { margin-top: 15px; font-size: 1.2rem; font-weight: bold; color: #0f172a; }</style></head><body><div class="card"><h1>Semaine du Goût 🍎</h1><p style="color:#64748b; margin-bottom:15px;">Entrez un aliment pour le tester :</p><input type="text" id="food" placeholder="Ex: Citron, Chocolat..."><button onclick="test()">Goûter !</button><div id="res" class="res"></div></div><script>function test(){ const f = document.getElementById('food').value; if(!f) return; const t = ['😋 Sucré', '😖 Acide', '🤓 Salé', '🤢 Amer', '🥵 Piquant']; const r = t[Math.floor(Math.random()*t.length)]; document.getElementById('res').innerText = f + " -> " + r; }<\/script></body></html>`
+            },
+            {
+                id: 'game-parkour',
+                title: '🏃 Parkour Gourmand',
+                type: 'code',
+                content: `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><style>* { box-sizing: border-box; margin: 0; padding: 0; } body { background: #0b0c10; font-family: sans-serif; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; } canvas { background: #1f2833; border: 3px solid #ff9f43; border-radius: 12px; }</style></head><body><canvas id="c" width="800" height="400"></canvas><script>const c=document.getElementById('c'),x=c.getContext('2d');let p={x:50,y:300,w:30,h:30,vy:0,g:0.8,j:false};let obs=[];setInterval(()=>{obs.push({x:800,w:20,h:40})},1500);function loop(){p.vy+=p.g;p.y+=p.vy;if(p.y>=320){p.y=320;p.vy=0;p.j=false;}x.fillStyle='#1f2833';x.fillRect(0,0,800,400);x.fillStyle='#ff9f43';x.fillRect(p.x,p.y,p.w,p.h);x.fillStyle='#ff4757';obs.forEach((o,i)=>{o.x-=5;x.fillRect(o.x,310,o.w,o.h);});requestAnimationFrame(loop);}window.onkeydown=e=>{if(e.code==='Space'&&!p.j){p.vy=-13;p.j=true;}};loop();<\/script></body></html>`
             }
-        }
+        ];
 
-        function applyResponse(taste, message) {
-            const avatar = document.getElementById('avatar');
-            const bubble = document.getElementById('bubble');
-            const container = document.getElementById('avatarContainer');
+        let games = JSON.parse(localStorage.getItem('custom_games')) || defaultGames;
+        let activeGameId = games[0]?.id || '';
 
-            avatar.className = 'avatar';
-            void avatar.offsetWidth;
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNavAndGames();
+        });
 
-            const config = TASTE_CONFIG[taste.toLowerCase()] || TASTE_CONFIG['inconnu'];
+        function renderNavAndGames() {
+            const tabsContainer = document.getElementById('tabsContainer');
+            const viewport = document.getElementById('viewport');
 
-            avatar.textContent = config.emoji;
-            avatar.classList.add(`anim-${config.anim}`);
-            container.style.backgroundColor = config.bg;
-            bubble.textContent = message || "Mmm, goût intéressant !";
-        }
+            tabsContainer.innerHTML = '';
+            viewport.innerHTML = '';
 
-        function saveToPantry(food, taste) {
-            let pantry = JSON.parse(localStorage.getItem('pantry') || '[]');
-            
-            const existingIndex = pantry.findIndex(item => item.food.toLowerCase() === food.toLowerCase());
-            if (existingIndex !== -1) {
-                pantry[existingIndex].taste = taste;
-            } else {
-                pantry.unshift({ food, taste });
-            }
+            games.forEach((game, index) => {
+                // Créer Onglet
+                const tab = document.createElement('button');
+                tab.className = `tab-btn ${game.id === activeGameId ? 'active' : ''}`;
+                tab.onclick = () => switchGame(game.id);
+                tab.innerHTML = `
+                    <span>${game.title}</span>
+                    ${index >= 2 ? `<span class="delete-btn" onclick="deleteGame(event, '${game.id}')">✕</span>` : ''}
+                `;
+                tabsContainer.appendChild(tab);
 
-            localStorage.setItem('pantry', JSON.stringify(pantry));
-            updatePantryUI();
-        }
+                // Créer Frame de jeu
+                const frame = document.createElement('iframe');
+                frame.className = `game-frame ${game.id === activeGameId ? 'active' : ''}`;
+                frame.id = `frame-${game.id}`;
 
-        function updatePantryUI() {
-            const pantry = JSON.parse(localStorage.getItem('pantry') || '[]');
-            const grid = document.getElementById('pantryGrid');
-            const count = document.getElementById('pantryCount');
+                viewport.appendChild(frame);
 
-            if (!grid || !count) return;
-
-            count.textContent = `${pantry.length} aliment${pantry.length > 1 ? 's' : ''} découvert${pantry.length > 1 ? 's' : ''}`;
-            grid.innerHTML = '';
-
-            pantry.forEach(item => {
-                const config = TASTE_CONFIG[item.taste.toLowerCase()] || TASTE_CONFIG['inconnu'];
-                const tag = document.createElement('div');
-                tag.className = 'pantry-item';
-                tag.style.backgroundColor = config.bg;
-                tag.innerHTML = `<span>${config.emoji}</span> <span>${item.food}</span>`;
-                grid.appendChild(tag);
+                // Charger le contenu dans l'iframe
+                if (game.type === 'url') {
+                    frame.src = game.content;
+                } else {
+                    const doc = frame.contentWindow.document;
+                    doc.open();
+                    doc.write(game.content);
+                    doc.close();
+                }
             });
         }
 
-        function clearPantry() {
-            if (confirm("Voulez-vous vraiment vider votre garde-manger ?")) {
-                localStorage.removeItem('pantry');
-                updatePantryUI();
+        function switchGame(gameId) {
+            activeGameId = gameId;
+            document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', games[idx].id === gameId);
+            });
+            document.querySelectorAll('.game-frame').forEach(frame => {
+                frame.classList.toggle('active', frame.id === `frame-${gameId}`);
+            });
+        }
+
+        function openAddGameModal() {
+            document.getElementById('addGameModal').style.display = 'flex';
+            if (!isAuthenticated) {
+                document.getElementById('gameFields').style.display = 'none';
+                document.getElementById('adminPass').style.display = 'block';
+                document.getElementById('submitBtn').innerText = 'Vérifier';
+            } else {
+                showGameForm();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('addGameModal').style.display = 'none';
+            document.getElementById('adminPass').value = '';
+        }
+
+        function handleAuthAndAdd(event) {
+            event.preventDefault();
+            
+            if (!isAuthenticated) {
+                const pass = document.getElementById('adminPass').value;
+                if (pass === ADMIN_PASSWORD) {
+                    isAuthenticated = true;
+                    showGameForm();
+                } else {
+                    alert('Mot de passe incorrect !');
+                }
+            } else {
+                addNewGame();
+            }
+        }
+
+        function showGameForm() {
+            document.getElementById('adminPass').style.display = 'none';
+            document.getElementById('gameFields').style.display = 'block';
+            document.getElementById('submitBtn').innerText = 'Ajouter le jeu';
+        }
+
+        function toggleSourceInput() {
+            const type = document.getElementById('sourceType').value;
+            document.getElementById('urlInputContainer').style.display = type === 'url' ? 'block' : 'none';
+            document.getElementById('codeInputContainer').style.display = type === 'code' ? 'block' : 'none';
+        }
+
+        function addNewGame() {
+            const title = document.getElementById('gameTitle').value.trim();
+            const type = document.getElementById('sourceType').value;
+            const content = type === 'url' 
+                ? document.getElementById('gameUrl').value.trim() 
+                : document.getElementById('gameCode').value.trim();
+
+            if (!title || !content) {
+                alert('Veuillez remplir tous les champs.');
+                return;
+            }
+
+            const newGame = {
+                id: 'game-' + Date.now(),
+                title: '🎮 ' + title,
+                type: type,
+                content: content
+            };
+
+            games.push(newGame);
+            localStorage.setItem('custom_games', JSON.stringify(games));
+            activeGameId = newGame.id;
+
+            renderNavAndGames();
+            closeModal();
+
+            // Réinitialiser le formulaire
+            document.getElementById('gameTitle').value = '';
+            document.getElementById('gameUrl').value = '';
+            document.getElementById('gameCode').value = '';
+        }
+
+        function deleteGame(event, gameId) {
+            event.stopPropagation();
+            if (confirm("Voulez-vous supprimer ce jeu ?")) {
+                games = games.filter(g => g.id !== gameId);
+                localStorage.setItem('custom_games', JSON.stringify(games));
+                if (activeGameId === gameId) {
+                    activeGameId = games[0]?.id || '';
+                }
+                renderNavAndGames();
             }
         }
     </script>
