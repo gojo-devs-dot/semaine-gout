@@ -48,7 +48,7 @@
         #home-view { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; }
         #game-view { display: none; flex-direction: column; flex-grow: 1; height: calc(100vh - 80px); }
 
-        /* Grille des Cartes (Neal.fun) */
+        /* Grille des Cartes */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -223,7 +223,7 @@
         <button class="btn-add" onclick="openAddGameModal()">+ Ajouter un jeu</button>
     </header>
 
-    <!-- Page d'accueil (Grille de jeux) -->
+    <!-- Page d'accueil -->
     <main id="home-view">
         <h1 style="font-size: 2rem; margin-bottom: 10px;">Mes Jeux</h1>
         <p style="color: #94a3b8; margin-bottom: 30px;">Cliquez sur le bouton en haut à droite pour ajouter vos propres jeux !</p>
@@ -289,7 +289,6 @@
         const ADMIN_PASSWORD = "GOUT2026";
         let isAuthenticated = false;
 
-        // On charge la liste vide par défaut si rien n'est sauvegardé
         let games = JSON.parse(localStorage.getItem('gourmand_games_empty')) || [];
 
         document.addEventListener('DOMContentLoaded', renderGrid);
@@ -432,10 +431,17 @@
 
         function deleteGame(event, gameId) {
             event.stopPropagation();
-            if (confirm("Voulez-vous supprimer ce jeu de la liste ?")) {
+            
+            const pass = prompt("Accès Administrateur requi pour supprimer ce jeu.\nEntrez le mot de passe admin :");
+            
+            if (pass === null) return; // Annulation
+
+            if (pass === ADMIN_PASSWORD) {
                 games = games.filter(g => g.id !== gameId);
                 localStorage.setItem('gourmand_games_empty', JSON.stringify(games));
                 renderGrid();
+            } else {
+                alert("Mot de passe incorrect ! Impossible de supprimer le jeu.");
             }
         }
     </script>
