@@ -6,7 +6,7 @@
     <title>Gourmand.fun - Tous les Jeux</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
         /* En-tête */
         header {
@@ -16,6 +16,7 @@
             padding: 20px 40px;
             background-color: #1e293b;
             border-bottom: 2px solid #334155;
+            height: 70px;
         }
 
         .logo {
@@ -29,6 +30,18 @@
         }
 
         .logo span { color: #f59e0b; }
+
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+
+        .admin-badge {
+            font-size: 0.85rem;
+            background-color: #334155;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: #94a3b8;
+        }
+
+        .admin-badge.logged { background-color: #065f46; color: #34d399; }
 
         .btn-add {
             background-color: #10b981;
@@ -45,8 +58,8 @@
         .btn-add:hover { background-color: #059669; transform: translateY(-2px); }
 
         /* Vues : Accueil vs Jeu actif */
-        #home-view { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        #game-view { display: none; flex-direction: column; flex-grow: 1; height: calc(100vh - 80px); }
+        #home-view { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; display: block; }
+        #game-view { display: none; flex-direction: column; width: 100vw; height: calc(100vh - 70px); }
 
         /* Grille des Cartes */
         .games-grid {
@@ -127,6 +140,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #334155;
+            height: 50px;
         }
 
         .btn-back {
@@ -143,9 +157,9 @@
 
         iframe {
             width: 100%;
-            height: 100%;
+            height: calc(100% - 50px);
             border: none;
-            flex-grow: 1;
+            background: #0f172a;
         }
 
         /* Modal Sécurisé */
@@ -214,42 +228,169 @@
             cursor: pointer;
         }
     </style>
+
+    <!-- Importation des SDKs Firebase (v10 Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addData, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Configuration Firebase fournie
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
+            authDomain: "jeux-feuxxx.firebaseapp.com",
+            databaseURL: "https://jeux-feuxxx-default-rtdb.firebaseio.com",
+            projectId: "jeux-feuxxx",
+            storageBucket: "jeux-feuxxx.firebasestorage.app",
+            messagingSenderId: "351401695038",
+            appId: "1:351401695038:web:dd3dbd6c5ff85aeb81fe6f",
+            measurementId: "G-41PSST98ZZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let cachedGames = [];
+
+        // Suivi de l'état de connexion Admin
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const badge = document.getElementById('adminBadge');
+            if (user) {
+                badge.innerText = "Admin connecté 🔒";
+                badge.classList.add('logged');
+            } else {
+                badge.innerText = "Mode Visiteur";
+                badge.classList.remove('logged');
+            }
+        });
+
+        // Charger les jeux en temps réel depuis Firestore
+        function loadGamesRealtime() {
+            const q = query(collection(db, "games"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                cachedGames = [];
+                snapshot.forEach((docSnap) => {
+                    cachedGames.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderGrid(cachedGames);
+            }, (error) => {
+                console.error("Erreur de chargement : ", error);
+            });
+        }
+
+        window.handleAction = async function() {
+            if (!currentUser) {
+                // Tentative de connexion Admin
+                const email = document.getElementById('adminEmail').value.trim();
+                const pass = document.getElementById('adminPass').value.trim();
+                try {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    showGameForm();
+                } catch (error) {
+                    alert('Identifiants incorrects : ' + error.message);
+                }
+            } else {
+                // Ajout d'un jeu
+                const title = document.getElementById('gameTitle').value.trim();
+                const emoji = document.getElementById('gameEmoji').value.trim() || '🎮';
+                const type = document.getElementById('sourceType').value;
+                const content = type === 'url' 
+                    ? document.getElementById('gameUrl').value.trim() 
+                    : document.getElementById('gameCode').value.trim();
+
+                if (!title || !content) {
+                    alert('Veuillez remplir le titre et le contenu du jeu !');
+                    return;
+                }
+
+                const colors = ['#fbcfe8', '#fed7aa', '#fef08a', '#ddd6fe', '#cbd5e1', '#bbf7d0', '#bfdbfe'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+                try {
+                    const { addDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                    await addDoc(collection(db, "games"), {
+                        title: title,
+                        emoji: emoji,
+                        bg: randomColor,
+                        type: type,
+                        content: content,
+                        createdAt: Date.now()
+                    });
+                    closeModal();
+                    // Reset
+                    document.getElementById('gameTitle').value = '';
+                    document.getElementById('gameEmoji').value = '';
+                    document.getElementById('gameUrl').value = '';
+                    document.getElementById('gameCode').value = '';
+                } catch (err) {
+                    alert("Erreur lors de l'ajout : " + err.message);
+                }
+            }
+        };
+
+        window.deleteGame = async function(event, gameId) {
+            event.stopPropagation();
+            if (!currentUser) {
+                alert("Vous devez être connecté en tant qu'administrateur pour supprimer un jeu ! Cliquez sur '+ Ajouter un jeu' pour vous connecter.");
+                openAddGameModal();
+                return;
+            }
+
+            if (confirm("Voulez-vous vraiment supprimer ce jeu pour tout le monde ?")) {
+                try {
+                    await deleteDoc(doc(db, "games", gameId));
+                } catch (err) {
+                    alert("Erreur lors de la suppression : " + err.message);
+                }
+            }
+        };
+
+        window.cachedGamesRef = () => cachedGames;
+        document.addEventListener('DOMContentLoaded', loadGamesRealtime);
+    </script>
 </head>
 <body>
 
-    <!-- En-tête -->
-    <header>
+    <!-- En-tête principal -->
+    <header id="main-header">
         <div class="logo" onclick="showHome()">Gourmand<span>.fun</span></div>
-        <button class="btn-add" onclick="openAddGameModal()">+ Ajouter un jeu</button>
+        <div class="header-actions">
+            <div id="adminBadge" class="admin-badge">Mode Visiteur</div>
+            <button class="btn-add" onclick="openAddGameModal()">+ Ajouter un jeu</button>
+        </div>
     </header>
 
-    <!-- Page d'accueil -->
+    <!-- Page d'accueil (Grille) -->
     <main id="home-view">
         <h1 style="font-size: 2rem; margin-bottom: 10px;">Mes Jeux</h1>
-        <p style="color: #94a3b8; margin-bottom: 30px;">Cliquez sur le bouton en haut à droite pour ajouter vos propres jeux !</p>
+        <p style="color: #94a3b8; margin-bottom: 30px;">Cliquez sur un rectangle pour jouer ou sur "+ Ajouter un jeu" pour en créer un nouveau en ligne !</p>
 
-        <div class="games-grid" id="gamesGrid">
-            <!-- Les cartes apparaîtront ici -->
-        </div>
+        <div class="games-grid" id="gamesGrid"></div>
     </main>
 
-    <!-- Vue Jeu Actif -->
+    <!-- Vue du Jeu -->
     <div id="game-view">
         <div class="game-header">
             <button class="btn-back" onclick="showHome()">← Retour aux jeux</button>
             <h2 id="activeGameTitle" style="font-size: 1.1rem; color: #f8fafc;">Titre du Jeu</h2>
-            <div></div>
+            <div style="width: 120px;"></div>
         </div>
         <iframe id="gameFrame"></iframe>
     </div>
 
-    <!-- Modal d'Ajout (Protégé par Mot de Passe) -->
+    <!-- Modal d'Authentification / Ajout Admin -->
     <div class="modal" id="addModal">
         <div class="modal-card">
-            <h2>🔒 Accès Administrateur</h2>
+            <h2>🔒 Espace Administrateur</h2>
             
             <div id="authSection">
-                <label>Mot de passe Administrateur</label>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px;">Connectez-vous avec votre compte Firebase Admin.</p>
+                <label>Email Admin</label>
+                <input type="email" id="adminEmail" placeholder="admin@gourmand.fun">
+                <label>Mot de passe</label>
                 <input type="password" id="adminPass" placeholder="Mot de passe...">
             </div>
 
@@ -279,29 +420,22 @@
 
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
-                <button type="button" class="btn-submit" id="submitBtn" onclick="handleAction()">Vérifier</button>
+                <button type="button" class="btn-submit" id="submitBtn" onclick="handleAction()">Se connecter</button>
             </div>
         </div>
     </div>
 
     <script>
-        const ADMIN_PASSWORD = "GOUT2026";
-        let isAuthenticated = false;
-
-        let games = JSON.parse(localStorage.getItem('gourmand_games_empty')) || [];
-
-        document.addEventListener('DOMContentLoaded', renderGrid);
-
-        function renderGrid() {
+        function renderGrid(gamesList) {
             const grid = document.getElementById('gamesGrid');
             grid.innerHTML = '';
 
-            if (games.length === 0) {
-                grid.innerHTML = `<div class="empty-msg">Aucun jeu disponible pour le moment.<br>Cliquez sur <strong>"+ Ajouter un jeu"</strong> pour commencer !</div>`;
+            if (gamesList.length === 0) {
+                grid.innerHTML = `<div class="empty-msg">Aucun jeu disponible pour le moment.<br>Connectez-vous en admin via <strong>"+ Ajouter un jeu"</strong> pour commencer !</div>`;
                 return;
             }
 
-            games.forEach((game) => {
+            gamesList.forEach((game) => {
                 const card = document.createElement('div');
                 card.className = 'game-card';
                 card.onclick = () => launchGame(game.id);
@@ -320,10 +454,12 @@
         }
 
         function launchGame(gameId) {
-            const game = games.find(g => g.id === gameId);
+            const game = window.cachedGamesRef().find(g => g.id === gameId);
             if (!game) return;
 
             document.getElementById('home-view').style.display = 'none';
+            document.getElementById('main-header').style.display = 'none';
+            
             const gameView = document.getElementById('game-view');
             gameView.style.display = 'flex';
 
@@ -342,38 +478,19 @@
 
         function showHome() {
             document.getElementById('game-view').style.display = 'none';
+            document.getElementById('main-header').style.display = 'flex';
             document.getElementById('home-view').style.display = 'block';
             document.getElementById('gameFrame').src = 'about:blank';
         }
 
         function openAddGameModal() {
             document.getElementById('addModal').style.display = 'flex';
-            if (!isAuthenticated) {
-                document.getElementById('authSection').style.display = 'block';
-                document.getElementById('gameFields').style.display = 'none';
-                document.getElementById('submitBtn').innerText = 'Vérifier';
-            } else {
-                showGameForm();
-            }
+            // Vérifier globalement l'état via l'UI ou laisser le script module gérer
         }
 
         function closeModal() {
             document.getElementById('addModal').style.display = 'none';
             document.getElementById('adminPass').value = '';
-        }
-
-        function handleAction() {
-            if (!isAuthenticated) {
-                const pass = document.getElementById('adminPass').value;
-                if (pass === ADMIN_PASSWORD) {
-                    isAuthenticated = true;
-                    showGameForm();
-                } else {
-                    alert('Mot de passe incorrect !');
-                }
-            } else {
-                addNewGame();
-            }
         }
 
         function showGameForm() {
@@ -386,60 +503,6 @@
             const type = document.getElementById('sourceType').value;
             document.getElementById('codeInputContainer').style.display = type === 'code' ? 'block' : 'none';
             document.getElementById('urlInputContainer').style.display = type === 'url' ? 'block' : 'none';
-        }
-
-        function addNewGame() {
-            const title = document.getElementById('gameTitle').value.trim();
-            const emoji = document.getElementById('gameEmoji').value.trim() || '🎮';
-            const type = document.getElementById('sourceType').value;
-            const content = type === 'url' 
-                ? document.getElementById('gameUrl').value.trim() 
-                : document.getElementById('gameCode').value.trim();
-
-            if (!title || !content) {
-                alert('Veuillez remplir le titre et le code/URL du jeu !');
-                return;
-            }
-
-            const colors = ['#fbcfe8', '#fed7aa', '#fef08a', '#ddd6fe', '#cbd5e1', '#bbf7d0', '#bfdbfe'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-            const newGame = {
-                id: 'game-' + Date.now(),
-                title: title,
-                emoji: emoji,
-                bg: randomColor,
-                type: type,
-                content: content
-            };
-
-            games.push(newGame);
-            localStorage.setItem('gourmand_games_empty', JSON.stringify(games));
-
-            renderGrid();
-            closeModal();
-
-            // Reset des champs
-            document.getElementById('gameTitle').value = '';
-            document.getElementById('gameEmoji').value = '';
-            document.getElementById('gameUrl').value = '';
-            document.getElementById('gameCode').value = '';
-        }
-
-        function deleteGame(event, gameId) {
-            event.stopPropagation();
-            
-            const pass = prompt("Accès Administrateur requis pour supprimer ce jeu.\nEntrez le mot de passe admin :");
-            
-            if (pass === null) return;
-
-            if (pass === ADMIN_PASSWORD) {
-                games = games.filter(g => g.id !== gameId);
-                localStorage.setItem('gourmand_games_empty', JSON.stringify(games));
-                renderGrid();
-            } else {
-                alert("Mot de passe incorrect ! Impossible de supprimer le jeu.");
-            }
         }
     </script>
 </body>
