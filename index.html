@@ -1,629 +1,1128 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gourmand.fun - Tous les Jeux</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<title>Gourmand.fun - Tous les Jeux</title>
 
-        /* En-tête */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 40px;
-            background-color: #1e293b;
-            border-bottom: 2px solid #334155;
-            height: 70px;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #3b82f6;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+body {
+    background: #0f172a;
+    color: #f8fafc;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
 
-        .logo span { color: #f59e0b; }
+button, input, select, textarea {
+    font: inherit;
+}
 
-        .header-actions { display: flex; align-items: center; gap: 15px; }
+button {
+    cursor: pointer;
+}
 
-        .admin-badge {
-            font-size: 0.85rem;
-            background-color: #334155;
-            padding: 6px 12px;
-            border-radius: 8px;
-            color: #94a3b8;
-        }
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 16px 30px;
+    background: #1e293b;
+    border-bottom: 2px solid #334155;
+    min-height: 75px;
+}
 
-        .admin-badge.logged { background-color: #065f46; color: #34d399; }
+.logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #3b82f6;
+    cursor: pointer;
+    white-space: nowrap;
+}
 
-        .btn-add {
-            background-color: #10b981;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
-        }
+.logo span {
+    color: #f59e0b;
+}
 
-        .btn-add:hover { background-color: #059669; transform: translateY(-2px); }
+.header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
 
-        /* Vues : Accueil vs Jeu actif */
-        #home-view { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; display: block; }
-        #game-view { display: none; flex-direction: column; width: 100vw; height: calc(100vh - 70px); position: relative; }
+.admin-badge {
+    font-size: .8rem;
+    background: #334155;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: #cbd5e1;
+}
 
-        /* Grille des Cartes */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
-        }
+.admin-badge.logged {
+    background: #065f46;
+    color: #34d399;
+}
 
-        .game-card {
-            background-color: #1e293b;
-            border-radius: 20px;
-            border: 2px solid #334155;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
+.btn-add {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 11px 16px;
+    border-radius: 12px;
+    font-weight: bold;
+}
 
-        .game-card:hover {
-            transform: translateY(-6px);
-            border-color: #3b82f6;
-            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.2);
-        }
+.btn-add:hover {
+    background: #059669;
+}
 
-        /* Badge plateforme */
-        .platform-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid #334155;
-            border-radius: 20px;
-            padding: 4px 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            z-index: 2;
-        }
-        .platform-badge.pc { color: #60a5fa; }
-        .platform-badge.mobile { color: #34d399; }
-        .platform-badge.all { color: #f59e0b; }
+#home-view {
+    padding: 35px;
+    max-width: 1250px;
+    margin: auto;
+}
 
-        .card-preview {
-            height: 160px;
-            background: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            border-bottom: 2px solid #334155;
-            user-select: none;
-        }
+.intro {
+    margin: 10px 0 25px;
+    color: #94a3b8;
+    line-height: 1.6;
+}
 
-        .card-info {
-            padding: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 22px;
+    margin-top: 25px;
+}
 
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #f8fafc;
-        }
+.game-card {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s;
+    position: relative;
+    min-width: 0;
+}
 
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #ef4444;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
+.game-card:hover {
+    transform: translateY(-4px);
+    border-color: #3b82f6;
+}
 
-        .btn-delete:hover { opacity: 1; }
+.platform-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(15, 23, 42, .94);
+    border: 1px solid #475569;
+    border-radius: 20px;
+    padding: 6px 10px;
+    font-size: .78rem;
+    font-weight: bold;
+    z-index: 2;
+}
 
-        .empty-msg {
-            text-align: center;
-            color: #64748b;
-            font-size: 1.1rem;
-            margin-top: 60px;
-            grid-column: 1 / -1;
-        }
+.platform-badge.pc {
+    color: #60a5fa;
+}
 
-        /* Barre supérieure du jeu ouvert */
-        .game-header {
-            background-color: #1e293b;
-            padding: 12px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #334155;
-            height: 50px;
-        }
+.platform-badge.mobile {
+    color: #34d399;
+}
 
-        .btn-back {
-            background-color: #334155;
-            color: #f8fafc;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.platform-badge.all {
+    color: #fbbf24;
+}
 
-        .btn-back:hover { background-color: #475569; }
+.card-preview {
+    height: 165px;
+    background: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    border-bottom: 2px solid #334155;
+}
 
-        iframe {
-            width: 100%;
-            height: calc(100% - 50px);
-            border: none;
-            background: #0f172a;
-        }
+.card-info {
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
 
-        /* Fenêtre "Cliquez pour jouer" (donne le focus clavier au jeu) */
-        .focus-overlay {
-            position: absolute;
-            top: 50px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(15, 23, 42, 0.9);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            gap: 12px;
-        }
+.card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
 
-        .focus-box {
-            background: #1e293b;
-            border: 2px solid #3b82f6;
-            border-radius: 20px;
-            padding: 30px 50px;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
+.btn-delete {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    padding: 5px;
+    color: #f87171;
+    flex-shrink: 0;
+}
 
-        .focus-box span { display: block; font-size: 3rem; margin-bottom: 10px; }
+.empty-msg {
+    text-align: center;
+    color: #94a3b8;
+    padding: 40px 10px;
+    grid-column: 1 / -1;
+    line-height: 1.8;
+}
 
-        /* Modal Sécurisé */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
+/* Vue du jeu */
 
-        .modal-card {
-            background-color: #1e293b;
-            border: 2px solid #3b82f6;
-            border-radius: 20px;
-            padding: 30px;
-            width: 440px;
-            max-width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        }
+#game-view {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    background: #0f172a;
+}
 
-        .modal-card h2 { margin-bottom: 15px; color: #3b82f6; font-size: 1.4rem; }
-        .modal-card label { font-size: 0.85rem; color: #94a3b8; display: block; margin-top: 12px; margin-bottom: 4px; text-align: left; }
-        
-        .modal-card input, .modal-card textarea, .modal-card select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #475569;
-            background-color: #0f172a;
-            color: #fff;
-            outline: none;
-            font-size: 0.9rem;
-        }
+.game-header {
+    background: #1e293b;
+    min-height: 58px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 2px solid #334155;
+}
 
-        .modal-card textarea { height: 120px; resize: vertical; font-family: monospace; }
+.game-header h2 {
+    font-size: 1rem;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
 
-        .btn-google {
-            width: 100%;
-            background-color: #ffffff;
-            color: #1e293b;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 0.95rem;
-            margin-top: 10px;
-        }
-        .btn-google:hover { background-color: #f1f5f9; }
+.btn-back {
+    background: #334155;
+    color: white;
+    border: none;
+    padding: 10px 13px;
+    border-radius: 10px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
 
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+#gameFrame {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    border: none;
+    background: #fff;
+}
 
-        .btn-submit {
-            flex: 1;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+.focus-overlay {
+    position: absolute;
+    inset: 58px 0 0;
+    background: rgba(15, 23, 42, .91);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 20px;
+    cursor: pointer;
+}
 
-        .btn-cancel {
-            flex: 1;
-            background-color: #475569;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-    </style>
+.focus-box {
+    background: #1e293b;
+    border: 2px solid #3b82f6;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 420px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    line-height: 1.6;
+}
 
-    <!-- Importation des SDKs Firebase (v10 Modular) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+.focus-box span {
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
-            authDomain: "jeux-feuxxx.firebaseapp.com",
-            databaseURL: "https://jeux-feuxxx-default-rtdb.firebaseio.com",
-            projectId: "jeux-feuxxx",
-            storageBucket: "jeux-feuxxx.firebasestorage.app",
-            messagingSenderId: "351401695038",
-            appId: "1:351401695038:web:dd3dbd6c5ff85aeb81fe6f",
-            measurementId: "G-41PSST98ZZ"
-        };
+/* Fenêtres modales */
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .78);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    z-index: 2000;
+}
 
-        let currentUser = null;
-        let cachedGames = [];
-        const ADMIN_EMAIL = "x.kaboom.x02@gmail.com";
+.modal-card {
+    background: #1e293b;
+    border: 2px solid #3b82f6;
+    border-radius: 20px;
+    padding: 25px;
+    width: 440px;
+    max-width: 100%;
+    max-height: 90dvh;
+    overflow-y: auto;
+    text-align: center;
+}
 
-        // Suivi de l'état de connexion Admin avec filtrage strict par email
-        onAuthStateChanged(auth, (user) => {
-            const badge = document.getElementById('adminBadge');
-            if (user && user.email === ADMIN_EMAIL) {
-                currentUser = user;
-                badge.innerText = "Admin connecté 🔒";
-                badge.classList.add('logged');
-                showGameForm();
-            } else if (user) {
-                alert("Accès refusé : Seul l'administrateur (" + ADMIN_EMAIL + ") peut gérer les jeux.");
-                signOut(auth);
-                currentUser = null;
-                badge.innerText = "Mode Visiteur";
-                badge.classList.remove('logged');
-                showAuthSection();
-            } else {
-                currentUser = null;
-                badge.innerText = "Mode Visiteur";
-                badge.classList.remove('logged');
-                showAuthSection();
+.modal-card h2 {
+    color: #60a5fa;
+    margin-bottom: 15px;
+}
+
+.modal-card label {
+    display: block;
+    text-align: left;
+    color: #cbd5e1;
+    font-size: .85rem;
+    margin: 14px 0 5px;
+}
+
+.modal-card input,
+.modal-card textarea,
+.modal-card select {
+    display: block;
+    width: 100%;
+    padding: 11px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+    outline: none;
+}
+
+.modal-card textarea {
+    height: 140px;
+    resize: vertical;
+    font-family: monospace;
+    font-size: .85rem;
+}
+
+.modal-card input:focus,
+.modal-card textarea:focus,
+.modal-card select:focus {
+    border-color: #3b82f6;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: 9px;
+    font-weight: bold;
+}
+
+.btn-cancel {
+    background: #475569;
+    color: white;
+}
+
+.btn-submit {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-google {
+    width: 100%;
+    padding: 12px;
+    background: white;
+    color: #1e293b;
+    border: none;
+    border-radius: 9px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+/* Avertissement PC / téléphone */
+
+.warning-card {
+    width: 440px;
+    max-width: 100%;
+    padding: 28px;
+    border-radius: 22px;
+    text-align: center;
+    background: #1e293b;
+    border: 2px solid #f59e0b;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, .5);
+    animation: warningAppear .2s ease-out;
+}
+
+.warning-icon {
+    font-size: 4rem;
+    margin-bottom: 12px;
+}
+
+.warning-card h2 {
+    color: #fbbf24;
+    margin-bottom: 12px;
+}
+
+.warning-card p {
+    color: #cbd5e1;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.warning-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.warning-actions button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.warning-back {
+    background: #334155;
+    color: white;
+}
+
+.warning-continue {
+    background: #f59e0b;
+    color: #111827;
+}
+
+.warning-back:hover {
+    background: #475569;
+}
+
+.warning-continue:hover {
+    background: #fbbf24;
+}
+
+@keyframes warningAppear {
+    from {
+        opacity: 0;
+        transform: scale(.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 650px) {
+    header {
+        padding: 14px;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    #home-view {
+        padding: 22px 15px;
+    }
+
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+        gap: 12px;
+    }
+
+    .card-preview {
+        height: 125px;
+        font-size: 3rem;
+    }
+
+    .card-info {
+        padding: 12px;
+    }
+
+    .card-title {
+        font-size: .95rem;
+    }
+
+    .platform-badge {
+        font-size: .68rem;
+        padding: 5px 7px;
+    }
+
+    .game-header {
+        padding: 8px;
+    }
+
+    .game-header h2 {
+        font-size: .85rem;
+    }
+
+    .btn-back {
+        padding: 9px;
+        font-size: .8rem;
+    }
+
+    .warning-card {
+        padding: 22px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header id="main-header">
+    <div class="logo" onclick="showHome()">Gourmand<span>.fun</span></div>
+
+    <div class="header-actions">
+        <div id="adminBadge" class="admin-badge">Mode Visiteur</div>
+        <button class="btn-add" onclick="openAddGameModal()">
+            + Ajouter un jeu
+        </button>
+    </div>
+</header>
+
+<main id="home-view">
+    <h1>🍔 Mes Jeux</h1>
+    <p class="intro">
+        🎮 Choisis ton jeu préféré et clique dessus pour commencer à jouer !
+        <br>Des jeux pour PC, téléphone et tablette.
+    </p>
+
+    <div class="games-grid" id="gamesGrid">
+        <div class="empty-msg">Chargement des jeux... ⏳</div>
+    </div>
+</main>
+
+<!-- Vue du jeu -->
+
+<div id="game-view">
+    <div class="game-header">
+        <button class="btn-back" onclick="showHome()">← Retour</button>
+        <h2 id="activeGameTitle">Titre du jeu</h2>
+        <div style="width:60px"></div>
+    </div>
+
+    <iframe id="gameFrame" title="Jeu"
+        allow="fullscreen; autoplay; gamepad"
+        allowfullscreen></iframe>
+
+    <div id="focusOverlay" class="focus-overlay" onclick="startPlaying()">
+        <div class="focus-box">
+            <span>🎮</span>
+            Clique ici pour commencer à jouer !
+            <br>
+            <small style="color:#94a3b8;font-size:.85rem">
+                Pour activer les commandes du jeu.
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Avertissement de compatibilité -->
+
+<div class="modal" id="platformWarning" role="dialog"
+     aria-modal="true" aria-labelledby="warningTitle">
+
+    <div class="warning-card">
+        <div class="warning-icon" id="warningIcon">💻⚠️</div>
+
+        <h2 id="warningTitle">Jeu réservé au PC !</h2>
+
+        <p id="platformWarningText">
+            Ce jeu est conçu pour un ordinateur et nécessite peut-être
+            un clavier. Il risque de ne pas fonctionner correctement
+            sur ton appareil.
+        </p>
+
+        <div class="warning-actions">
+            <button class="warning-back" onclick="closePlatformWarning()">
+                ← Retour aux jeux
+            </button>
+
+            <button class="warning-continue" onclick="continueAnyway()">
+                🎮 Essayer quand même
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Espace administrateur -->
+
+<div class="modal" id="addModal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+        <h2>🔒 Espace Administrateur</h2>
+
+        <div id="authSection">
+            <p style="font-size:.9rem;color:#94a3b8;line-height:1.6">
+                Connecte-toi avec le compte Google administrateur
+                pour ajouter ou gérer les jeux.
+            </p>
+
+            <button class="btn-google" onclick="loginWithGoogle()">
+                🌐 Se connecter avec Google
+            </button>
+        </div>
+
+        <div id="gameFields" style="display:none">
+            <label for="gameTitle">Titre du jeu</label>
+            <input id="gameTitle" type="text"
+                   placeholder="Ex. : Restaurant Tycoon">
+
+            <label for="gameEmoji">Icône / Emoji</label>
+            <input id="gameEmoji" type="text"
+                   placeholder="🍔 🎮 🍕" maxlength="8">
+
+            <label for="gamePlatform">Plateforme compatible</label>
+            <select id="gamePlatform">
+                <option value="pc">💻 PC uniquement</option>
+                <option value="mobile">📱 Téléphone / tablette</option>
+                <option value="all">📱💻 PC + téléphone + tablette</option>
+            </select>
+
+            <label for="sourceType">Source du jeu</label>
+            <select id="sourceType" onchange="toggleSourceInput()">
+                <option value="code">Code HTML / JavaScript</option>
+                <option value="url">Lien URL</option>
+            </select>
+
+            <div id="codeInputContainer">
+                <label for="gameCode">Code HTML du jeu</label>
+                <textarea id="gameCode"
+                    placeholder="Colle ici le code HTML complet du jeu..."></textarea>
+            </div>
+
+            <div id="urlInputContainer" style="display:none">
+                <label for="gameUrl">Adresse du jeu</label>
+                <input id="gameUrl" type="url"
+                       placeholder="https://exemple.com/jeu">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Fermer</button>
+            <button class="btn-submit" id="submitBtn"
+                    onclick="submitGame()" style="display:none">
+                Ajouter le jeu
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+
+const platformLabels = {
+    pc: "💻 PC",
+    mobile: "📱 Mobile",
+    all: "📱💻 Tous appareils"
+};
+
+let cachedGames = [];
+let pendingGameId = null;
+
+window.isAdmin = false;
+
+function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+/*
+ * Détection de téléphone ou tablette.
+ * La détection reste indicative : certains appareils peuvent
+ * être identifiés différemment selon leur navigateur.
+ */
+function isMobileDevice() {
+    const ua = navigator.userAgent || "";
+
+    const mobileUA =
+        /Android|iPhone|iPod|Mobile|Windows Phone/i.test(ua);
+
+    const ipadUA = /iPad/i.test(ua);
+
+    const ipadLike =
+        navigator.maxTouchPoints > 1 &&
+        /Macintosh/i.test(ua);
+
+    const compactTouchDevice =
+        navigator.maxTouchPoints > 1 &&
+        Math.min(window.innerWidth, window.innerHeight) < 800;
+
+    return mobileUA || ipadUA || ipadLike || compactTouchDevice;
+}
+
+function renderGrid(gamesList) {
+    const grid = document.getElementById("gamesGrid");
+    grid.innerHTML = "";
+
+    if (!gamesList || gamesList.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-msg">
+                Aucun jeu disponible pour le moment. 🎮
+                <br>Reviens bientôt !
+            </div>`;
+        return;
+    }
+
+    gamesList.forEach(game => {
+        const card = document.createElement("article");
+        card.className = "game-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", "Lancer " + game.title);
+
+        const platform = ["pc", "mobile", "all"].includes(game.platform)
+            ? game.platform
+            : "pc";
+
+        card.innerHTML = `
+            <div class="platform-badge ${platform}">
+                ${platformLabels[platform]}
+            </div>
+
+            <div class="card-preview"
+                 style="background-color:${safeColor(game.bg)}">
+                ${escapeHtml(game.emoji || "🎮")}
+            </div>
+
+            <div class="card-info">
+                <div class="card-title">${escapeHtml(game.title)}</div>
+
+                ${window.isAdmin ? `
+                    <button class="btn-delete" title="Supprimer ce jeu"
+                            aria-label="Supprimer ce jeu">🗑️</button>
+                ` : ""}
+            </div>
+        `;
+
+        card.addEventListener("click", () => launchGame(game.id));
+
+        card.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                launchGame(game.id);
             }
         });
 
-        // Connexion avec Google
-        window.loginWithGoogle = async function() {
-            const provider = new GoogleAuthProvider();
+        const deleteButton = card.querySelector(".btn-delete");
+
+        if (deleteButton) {
+            deleteButton.addEventListener("click", event => {
+                event.stopPropagation();
+                deleteGame(game.id);
+            });
+        }
+
+        grid.appendChild(card);
+    });
+}
+
+function safeColor(value) {
+    const color = String(value || "#0f172a");
+
+    if (/^#[0-9a-fA-F]{3}$/.test(color) ||
+        /^#[0-9a-fA-F]{6}$/.test(color)) {
+        return color;
+    }
+
+    return "#0f172a";
+}
+
+/* Lancement avec avertissement de compatibilité */
+
+function launchGame(gameId) {
+    const game = cachedGames.find(item => item.id === gameId);
+    if (!game) return;
+
+    const mobile = isMobileDevice();
+
+    if (game.platform === "pc" && mobile) {
+        pendingGameId = gameId;
+
+        document.getElementById("warningIcon").textContent = "💻⚠️";
+        document.getElementById("warningTitle").textContent =
+            "Jeu réservé au PC !";
+
+        document.getElementById("platformWarningText").textContent =
+            "Ce jeu est prévu pour un ordinateur et peut nécessiter un clavier " +
+            "ou une souris. Tu utilises un téléphone ou une tablette : " +
+            "le jeu risque de ne pas fonctionner correctement.";
+
+        document.getElementById("platformWarning").style.display = "flex";
+        return;
+    }
+
+    openGame(game);
+}
+
+function closePlatformWarning() {
+    document.getElementById("platformWarning").style.display = "none";
+    pendingGameId = null;
+}
+
+function continueAnyway() {
+    const game = cachedGames.find(item => item.id === pendingGameId);
+
+    closePlatformWarning();
+
+    if (game) {
+        openGame(game);
+    }
+}
+
+function openGame(game) {
+    document.getElementById("home-view").style.display = "none";
+    document.getElementById("main-header").style.display = "none";
+
+    document.getElementById("game-view").style.display = "flex";
+    document.getElementById("activeGameTitle").textContent = game.title;
+
+    const frame = document.getElementById("gameFrame");
+
+    document.getElementById("focusOverlay").style.display = "flex";
+
+    if (game.type === "url") {
+        frame.src = game.content;
+    } else {
+        frame.removeAttribute("src");
+
+        const gameDocument = frame.contentWindow.document;
+        gameDocument.open();
+        gameDocument.write(game.content);
+        gameDocument.close();
+    }
+}
+
+function startPlaying() {
+    document.getElementById("focusOverlay").style.display = "none";
+
+    const frame = document.getElementById("gameFrame");
+    frame.focus();
+
+    try {
+        frame.contentWindow.focus();
+    } catch (error) {
+        console.warn("Focus du jeu indisponible.", error);
+    }
+}
+
+function showHome() {
+    document.getElementById("game-view").style.display = "none";
+    document.getElementById("focusOverlay").style.display = "none";
+    document.getElementById("main-header").style.display = "flex";
+    document.getElementById("home-view").style.display = "block";
+
+    const frame = document.getElementById("gameFrame");
+    frame.src = "about:blank";
+
+    closePlatformWarning();
+}
+
+function openAddGameModal() {
+    document.getElementById("addModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("addModal").style.display = "none";
+}
+
+function showGameForm() {
+    document.getElementById("authSection").style.display = "none";
+    document.getElementById("gameFields").style.display = "block";
+    document.getElementById("submitBtn").style.display = "block";
+}
+
+function showAuthSection() {
+    document.getElementById("authSection").style.display = "block";
+    document.getElementById("gameFields").style.display = "none";
+    document.getElementById("submitBtn").style.display = "none";
+}
+
+function toggleSourceInput() {
+    const type = document.getElementById("sourceType").value;
+
+    document.getElementById("codeInputContainer").style.display =
+        type === "code" ? "block" : "none";
+
+    document.getElementById("urlInputContainer").style.display =
+        type === "url" ? "block" : "none";
+}
+
+/* Fermer les fenêtres avec Échap */
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+        const warning = document.getElementById("platformWarning");
+
+        if (warning.style.display === "flex") {
+            closePlatformWarning();
+        } else if (document.getElementById("addModal").style.display === "flex") {
+            closeModal();
+        }
+    }
+});
+
+/* Fonctions accessibles depuis le SDK Firebase */
+
+window.renderGrid = renderGrid;
+window.cachedGamesRef = () => cachedGames;
+window.launchGame = launchGame;
+window.startPlaying = startPlaying;
+window.showHome = showHome;
+window.openAddGameModal = openAddGameModal;
+window.closeModal = closeModal;
+window.showGameForm = showGameForm;
+window.showAuthSection = showAuthSection;
+window.toggleSourceInput = toggleSourceInput;
+window.closePlatformWarning = closePlatformWarning;
+window.continueAnyway = continueAnyway;
+window.submitGame = async function() {};
+window.loginWithGoogle = async function() {
+    alert("Firebase est en cours de chargement. Réessaie dans un instant.");
+};
+window.deleteGame = async function() {};
+</script>
+
+<!-- Firebase : authentification et stockage des jeux -->
+
+<script type="module">
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    deleteDoc,
+    doc,
+    onSnapshot,
+    query,
+    orderBy
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
+    authDomain: "jeux-feuxxx.firebaseapp.com",
+    databaseURL: "https://jeux-feuxxx-default-rtdb.firebaseio.com",
+    projectId: "jeux-feuxxx",
+    storageBucket: "jeux-feuxxx.firebasestorage.app",
+    messagingSenderId: "351401695038",
+    appId: "1:351401695038:web:dd3dbd6c5ff85aeb81fe6f",
+    measurementId: "G-41PSST98ZZ"
+};
+
+const ADMIN_EMAIL = "x.kaboom.x02@gmail.com";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+
+window.loginWithGoogle = async function() {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    try {
+        await signInWithPopup(auth, provider);
+    } catch (error) {
+        console.error(error);
+        alert("Connexion Google impossible : " + error.message);
+    }
+};
+
+onAuthStateChanged(auth, async user => {
+    const badge = document.getElementById("adminBadge");
+
+    if (user && user.email === ADMIN_EMAIL) {
+        currentUser = user;
+        window.isAdmin = true;
+
+        badge.textContent = "Admin connecté 🔒";
+        badge.classList.add("logged");
+
+        window.showGameForm();
+        window.renderGrid(window.cachedGamesRef());
+    } else {
+        currentUser = null;
+        window.isAdmin = false;
+
+        badge.textContent = "Mode Visiteur";
+        badge.classList.remove("logged");
+
+        window.showAuthSection();
+        window.renderGrid(window.cachedGamesRef());
+
+        if (user) {
+            alert("Accès refusé : ce compte Google n'est pas administrateur.");
             try {
-                await signInWithPopup(auth, provider);
+                await signOut(auth);
             } catch (error) {
-                alert("Erreur de connexion Google : " + error.message);
+                console.error(error);
             }
-        };
-
-        // Charger les jeux en temps réel depuis Firestore
-        function loadGamesRealtime() {
-            const q = query(collection(db, "games"), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
-                cachedGames = [];
-                snapshot.forEach((docSnap) => {
-                    cachedGames.push({ id: docSnap.id, ...docSnap.data() });
-                });
-                renderGrid(cachedGames);
-            }, (error) => {
-                console.error("Erreur de chargement : ", error);
-            });
         }
+    }
+});
 
-        window.submitGame = async function() {
-            if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
-                alert("Seul l'administrateur peut ajouter un jeu !");
-                return;
+/* Chargement des jeux en temps réel */
+
+const gamesQuery = query(
+    collection(db, "games"),
+    orderBy("createdAt", "desc")
+);
+
+onSnapshot(gamesQuery, snapshot => {
+    const games = [];
+
+    snapshot.forEach(documentSnapshot => {
+        games.push({
+            id: documentSnapshot.id,
+            ...documentSnapshot.data()
+        });
+    });
+
+    window.cachedGamesRef = () => games;
+    window.renderGrid(games);
+}, error => {
+    console.error("Erreur de chargement Firebase :", error);
+
+    document.getElementById("gamesGrid").innerHTML = `
+        <div class="empty-msg">
+            Impossible de charger les jeux.
+            <br>Vérifie la connexion à Internet et la configuration Firebase.
+        </div>`;
+});
+
+/* Ajouter un jeu */
+
+window.submitGame = async function() {
+    if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+        alert("Seul l'administrateur peut ajouter un jeu.");
+        return;
+    }
+
+    const title = document.getElementById("gameTitle").value.trim();
+    const emoji = document.getElementById("gameEmoji").value.trim() || "🎮";
+    const platform = document.getElementById("gamePlatform").value;
+    const type = document.getElementById("sourceType").value;
+
+    const content = type === "url"
+        ? document.getElementById("gameUrl").value.trim()
+        : document.getElementById("gameCode").value.trim();
+
+    if (!title || !content) {
+        alert("Remplis le titre et le contenu du jeu.");
+        return;
+    }
+
+    if (type === "url") {
+        try {
+            const parsedUrl = new URL(content);
+
+            if (!["https:", "http:"].includes(parsedUrl.protocol)) {
+                throw new Error("URL invalide");
             }
-
-            const title = document.getElementById('gameTitle').value.trim();
-            const emoji = document.getElementById('gameEmoji').value.trim() || '🎮';
-            const platform = document.getElementById('gamePlatform').value;
-            const type = document.getElementById('sourceType').value;
-            const content = type === 'url' 
-                ? document.getElementById('gameUrl').value.trim() 
-                : document.getElementById('gameCode').value.trim();
-
-            if (!title || !content) {
-                alert('Veuillez remplir le titre et le contenu du jeu !');
-                return;
-            }
-
-            const colors = ['#fbcfe8', '#fed7aa', '#fef08a', '#ddd6fe', '#cbd5e1', '#bbf7d0', '#bfdbfe'];
-            const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-            try {
-                await addDoc(collection(db, "games"), {
-                    title: title,
-                    emoji: emoji,
-                    bg: randomColor,
-                    type: type,
-                    platform: platform,
-                    content: content,
-                    createdAt: Date.now()
-                });
-                closeModal();
-                document.getElementById('gameTitle').value = '';
-                document.getElementById('gameEmoji').value = '';
-                document.getElementById('gameUrl').value = '';
-                document.getElementById('gameCode').value = '';
-            } catch (err) {
-                alert("Erreur lors de l'ajout : " + err.message);
-            }
-        };
-
-        window.deleteGame = async function(event, gameId) {
-            event.stopPropagation();
-            if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
-                alert("Seul l'administrateur peut supprimer un jeu !");
-                openAddGameModal();
-                return;
-            }
-
-            if (confirm("Voulez-vous vraiment supprimer ce jeu pour tout le monde ?")) {
-                try {
-                    await deleteDoc(doc(db, "games", gameId));
-                } catch (err) {
-                    alert("Erreur lors de la suppression : " + err.message);
-                }
-            }
-        };
-
-        window.cachedGamesRef = () => cachedGames;
-        document.addEventListener('DOMContentLoaded', loadGamesRealtime);
-    </script>
-</head>
-<body>
-
-    <!-- En-tête principal -->
-    <header id="main-header">
-        <div class="logo" onclick="showHome()">Gourmand<span>.fun</span></div>
-        <div class="header-actions">
-            <div id="adminBadge" class="admin-badge">Mode Visiteur</div>
-            <button class="btn-add" onclick="openAddGameModal()">+ Ajouter un jeu</button>
-        </div>
-    </header>
-
-    <!-- Page d'accueil (Grille) -->
-    <main id="home-view">
-        <h1 style="font-size: 2rem; margin-bottom: 10px;">Mes Jeux</h1>
-        <p style="color: #94a3b8; margin-bottom: 30px;"><p style="color: #94a3b8; margin-bottom: 30px;">🎮 Choisis ton jeu préféré et clique dessus pour commencer à jouer ! 🍔</p></p>
-
-        <div class="games-grid" id="gamesGrid"></div>
-    </main>
-
-    <!-- Vue du Jeu -->
-    <div id="game-view">
-        <div class="game-header">
-            <button class="btn-back" onclick="showHome()">← Retour aux jeux</button>
-            <h2 id="activeGameTitle" style="font-size: 1.1rem; color: #f8fafc;">Titre du Jeu</h2>
-            <div style="width: 120px;"></div>
-        </div>
-        <iframe id="gameFrame"></iframe>
-
-        <!-- Clic obligatoire pour que le clavier soit pris en compte -->
-        <div id="focusOverlay" class="focus-overlay" onclick="startPlaying()">
-            <div class="focus-box"><span>🎮</span>Cliquez ici pour jouer</div>
-        </div>
-    </div>
-
-    <!-- Modal d'Authentification / Ajout Admin -->
-    <div class="modal" id="addModal">
-        <div class="modal-card">
-            <h2>🔒 Espace Administrateur</h2>
-            
-            <div id="authSection">
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px;">Connectez-vous avec votre compte Google Administrateur.</p>
-                <button type="button" class="btn-google" onclick="loginWithGoogle()">
-                    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                    Se connecter avec Google
-                </button>
-            </div>
-
-            <div id="gameFields" style="display: none;">
-                <label>Titre du Jeu</label>
-                <input type="text" id="gameTitle" placeholder="Ex: Semaine du Goût">
-
-                <label>Icône / Emoji d'aperçu</label>
-                <input type="text" id="gameEmoji" placeholder="Ex: 🍎, 🍕, 🏃..." maxlength="2">
-
-                <label>Plateforme</label>
-                <select id="gamePlatform">
-                    <option value="pc">💻 PC (clavier)</option>
-                    <option value="mobile">📱 Téléphone (tactile)</option>
-                    <option value="all">📱💻 PC + Téléphone</option>
-                </select>
-
-                <label>Source du Jeu</label>
-                <select id="sourceType" onchange="toggleSourceInput()">
-                    <option value="code">Code HTML / JS direct</option>
-                    <option value="url">Lien URL (ex: https://...)</option>
-                </select>
-
-                <div id="codeInputContainer" style="margin-top: 10px;">
-                    <label>Code HTML du jeu</label>
-                    <textarea id="gameCode" placeholder="Collez le code <!DOCTYPE html> ici..."></textarea>
-                </div>
-
-                <div id="urlInputContainer" style="display: none; margin-top: 10px;">
-                    <label>URL Web du jeu</label>
-                    <input type="url" id="gameUrl" placeholder="https://exemple.com/jeu">
-                </div>
-            </div>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="closeModal()">Fermer</button>
-                <button type="button" class="btn-submit" id="submitBtn" onclick="submitGame()" style="display: none;">Ajouter la carte</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const platformLabels = {
-            pc: '💻 PC',
-            mobile: '📱 Téléphone',
-            all: '📱💻 PC + Tél.'
-        };
-
-        function escapeHtml(str) {
-            return String(str ?? '').replace(/[&<>"']/g, c => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-            }[c]));
+        } catch (error) {
+            alert("Entre une adresse Web valide, commençant par https:// ou http://.");
+            return;
         }
+    }
 
-        function renderGrid(gamesList) {
-            const grid = document.getElementById('gamesGrid');
-            grid.innerHTML = '';
+    const colors = [
+        "#fbcfe8", "#fed7aa", "#fef08a",
+        "#ddd6fe", "#cbd5e1", "#bbf7d0", "#bfdbfe"
+    ];
 
-            if (gamesList.length === 0) {
-                grid.innerHTML = `<div class="empty-msg">Aucun jeu disponible pour le moment.<br>Connectez-vous en admin via <strong>"+ Ajouter un jeu"</strong> pour commencer !</div>`;
-                return;
-            }
+    const bg = colors[Math.floor(Math.random() * colors.length)];
 
-            gamesList.forEach((game) => {
-                const card = document.createElement('div');
-                card.className = 'game-card';
-                card.onclick = () => launchGame(game.id);
+    try {
+        await addDoc(collection(db, "games"), {
+            title,
+            emoji,
+            platform,
+            type,
+            content,
+            bg,
+            createdAt: Date.now()
+        });
 
-                const p = platformLabels[game.platform] ? game.platform : 'pc';
+        document.getElementById("gameTitle").value = "";
+        document.getElementById("gameEmoji").value = "";
+        document.getElementById("gameUrl").value = "";
+        document.getElementById("gameCode").value = "";
 
-                card.innerHTML = `
-                    <div class="platform-badge ${p}">${platformLabels[p]}</div>
-                    <div class="card-preview" style="background-color: ${escapeHtml(game.bg || '#1e293b')}">
-                        ${escapeHtml(game.emoji || '🎮')}
-                    </div>
-                    <div class="card-info">
-                        <div class="card-title">${escapeHtml(game.title)}</div>
-                        <button class="btn-delete" onclick="deleteGame(event, '${game.id}')" title="Supprimer">🗑️</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+        document.getElementById("gamePlatform").value = "pc";
+        document.getElementById("sourceType").value = "code";
+        window.toggleSourceInput();
 
-        function launchGame(gameId) {
-            const game = window.cachedGamesRef().find(g => g.id === gameId);
-            if (!game) return;
+        window.closeModal();
+        alert("Jeu ajouté avec succès ! 🎮");
+    } catch (error) {
+        console.error(error);
+        alert("Erreur lors de l'ajout du jeu : " + error.message);
+    }
+};
 
-            document.getElementById('home-view').style.display = 'none';
-            document.getElementById('main-header').style.display = 'none';
-            
-            const gameView = document.getElementById('game-view');
-            gameView.style.display = 'flex';
+/* Supprimer un jeu */
 
-            document.getElementById('activeGameTitle').innerText = game.title;
-            const frame = document.getElementById('gameFrame');
+window.deleteGame = async function(gameId) {
+    if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+        alert("Seul l'administrateur peut supprimer un jeu.");
+        return;
+    }
 
-            if (game.type === 'url') {
-                frame.src = game.content;
-            } else {
-                const doc = frame.contentWindow.document;
-                doc.open();
-                doc.write(game.content);
-                doc.close();
-            }
+    if (!confirm("Supprimer ce jeu pour tous les visiteurs ?")) {
+        return;
+    }
 
-            // Affiche la fenêtre "Cliquez ici pour jouer"
-            document.getElementById('focusOverlay').style.display = 'flex';
-        }
+    try {
+        await deleteDoc(doc(db, "games", gameId));
+    } catch (error) {
+        console.error(error);
+        alert("Impossible de supprimer ce jeu : " + error.message);
+    }
+};
+</script>
 
-        function startPlaying() {
-            document.getElementById('focusOverlay').style.display = 'none';
-            const frame = document.getElementById('gameFrame');
-            frame.focus();
-            try { frame.contentWindow.focus(); } catch (e) {}
-        }
-
-        function showHome() {
-            document.getElementById('game-view').style.display = 'none';
-            document.getElementById('focusOverlay').style.display = 'none';
-            document.getElementById('main-header').style.display = 'flex';
-            document.getElementById('home-view').style.display = 'block';
-            document.getElementById('gameFrame').src = 'about:blank';
-        }
-
-        function openAddGameModal() {
-            document.getElementById('addModal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('addModal').style.display = 'none';
-        }
-
-        function showGameForm() {
-            document.getElementById('authSection').style.display = 'none';
-            document.getElementById('gameFields').style.display = 'block';
-            document.getElementById('submitBtn').style.display = 'block';
-        }
-
-        function showAuthSection() {
-            document.getElementById('authSection').style.display = 'block';
-            document.getElementById('gameFields').style.display = 'none';
-            document.getElementById('submitBtn').style.display = 'none';
-        }
-
-        function toggleSourceInput() {
-            const type = document.getElementById('sourceType').value;
-            document.getElementById('codeInputContainer').style.display = type === 'code' ? 'block' : 'none';
-            document.getElementById('urlInputContainer').style.display = type === 'url' ? 'block' : 'none';
-        }
-    </script>
 </body>
 </html>
