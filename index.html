@@ -59,7 +59,7 @@
 
         /* Vues : Accueil vs Jeu actif */
         #home-view { padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; display: block; }
-        #game-view { display: none; flex-direction: column; width: 100vw; height: calc(100vh - 70px); }
+        #game-view { display: none; flex-direction: column; width: 100vw; height: calc(100vh - 70px); position: relative; }
 
         /* Grille des Cartes */
         .games-grid {
@@ -86,6 +86,23 @@
             border-color: #3b82f6;
             box-shadow: 0 12px 25px rgba(59, 130, 246, 0.2);
         }
+
+        /* Badge plateforme */
+        .platform-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        .platform-badge.pc { color: #60a5fa; }
+        .platform-badge.mobile { color: #34d399; }
+        .platform-badge.all { color: #f59e0b; }
 
         .card-preview {
             height: 160px;
@@ -162,6 +179,35 @@
             background: #0f172a;
         }
 
+        /* Fenêtre "Cliquez pour jouer" (donne le focus clavier au jeu) */
+        .focus-overlay {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            gap: 12px;
+        }
+
+        .focus-box {
+            background: #1e293b;
+            border: 2px solid #3b82f6;
+            border-radius: 20px;
+            padding: 30px 50px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .focus-box span { display: block; font-size: 3rem; margin-bottom: 10px; }
+
         /* Modal Sécurisé */
         .modal {
             display: none;
@@ -181,6 +227,8 @@
             padding: 30px;
             width: 440px;
             max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
 
@@ -327,6 +375,7 @@
 
             const title = document.getElementById('gameTitle').value.trim();
             const emoji = document.getElementById('gameEmoji').value.trim() || '🎮';
+            const platform = document.getElementById('gamePlatform').value;
             const type = document.getElementById('sourceType').value;
             const content = type === 'url' 
                 ? document.getElementById('gameUrl').value.trim() 
@@ -346,6 +395,7 @@
                     emoji: emoji,
                     bg: randomColor,
                     type: type,
+                    platform: platform,
                     content: content,
                     createdAt: Date.now()
                 });
@@ -407,6 +457,11 @@
             <div style="width: 120px;"></div>
         </div>
         <iframe id="gameFrame"></iframe>
+
+        <!-- Clic obligatoire pour que le clavier soit pris en compte -->
+        <div id="focusOverlay" class="focus-overlay" onclick="startPlaying()">
+            <div class="focus-box"><span>🎮</span>Cliquez ici pour jouer</div>
+        </div>
     </div>
 
     <!-- Modal d'Authentification / Ajout Admin -->
@@ -428,6 +483,13 @@
 
                 <label>Icône / Emoji d'aperçu</label>
                 <input type="text" id="gameEmoji" placeholder="Ex: 🍎, 🍕, 🏃..." maxlength="2">
+
+                <label>Plateforme</label>
+                <select id="gamePlatform">
+                    <option value="pc">💻 PC (clavier)</option>
+                    <option value="mobile">📱 Téléphone (tactile)</option>
+                    <option value="all">📱💻 PC + Téléphone</option>
+                </select>
 
                 <label>Source du Jeu</label>
                 <select id="sourceType" onchange="toggleSourceInput()">
@@ -454,6 +516,18 @@
     </div>
 
     <script>
+        const platformLabels = {
+            pc: '💻 PC',
+            mobile: '📱 Téléphone',
+            all: '📱💻 PC + Tél.'
+        };
+
+        function escapeHtml(str) {
+            return String(str ?? '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
         function renderGrid(gamesList) {
             const grid = document.getElementById('gamesGrid');
             grid.innerHTML = '';
@@ -468,12 +542,15 @@
                 card.className = 'game-card';
                 card.onclick = () => launchGame(game.id);
 
+                const p = platformLabels[game.platform] ? game.platform : 'pc';
+
                 card.innerHTML = `
-                    <div class="card-preview" style="background-color: ${game.bg || '#1e293b'}">
-                        ${game.emoji || '🎮'}
+                    <div class="platform-badge ${p}">${platformLabels[p]}</div>
+                    <div class="card-preview" style="background-color: ${escapeHtml(game.bg || '#1e293b')}">
+                        ${escapeHtml(game.emoji || '🎮')}
                     </div>
                     <div class="card-info">
-                        <div class="card-title">${game.title}</div>
+                        <div class="card-title">${escapeHtml(game.title)}</div>
                         <button class="btn-delete" onclick="deleteGame(event, '${game.id}')" title="Supprimer">🗑️</button>
                     </div>
                 `;
@@ -502,10 +579,21 @@
                 doc.write(game.content);
                 doc.close();
             }
+
+            // Affiche la fenêtre "Cliquez ici pour jouer"
+            document.getElementById('focusOverlay').style.display = 'flex';
+        }
+
+        function startPlaying() {
+            document.getElementById('focusOverlay').style.display = 'none';
+            const frame = document.getElementById('gameFrame');
+            frame.focus();
+            try { frame.contentWindow.focus(); } catch (e) {}
         }
 
         function showHome() {
             document.getElementById('game-view').style.display = 'none';
+            document.getElementById('focusOverlay').style.display = 'none';
             document.getElementById('main-header').style.display = 'flex';
             document.getElementById('home-view').style.display = 'block';
             document.getElementById('gameFrame').src = 'about:blank';
