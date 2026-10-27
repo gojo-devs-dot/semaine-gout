@@ -1,723 +1,963 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Gourmand.fun - Tous les jeux</title>
-  <meta name="description" content="Découvre les jeux du club informatique sur Gourmand.fun !">
-
-  <style>
-    :root {
-      --bg: #101019;
-      --panel: #1b1b29;
-      --panel2: #242437;
-      --text: #f6f5ff;
-      --muted: #b8b6cc;
-      --accent: #ff9f43;
-      --accent2: #ff6b81;
-      --green: #52d69a;
-      --danger: #ff647c;
-      --border: #35354b;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-
-    body {
-      background:
-        radial-gradient(ellipse at top left, #30203c 0, transparent 45%),
-        var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    button, input, textarea, select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: #11111bee;
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(14px);
-    }
-
-    .nav {
-      max-width: 1200px;
-      margin: auto;
-      padding: 16px 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .logo {
-      font-size: 1.6rem;
-      font-weight: 1000;
-      letter-spacing: -1px;
-    }
-
-    .logo span {
-      color: var(--accent);
-    }
-
-    .nav-actions {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-    }
-
-    main {
-      max-width: 1200px;
-      margin: auto;
-      padding: 32px 22px 70px;
-    }
-
-    .hero {
-      padding: 42px 28px;
-      border-radius: 24px;
-      background: linear-gradient(135deg, #30233f, #1c2639);
-      border: 1px solid var(--border);
-      margin-bottom: 30px;
-    }
-
-    .hero h1 {
-      font-size: clamp(2rem, 6vw, 3.7rem);
-      line-height: 1.1;
-      margin-bottom: 14px;
-    }
-
-    .hero h1 span {
-      color: var(--accent);
-    }
-
-    .hero p {
-      color: var(--muted);
-      max-width: 650px;
-      line-height: 1.7;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 23px;
-    }
-
-    .btn {
-      border: 1px solid transparent;
-      border-radius: 11px;
-      padding: 10px 15px;
-      font-weight: 800;
-      color: #17121d;
-      background: var(--accent);
-      transition: .2s;
-    }
-
-    .btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      filter: brightness(1.08);
-    }
-
-    .btn.secondary {
-      color: var(--text);
-      background: var(--panel2);
-      border-color: var(--border);
-    }
-
-    .btn.green {
-      color: #071b12;
-      background: var(--green);
-    }
-
-    .btn.danger {
-      color: white;
-      background: #a82d43;
-    }
-
-    .btn.small {
-      padding: 8px 10px;
-      font-size: .85rem;
-    }
-
-    .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 30px 0 18px;
-    }
-
-    .section-heading h2 {
-      font-size: 1.65rem;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .search {
-      width: min(100%, 320px);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 12px 14px;
-      outline: none;
-    }
-
-    .search:focus, input:focus, textarea:focus, select:focus {
-      border-color: var(--accent);
-    }
-
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
-      gap: 20px;
-    }
-
-    .game-card {
-      overflow: hidden;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      transition: transform .2s, border-color .2s;
-      min-width: 0;
-    }
-
-    .game-card:hover {
-      transform: translateY(-3px);
-      border-color: #77708e;
-    }
-
-    .game-card.maintenance {
-      border-color: #ffb45480;
-    }
-
-    .game-cover {
-      height: 155px;
-      background: linear-gradient(135deg, #302b46, #51344a);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      font-size: 3rem;
-    }
-
-    .game-cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .game-info {
-      padding: 17px;
-    }
-
-    .game-info h3 {
-      font-size: 1.2rem;
-      margin-bottom: 9px;
-      overflow-wrap: anywhere;
-    }
-
-    .game-description {
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: .94rem;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .game-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-
-    .maintenance-badge {
-      display: inline-block;
-      margin-bottom: 10px;
-      padding: 6px 10px;
-      border-radius: 9px;
-      background: #ffb45420;
-      border: 1px solid #ffb45470;
-      color: #ffda9f;
-      font-size: .82rem;
-      font-weight: 900;
-    }
-
-    .maintenance-message {
-      margin-top: 10px;
-      padding: 10px;
-      background: #ffb45412;
-      border-radius: 9px;
-      color: #ffda9f;
-      font-size: .9rem;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .announcement {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      border-radius: 13px;
-      padding: 16px;
-      margin-bottom: 12px;
-    }
-
-    .announcement h3 {
-      margin-bottom: 7px;
-    }
-
-    .announcement p {
-      color: var(--muted);
-      line-height: 1.6;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .admin-panel {
-      margin-top: 45px;
-      padding: 23px;
-      background: #171722;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-    }
-
-    .admin-panel h2 {
-      margin-bottom: 15px;
-    }
-
-    .admin-form {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin: 18px 0 25px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      font-weight: 750;
-      font-size: .92rem;
-    }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      color: var(--text);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 11px;
-      outline: none;
-    }
-
-    .field textarea {
-      min-height: 95px;
-      resize: vertical;
-    }
-
-    .admin-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .admin-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
-      padding: 14px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-    }
-
-    .admin-row h3 {
-      margin-bottom: 6px;
-      overflow-wrap: anywhere;
-    }
-
-    .admin-row p {
-      color: var(--muted);
-      font-size: .9rem;
-      margin-top: 5px;
-    }
-
-    .admin-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .notice {
-      padding: 13px;
-      border-radius: 10px;
-      background: var(--panel2);
-      color: var(--muted);
-      line-height: 1.5;
-      margin: 12px 0;
-    }
-
-    .notice.error {
-      color: #ffb7c1;
-      border: 1px solid #a82d43;
-    }
-
-    .notice.success {
-      color: #a5f5d0;
-      border: 1px solid #247653;
-    }
-
-    .empty {
-      color: var(--muted);
-      text-align: center;
-      padding: 35px 15px;
-      border: 1px dashed var(--border);
-      border-radius: 14px;
-      grid-column: 1 / -1;
-    }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 25px 20px;
-      text-align: center;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background: #080810ed;
-      padding: 15px;
-    }
-
-    .modal.open {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 12px 12px 0 0;
-    }
-
-    .modal-bar h2 {
-      font-size: 1rem;
-      overflow-wrap: anywhere;
-    }
-
-    #gameFrame {
-      width: 100%;
-      flex: 1;
-      min-height: 0;
-      background: white;
-      border: 1px solid var(--border);
-      border-top: 0;
-      border-radius: 0 0 12px 12px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (max-width: 650px) {
-      main {
-        padding: 20px 14px 45px;
-      }
-
-      .hero {
-        padding: 28px 19px;
-      }
-
-      .admin-form {
-        grid-template-columns: 1fr;
-      }
-
-      .field.full {
-        grid-column: auto;
-      }
-
-      .admin-panel {
-        padding: 16px;
-      }
-
-      .nav {
-        padding: 13px 15px;
-      }
-
-      .game-cover {
-        height: 180px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#17111f">
+<title>Gourmand.fun — Les jeux du club informatique</title>
+
+<style>
+:root {
+  --bg:#17111f;
+  --panel:#241b30;
+  --panel2:#30233d;
+  --text:#fff8f0;
+  --muted:#c5b8ce;
+  --pink:#ff668a;
+  --orange:#ffb454;
+  --green:#6ee7b7;
+  --blue:#7dd3fc;
+  --danger:#ff626c;
+  --border:rgba(255,255,255,.12);
+}
+
+* { box-sizing:border-box }
+
+body {
+  margin:0;
+  background:
+    radial-gradient(circle at 10% 0%,#42213e 0,transparent 35%),
+    radial-gradient(circle at 100% 20%,#38264a 0,transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+  min-height:100vh;
+}
+
+button,input,textarea,select { font:inherit }
+button { cursor:pointer }
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline:3px solid var(--blue);
+  outline-offset:2px;
+}
+
+header {
+  position:sticky;
+  top:0;
+  z-index:20;
+  padding:14px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  background:rgba(23,17,31,.96);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(14px);
+}
+
+.logo {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:950;
+  font-size:1.35rem;
+}
+
+.logo-icon {
+  display:grid;
+  place-items:center;
+  width:44px;
+  height:44px;
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  border-radius:15px;
+  font-size:1.5rem;
+}
+
+.header-actions {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.btn {
+  border:0;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:800;
+  color:#211526;
+  background:linear-gradient(135deg,var(--orange),var(--pink));
+  transition:transform .15s,filter .15s;
+}
+
+.btn:hover {
+  transform:translateY(-2px);
+  filter:brightness(1.08);
+}
+
+.btn:disabled {
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+  filter:none;
+}
+
+.btn.secondary {
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+.btn.green { background:var(--green) }
+.btn.red { background:var(--danger);color:#2b1017 }
+.btn.small { padding:7px 10px;font-size:.85rem }
+
+.gradient-text {
+  background:linear-gradient(90deg,var(--orange),var(--pink));
+  color:transparent;
+  background-clip:text;
+}
+
+main {
+  width:min(1200px,92%);
+  margin:auto;
+}
+
+.hero {
+  padding:55px 0 35px;
+  display:grid;
+  grid-template-columns:1.4fr .6fr;
+  gap:25px;
+  align-items:center;
+}
+
+.eyebrow {
+  display:inline-block;
+  color:var(--orange);
+  background:#ffb4541f;
+  border:1px solid #ffb45440;
+  padding:7px 12px;
+  border-radius:30px;
+  font-weight:800;
+  font-size:.82rem;
+}
+
+h1 {
+  font-size:clamp(2.4rem,6vw,4.7rem);
+  line-height:1.03;
+  margin:18px 0;
+  letter-spacing:-2px;
+}
+
+.hero p {
+  color:var(--muted);
+  font-size:1.08rem;
+  line-height:1.7;
+}
+
+.hero-art {
+  text-align:center;
+  font-size:clamp(5rem,12vw,9rem);
+  animation:bob 3s ease-in-out infinite;
+}
+
+@keyframes bob {
+  50% { transform:translateY(-10px) rotate(3deg) }
+}
+
+.notice {
+  padding:13px 16px;
+  background:#6ee7b715;
+  border:1px solid #6ee7b738;
+  border-radius:14px;
+  color:#d4ffed;
+  margin-bottom:25px;
+  line-height:1.5;
+}
+
+.toolbar {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+
+.field {
+  width:100%;
+  padding:12px 13px;
+  color:var(--text);
+  background:#1f1729;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+.toolbar .search { flex:1 1 240px }
+.toolbar select { flex:0 1 190px }
+
+.section-title {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:25px 0 16px;
+}
+
+.section-title h2 {
+  margin:0;
+  font-size:1.55rem;
+}
+
+.muted { color:var(--muted) }
+
+.game-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:17px;
+  padding-bottom:50px;
+}
+
+.game-card {
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:20px;
+  background:linear-gradient(145deg,#ffffff0e,#ffffff05);
+  transition:.2s;
+}
+
+.game-card:hover {
+  transform:translateY(-4px);
+  border-color:#ffb45480;
+}
+
+/* Apparence des jeux en maintenance */
+.game-card.maintenance {
+  border-color:#ffb45480;
+}
+
+.game-card.maintenance:hover {
+  border-color:var(--orange);
+}
+
+.game-cover {
+  min-height:150px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  background:var(--cover,linear-gradient(135deg,#55304d,#282142));
+}
+
+.game-emoji {
+  font-size:4rem;
+  filter:drop-shadow(0 8px 10px #0005);
+}
+
+.platform-badge {
+  position:absolute;
+  left:10px;
+  top:10px;
+  font-size:.75rem;
+  background:#1d1424e8;
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:5px 9px;
+}
+
+.game-info { padding:16px }
+
+.game-info h3 {
+  margin:0 0 8px;
+  font-size:1.15rem;
+}
+
+.game-info p {
+  margin:0 0 15px;
+  color:var(--muted);
+  font-size:.9rem;
+  overflow-wrap:anywhere;
+}
+
+.game-buttons {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.game-buttons .btn { flex:1 }
+
+.maintenance-badge {
+  display:inline-block;
+  margin-bottom:10px;
+  padding:6px 10px;
+  border-radius:20px;
+  background:#ffb4541f;
+  border:1px solid #ffb45470;
+  color:#ffda9f;
+  font-weight:900;
+  font-size:.78rem;
+}
+
+.maintenance-message {
+  margin:10px 0 15px;
+  padding:11px;
+  border-radius:12px;
+  background:#ffb45412;
+  border:1px solid #ffb45430;
+  color:#ffe3b9;
+  font-size:.88rem;
+  line-height:1.6;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+
+.empty {
+  grid-column:1/-1;
+  text-align:center;
+  padding:45px 20px;
+  border:1px dashed var(--border);
+  border-radius:18px;
+  color:var(--muted);
+}
+
+footer {
+  padding:25px 5%;
+  border-top:1px solid var(--border);
+  text-align:center;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+footer strong { color:var(--text) }
+
+.overlay {
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:#07050cd9;
+  backdrop-filter:blur(8px);
+}
+
+.overlay.open { display:flex }
+
+.modal {
+  width:min(600px,100%);
+  max-height:90vh;
+  overflow-y:auto;
+  padding:23px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:22px;
+  box-shadow:0 25px 90px #0008;
+}
+
+.modal.wide { width:min(950px,100%) }
+.modal h2 { margin:0 0 16px }
+
+.modal-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:15px;
+}
+
+.close-btn {
+  border:0;
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:10px;
+  padding:8px 12px;
+  font-weight:900;
+}
+
+.form-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+}
+
+.form-group {
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin-bottom:13px;
+  min-width:0;
+}
+
+.form-group label {
+  font-size:.9rem;
+  font-weight:800;
+  color:#f2e8fa;
+}
+
+.form-group.full { grid-column:1/-1 }
+
+textarea.field {
+  min-height:110px;
+  resize:vertical;
+}
+
+.form-actions {
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+.admin-list {
+  display:grid;
+  gap:10px;
+  margin-top:18px;
+}
+
+.admin-item {
+  background:var(--panel2);
+  border:1px solid var(--border);
+  padding:13px;
+  border-radius:13px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+}
+
+.admin-item p {
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:.85rem;
+  overflow-wrap:anywhere;
+}
+
+.admin-item-actions {
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.status {
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:.75rem;
+  font-weight:900;
+}
+
+.status.on {
+  color:#c9ffe6;
+  background:#1b6848;
+}
+
+.status.off {
+  color:#ffe1e1;
+  background:#71323a;
+}
+
+.status.maintenance {
+  color:#ffe3b9;
+  background:#75491d;
+}
+
+.help {
+  color:var(--muted);
+  font-size:.85rem;
+  line-height:1.5;
+}
+
+#gameFrame {
+  width:100%;
+  height:min(70vh,650px);
+  background:#fff;
+  border:0;
+  border-radius:12px;
+}
+
+.game-warning {
+  padding:10px;
+  margin-bottom:12px;
+  border-radius:10px;
+  background:#ffb4541f;
+  color:#ffe3b9;
+}
+
+.toast {
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:500;
+  padding:12px 18px;
+  border-radius:12px;
+  background:var(--green);
+  color:#13251d;
+  font-weight:800;
+  box-shadow:0 8px 35px #0005;
+  display:none;
+  max-width:90%;
+  text-align:center;
+}
+
+.toast.show { display:block }
+
+.compatibility-icon {
+  text-align:center;
+  font-size:3.5rem;
+  margin-bottom:12px;
+}
+
+.compatibility-message {
+  color:var(--muted);
+  line-height:1.7;
+  margin-bottom:20px;
+  white-space:pre-line;
+}
+
+.compatibility-actions {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.compatibility-actions .btn {
+  flex:1;
+  min-width:140px;
+}
+
+.announcement-card { --announce-color:var(--blue) }
+
+.announcement-card[data-type="update"] {
+  --announce-color:var(--green);
+}
+
+.announcement-card[data-type="maintenance"] {
+  --announce-color:var(--orange);
+}
+
+.announcement-card[data-type="issue"] {
+  --announce-color:var(--pink);
+}
+
+.announcement-icon {
+  font-size:2.8rem;
+  margin-bottom:8px;
+}
+
+.announcement-label {
+  display:inline-block;
+  color:var(--announce-color);
+  background:color-mix(in srgb,var(--announce-color) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--announce-color) 40%,transparent);
+  border-radius:30px;
+  padding:5px 10px;
+  font-weight:900;
+  font-size:.78rem;
+  margin-bottom:10px;
+}
+
+.announcement-message {
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  line-height:1.7;
+  color:var(--muted);
+}
+
+.check-row {
+  display:flex;
+  gap:9px;
+  align-items:center;
+  margin-top:16px;
+  color:var(--muted);
+  font-size:.9rem;
+}
+
+.check-row input {
+  width:18px;
+  height:18px;
+}
+
+@media(max-width:800px) {
+  .hero {
+    grid-template-columns:1fr;
+    padding-top:35px;
+  }
+
+  .hero-art { display:none }
+
+  .game-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:520px) {
+  header { align-items:flex-start }
+
+  .logo { font-size:1.05rem }
+
+  .logo-icon {
+    width:38px;
+    height:38px;
+  }
+
+  .header-actions { flex-direction:column }
+
+  .header-actions .btn { padding:8px 10px }
+
+  .game-grid { grid-template-columns:1fr }
+
+  .form-grid { grid-template-columns:1fr }
+
+  .form-group.full { grid-column:auto }
+
+  .modal { padding:17px }
+
+  .admin-item {
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .compatibility-actions { flex-direction:column }
+}
+</style>
 </head>
 
 <body>
-
 <header>
-  <nav class="nav">
-    <div class="logo">🍔 Gourmand<span>.fun</span></div>
+  <div class="logo">
+    <div class="logo-icon">🍔</div>
+    <span>Gourmand<span class="gradient-text">.fun</span></span>
+  </div>
 
-    <div class="nav-actions">
-      <button class="btn secondary" id="loginBtn">
-        🔐 Connexion admin
-      </button>
-      <button class="btn secondary hidden" id="logoutBtn">
-        Déconnexion
-      </button>
-      <button class="btn hidden" id="adminNavBtn">
-        ⚙️ Administration
-      </button>
-    </div>
-  </nav>
+  <div class="header-actions">
+    <button class="btn secondary" id="showAnnouncementsBtn">📢 Annonces</button>
+    <button class="btn secondary" id="adminLoginBtn">🔐 Administration</button>
+    <button class="btn secondary" id="logoutBtn" hidden>Déconnexion</button>
+  </div>
 </header>
 
 <main>
   <section class="hero">
-    <h1>Bienvenue sur <span>Gourmand.fun</span> 🍕</h1>
-
-    <p>
-      Découvre les jeux du club informatique, lance une partie
-      et amuse-toi ! De nouveaux jeux peuvent être ajoutés au fil du temps.
-    </p>
-
-    <div class="hero-buttons">
-      <button class="btn" id="exploreBtn">🎮 Découvrir les jeux</button>
-      <button class="btn secondary" id="announcementBtn">
-        📢 Annonces
-      </button>
+    <div>
+      <span class="eyebrow">🎮 LES JEUX DU CLUB INFORMATIQUE</span>
+      <h1>Une petite faim de <span class="gradient-text">jeux ?</span></h1>
+      <p>Bienvenue sur Gourmand.fun ! Découvre les jeux du club informatique, lance une partie et amuse-toi. Il y a toujours quelque chose à tester !</p>
+      <button class="btn" id="discoverBtn">🍟 Découvrir les jeux</button>
     </div>
+
+    <div class="hero-art" aria-hidden="true">🍔🎮🍟</div>
   </section>
 
-  <section id="announcementsSection">
-    <div class="section-heading">
-      <h2>📢 Annonces du club</h2>
+  <div class="notice">
+    💻 <strong>Les jeux du club informatique :</strong>
+    certains jeux sont jouables directement sur le site.
+    D'autres peuvent ouvrir une page externe.
+    <br>
+    📦 Les jeux proposés ici peuvent être téléchargés lorsque leur licence et leur page de distribution le permettent.
+  </div>
+
+  <section id="catalogue">
+    <div class="section-title">
+      <h2>🍕 Le menu des jeux</h2>
+      <span class="muted" id="gameCount">Chargement…</span>
     </div>
 
-    <div id="announcementsList">
-      <div class="empty">Chargement des annonces…</div>
-    </div>
-  </section>
+    <div class="toolbar">
+      <input class="field search" id="searchInput" type="search"
+        placeholder="🔎 Chercher un jeu…">
 
-  <section id="gamesSection">
-    <div class="section-heading">
-      <div>
-        <h2>🎮 Tous les jeux</h2>
-        <p class="muted">Choisis ton prochain jeu !</p>
-      </div>
-
-      <input
-        class="search"
-        id="searchInput"
-        type="search"
-        placeholder="🔎 Rechercher un jeu…"
-        aria-label="Rechercher un jeu"
-      >
+      <select class="field" id="platformFilter" aria-label="Filtrer par appareil">
+        <option value="all">💻 Tous les appareils</option>
+        <option value="pc">🖥️ PC uniquement</option>
+        <option value="mobile">📱 Mobile / tablette</option>
+      </select>
     </div>
 
-    <div id="gamesGrid" class="games-grid">
-      <div class="empty">Chargement des jeux…</div>
-    </div>
-  </section>
-
-  <section id="adminPanel" class="admin-panel hidden">
-    <h2>⚙️ Administration</h2>
-
-    <p class="muted">
-      Ajoute des jeux, modifie leur statut et publie les annonces du club.
-    </p>
-
-    <div id="adminNotice" class="notice">
-      Tu es connecté à l'espace administrateur.
-    </div>
-
-    <h3>➕ Ajouter ou modifier un jeu</h3>
-
-    <form id="gameForm" class="admin-form">
-      <input type="hidden" id="gameId">
-
-      <div class="field">
-        <label for="gameTitle">Nom du jeu *</label>
-        <input id="gameTitle" required maxlength="100">
-      </div>
-
-      <div class="field">
-        <label for="gameType">Type de jeu *</label>
-        <select id="gameType" required>
-          <option value="html">HTML intégré</option>
-          <option value="url">Site ou jeu en ligne</option>
-        </select>
-      </div>
-
-      <div class="field full">
-        <label for="gameDescription">Description</label>
-        <textarea id="gameDescription" maxlength="1000"></textarea>
-      </div>
-
-      <div class="field full">
-        <label for="gameCover">URL de l'image de couverture (facultatif)</label>
-        <input id="gameCover" type="url" placeholder="https://exemple.com/image.jpg">
-      </div>
-
-      <div class="field full">
-        <label id="gameContentLabel" for="gameContent">
-          Code HTML du jeu *
-        </label>
-        <textarea
-          id="gameContent"
-          required
-          placeholder="Colle ici le code HTML du jeu."
-        ></textarea>
-      </div>
-
-      <div class="field full">
-        <button class="btn" type="submit" id="saveGameBtn">
-          💾 Enregistrer le jeu
-        </button>
-
-        <button
-          class="btn secondary hidden"
-          type="button"
-          id="cancelEditBtn"
-        >
-          Annuler la modification
-        </button>
-      </div>
-    </form>
-
-    <h3>🕹️ Gestion des jeux</h3>
-    <div id="adminGamesList" class="admin-list">
-      <div class="empty">Chargement…</div>
-    </div>
-
-    <h3 style="margin-top:30px">📢 Publier une annonce</h3>
-
-    <form id="announcementForm" class="admin-form">
-      <div class="field full">
-        <label for="announcementTitle">Titre *</label>
-        <input id="announcementTitle" required maxlength="120">
-      </div>
-
-      <div class="field full">
-        <label for="announcementText">Message *</label>
-        <textarea id="announcementText" required maxlength="2000"></textarea>
-      </div>
-
-      <div class="field full">
-        <button class="btn" type="submit">
-          📢 Publier l'annonce
-        </button>
-      </div>
-    </form>
-
-    <h3>🗂️ Gestion des annonces</h3>
-    <div id="adminAnnouncementsList" class="admin-list">
-      <div class="empty">Chargement…</div>
+    <div class="game-grid" id="gameGrid">
+      <div class="empty">🍳 Chargement du menu…</div>
     </div>
   </section>
 </main>
 
 <footer>
-  <p>🍔 Gourmand.fun — Les jeux du club informatique</p>
-  <p>
-    Les jeux peuvent être temporairement indisponibles pendant leur réparation.
-  </p>
-  <p>Amuse-toi bien ! 🎮</p>
+  <strong>🍔 Gourmand.fun</strong><br>
+  Les jeux du club informatique.<br>
+  <span>En cas de problème, consulte les annonces du site.</span>
 </footer>
 
-<div class="modal" id="gameModal" aria-hidden="true">
-  <div class="modal-bar">
-    <h2 id="gameModalTitle">🎮 Jeu</h2>
-    <button class="btn danger" id="closeGameBtn">✕ Fermer</button>
+<!-- Lecteur de jeu -->
+<div class="overlay" id="gameOverlay">
+  <div class="modal wide">
+    <div class="modal-head">
+      <h2 id="playerTitle">🎮 Jeu</h2>
+      <button class="close-btn" id="closeGameBtn">✕ Fermer</button>
+    </div>
+
+    <div id="gameWarning" class="game-warning" hidden></div>
+
+    <iframe id="gameFrame" title="Jeu"
+      allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
+      allowfullscreen></iframe>
+
+    <div class="form-actions">
+      <button class="btn secondary" id="openGameTabBtn">
+        ↗ Ouvrir dans un nouvel onglet
+      </button>
+    </div>
   </div>
-
-  <iframe
-    id="gameFrame"
-    title="Jeu"
-    sandbox="allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals"
-    allow="fullscreen; gamepad"
-    referrerpolicy="no-referrer"
-  ></iframe>
 </div>
 
-<div id="toast" class="hidden" role="status" aria-live="polite"
-  style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-  z-index:200;background:#29283b;border:1px solid #55516b;
-  border-radius:12px;padding:13px 18px;max-width:90%;color:white">
+<!-- Avertissement de compatibilité -->
+<div class="overlay" id="platformWarningOverlay">
+  <div class="modal" role="dialog" aria-modal="true"
+    aria-labelledby="platformWarningTitle">
+    <div class="compatibility-icon" id="platformWarningIcon">⚠️</div>
+    <h2 id="platformWarningTitle">Attention !</h2>
+    <div class="compatibility-message" id="platformWarningMessage"></div>
+
+    <div class="compatibility-actions">
+      <button class="btn secondary" id="cancelPlatformWarningBtn">❌ Annuler</button>
+      <button class="btn" id="continuePlatformWarningBtn">🎮 Continuer quand même</button>
+    </div>
+  </div>
 </div>
+
+<!-- Connexion admin -->
+<div class="overlay" id="loginOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>🔐 Administration</h2>
+      <button class="close-btn" data-close="loginOverlay">✕</button>
+    </div>
+
+    <p class="muted">
+      Connecte-toi avec le compte Google autorisé à administrer le site.
+    </p>
+
+    <button class="btn" id="googleLoginBtn">Continuer avec Google</button>
+
+    <p class="help">
+      Les droits doivent également être protégés par les règles de sécurité Firebase.
+    </p>
+  </div>
+</div>
+
+<!-- Administration -->
+<div class="overlay" id="adminOverlay">
+  <div class="modal wide">
+    <div class="modal-head">
+      <h2>🧑‍🍳 Cuisine du site — Administration</h2>
+      <button class="close-btn" data-close="adminOverlay">✕ Fermer</button>
+    </div>
+
+    <p class="muted">
+      Gère les jeux, leur maintenance et publie des annonces sans modifier le fichier HTML.
+    </p>
+
+    <div class="section-title">
+      <h2>🎮 Ajouter ou modifier un jeu</h2>
+    </div>
+
+    <form id="gameForm">
+      <input type="hidden" id="gameEditId">
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="gameTitle">Nom du jeu</label>
+          <input class="field" id="gameTitle" required maxlength="80"
+            placeholder="Ex. Snake">
+        </div>
+
+        <div class="form-group">
+          <label for="gameEmoji">Emoji</label>
+          <input class="field" id="gameEmoji" maxlength="12" value="🎮">
+        </div>
+
+        <div class="form-group">
+          <label for="gameBackground">Couleur du fond</label>
+          <select class="field" id="gameBackground">
+            <option value="linear-gradient(135deg,#55304d,#282142)">🍇 Violet</option>
+            <option value="linear-gradient(135deg,#7f303a,#3d1d38)">🍓 Rouge</option>
+            <option value="linear-gradient(135deg,#27644e,#1d3241)">🥑 Vert</option>
+            <option value="linear-gradient(135deg,#8a5929,#493047)">🍊 Orange</option>
+            <option value="linear-gradient(135deg,#235c86,#332b59)">🫐 Bleu</option>
+            <option value="linear-gradient(135deg,#735b24,#493047)">🍍 Jaune</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="gamePlatform">Compatibilité</label>
+          <select class="field" id="gamePlatform">
+            <option value="all">PC, tablette et téléphone</option>
+            <option value="pc">PC uniquement</option>
+            <option value="mobile">Mobile et tablette</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="gameType">Type de jeu</label>
+          <select class="field" id="gameType">
+            <option value="url">Lien vers un jeu / site</option>
+            <option value="html">Code HTML du jeu</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="gameContent">Lien ou code HTML</label>
+          <textarea class="field" id="gameContent" required
+            placeholder="Colle ici l'URL du jeu ou son code HTML"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn green" type="submit" id="saveGameBtn">
+          ➕ Enregistrer le jeu
+        </button>
+
+        <button class="btn secondary" type="button"
+          id="cancelGameEditBtn" hidden>
+          Annuler la modification
+        </button>
+      </div>
+    </form>
+
+    <div class="section-title">
+      <h2>📚 Jeux enregistrés</h2>
+    </div>
+
+    <div id="adminGameList" class="admin-list"></div>
+
+    <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
+
+    <div class="section-title">
+      <h2>📢 Publier une annonce</h2>
+    </div>
+
+    <p class="help">
+      Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.
+    </p>
+
+    <form id="announcementForm">
+      <input type="hidden" id="announcementEditId">
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="announcementTitle">Titre de l'annonce</label>
+          <input class="field" id="announcementTitle" required maxlength="100"
+            placeholder="Ex. Maintenance ce soir">
+        </div>
+
+        <div class="form-group">
+          <label for="announcementType">Type d'annonce</label>
+          <select class="field" id="announcementType">
+            <option value="info">ℹ️ Information</option>
+            <option value="update">🆕 Mise à jour</option>
+            <option value="maintenance">🛠️ Maintenance</option>
+            <option value="issue">🚨 Problème technique</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label for="announcementMessage">Message</label>
+          <textarea class="field" id="announcementMessage" required maxlength="2000"
+            placeholder="Explique aux visiteurs ce qu'ils doivent savoir…"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="announcementExpires">Date de fin (facultative)</label>
+          <input class="field" id="announcementExpires" type="datetime-local">
+          <span class="help">Laisse vide pour une annonce sans expiration automatique.</span>
+        </div>
+
+        <div class="form-group">
+          <label style="display:flex;gap:10px;align-items:center;padding:10px 0">
+            <input id="announcementActive" type="checkbox" checked
+              style="width:18px;height:18px">
+            Annonce active
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn green" id="saveAnnouncementBtn" type="submit">
+          📢 Publier l'annonce
+        </button>
+
+        <button class="btn secondary" id="cancelAnnouncementEditBtn"
+          type="button" hidden>
+          Annuler la modification
+        </button>
+      </div>
+    </form>
+
+    <div class="section-title">
+      <h2>🗞️ Annonces enregistrées</h2>
+    </div>
+
+    <div id="adminAnnouncementList" class="admin-list"></div>
+  </div>
+</div>
+
+<!-- Annonce publique -->
+<div class="overlay" id="announcementOverlay">
+  <div class="modal announcement-card" id="announcementModal"
+    data-type="info" role="dialog" aria-modal="true"
+    aria-labelledby="publicAnnouncementTitle">
+
+    <div class="modal-head">
+      <div class="announcement-icon" id="publicAnnouncementIcon">📢</div>
+      <button class="close-btn" id="closeAnnouncementX"
+        aria-label="Fermer l'annonce">✕</button>
+    </div>
+
+    <span class="announcement-label" id="publicAnnouncementType">
+      INFORMATION
+    </span>
+
+    <h2 id="publicAnnouncementTitle">Une annonce</h2>
+
+    <div class="announcement-message" id="publicAnnouncementMessage"></div>
+
+    <label class="check-row">
+      <input type="checkbox" id="neverShowAnnouncement">
+      Ne plus afficher cette annonce sur ce navigateur
+    </label>
+
+    <div class="form-actions">
+      <button class="btn" id="closeAnnouncementBtn">J'ai compris 👍</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
-  import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
-  import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signOut,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  import {
-    getFirestore,
-    collection,
-    doc,
-    addDoc,
-    updateDoc,
-    deleteDoc,
-    onSnapshot,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-  // ============================================================
-  // CONFIGURATION FIREBASE
-  // Remplace les valeurs A_REMPLACER par celles de ton projet.
-  // ============================================================
-
-  const firebaseConfig = {
+/* CONFIGURATION FIREBASE */
+const firebaseConfig = {
   apiKey: "AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
   authDomain: "jeux-feuxxx.firebaseapp.com",
   databaseURL: "https://jeux-feuxxx-default-rtdb.firebaseio.com",
@@ -728,783 +968,1182 @@
   measurementId: "G-41PSST98ZZ"
 };
 
-  // Adresse Google autorisée à administrer le site.
-  const ADMIN_EMAIL = "x.kaboom.x02@gmail.com";
+const ADMIN_EMAIL = "x.kaboom.x02@gmail.com";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-  let currentUser = null;
-  let games = [];
-  let announcements = [];
-  let unsubscribeGames = null;
-  let unsubscribeAnnouncements = null;
-  let toastTimer = null;
+const gamesRef = collection(db, "games");
+const announcementsRef = collection(db, "announcements");
 
-  const $ = id => document.getElementById(id);
+let games = [];
+let announcements = [];
+let currentUser = null;
+let currentGame = null;
+let editingGame = null;
+let editingAnnouncement = null;
+let currentAnnouncement = null;
+let pendingGame = null;
+let gamesLoaded = false;
+let announcementsLoaded = false;
 
-  function isAdmin() {
-    return Boolean(
-      currentUser &&
-      currentUser.email &&
-      currentUser.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()
-    );
-  }
+const shownThisPage = new Set();
+const $ = id => document.getElementById(id);
 
-  function toast(message) {
-    const element = $("toast");
-    element.textContent = message;
-    element.classList.remove("hidden");
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.classList.remove("show"), 3500);
+}
 
-    clearTimeout(toastTimer);
+function isAdmin() {
+  return !!currentUser &&
+    currentUser.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+}
 
-    toastTimer = setTimeout(() => {
-      element.classList.add("hidden");
-    }, 3500);
-  }
+function openOverlay(id) {
+  $(id).classList.add("open");
+}
 
-  function setAdminNotice(message, type = "") {
-    const element = $("adminNotice");
-    element.textContent = message;
-    element.className = "notice";
+function closeOverlay(id) {
+  $(id).classList.remove("open");
+}
 
-    if (type) element.classList.add(type);
-  }
+function safeText(value) {
+  return String(value ?? "");
+}
 
-  function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, character => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    })[character]);
-  }
+/* Fermeture des fenêtres */
+document.querySelectorAll("[data-close]").forEach(button => {
+  button.addEventListener("click", () => closeOverlay(button.dataset.close));
+});
 
-  function makeElement(tag, className, text) {
-    const element = document.createElement(tag);
+document.querySelectorAll(".overlay").forEach(overlay => {
+  overlay.addEventListener("click", event => {
+    if (event.target !== overlay) return;
 
-    if (className) element.className = className;
-    if (text !== undefined) element.textContent = text;
-
-    return element;
-  }
-
-  function formatDate(timestamp) {
-    if (!timestamp || typeof timestamp.toDate !== "function") {
-      return "";
+    if (overlay.id === "gameOverlay") {
+      stopCurrentGame();
     }
 
-    return timestamp.toDate().toLocaleDateString("fr-FR");
-  }
-
-  // ============================================================
-  // AFFICHAGE DES JEUX
-  // ============================================================
-
-  function renderGames() {
-    const grid = $("gamesGrid");
-    const search = $("searchInput").value.trim().toLowerCase();
-
-    grid.replaceChildren();
-
-    const filteredGames = games.filter(game => {
-      const text = `${game.title || ""} ${game.description || ""}`;
-      return text.toLowerCase().includes(search);
-    });
-
-    if (!filteredGames.length) {
-      grid.append(makeElement(
-        "div",
-        "empty",
-        search
-          ? "Aucun jeu ne correspond à ta recherche."
-          : "Aucun jeu n'a encore été ajouté."
-      ));
+    if (overlay.id === "announcementOverlay") {
+      closePublicAnnouncement();
       return;
     }
 
-    filteredGames.forEach(game => {
-      const card = makeElement("article", "game-card");
+    if (overlay.id === "platformWarningOverlay") {
+      pendingGame = null;
+    }
 
-      if (game.maintenance) {
-        card.classList.add("maintenance");
-      }
+    overlay.classList.remove("open");
+  });
+});
 
-      const cover = makeElement("div", "game-cover");
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape") return;
 
-      if (game.cover) {
-        const image = document.createElement("img");
-        image.src = game.cover;
-        image.alt = "Couverture de " + (game.title || "jeu");
-        image.loading = "lazy";
-
-        image.addEventListener("error", () => {
-          image.remove();
-          cover.textContent = "🎮";
-        });
-
-        cover.append(image);
-      } else {
-        cover.textContent = "🎮";
-      }
-
-      const info = makeElement("div", "game-info");
-      const title = makeElement("h3", "", game.title || "Jeu sans titre");
-      const description = makeElement(
-        "p",
-        "game-description",
-        game.description || "Découvre ce jeu !"
-      );
-
-      const actions = makeElement("div", "game-actions");
-
-      if (game.maintenance) {
-        const badge = makeElement(
-          "div",
-          "maintenance-badge",
-          "🛠️ Jeu temporairement indisponible"
-        );
-
-        const message = makeElement(
-          "p",
-          "maintenance-message",
-          game.maintenanceMessage ||
-          "Ce jeu est en cours de réparation. Reviens bientôt !"
-        );
-
-        const disabledButton = makeElement(
-          "button",
-          "btn secondary",
-          "⏸️ En maintenance"
-        );
-
-        disabledButton.disabled = true;
-
-        info.append(title, badge, description, message);
-        actions.append(disabledButton);
-      } else {
-        const playButton = makeElement("button", "btn", "▶ Jouer");
-
-        playButton.addEventListener("click", () => playGame(game));
-
-        info.append(title, description);
-        actions.append(playButton);
-      }
-
-      info.append(actions);
-      card.append(cover, info);
-      grid.append(card);
-    });
+  if ($("gameOverlay").classList.contains("open")) {
+    stopCurrentGame();
   }
 
-  // ============================================================
-  // LANCEMENT DES JEUX
-  // ============================================================
+  ["loginOverlay", "adminOverlay", "platformWarningOverlay"]
+    .forEach(closeOverlay);
 
-  function playGame(game) {
-    if (game.maintenance) {
-      toast(
+  pendingGame = null;
+
+  if ($("announcementOverlay").classList.contains("open")) {
+    closePublicAnnouncement();
+  }
+});
+
+$("discoverBtn").addEventListener("click", () => {
+  $("catalogue").scrollIntoView({ behavior:"smooth" });
+});
+
+/* Détection PC, tablette ou téléphone */
+function detectDevice() {
+  const ua = navigator.userAgent || "";
+  const uaData = navigator.userAgentData;
+
+  const isIPad =
+    /iPad/i.test(ua) ||
+    (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+
+  if (isIPad) return "tablet";
+
+  if (uaData && uaData.mobile === true) return "phone";
+
+  if (/iPhone|iPod|Windows Phone|IEMobile/i.test(ua)) {
+    return "phone";
+  }
+
+  if (/Android/i.test(ua)) {
+    return /Mobile/i.test(ua) ? "phone" : "tablet";
+  }
+
+  if (/Tablet|PlayBook|Silk/i.test(ua)) return "tablet";
+  if (/Mobile/i.test(ua)) return "phone";
+
+  const touchPoints = navigator.maxTouchPoints || 0;
+  const smallestScreenSide = Math.min(
+    window.screen?.width || window.innerWidth,
+    window.screen?.height || window.innerHeight
+  );
+
+  if (touchPoints > 1 && smallestScreenSide < 1100) {
+    return "tablet";
+  }
+
+  return "pc";
+}
+
+function deviceLabel(device) {
+  if (device === "phone") return "téléphone";
+  if (device === "tablet") return "tablette";
+  return "ordinateur";
+}
+
+function platformLabel(platform) {
+  if (platform === "pc") return "🖥️ PC uniquement";
+  if (platform === "mobile") return "📱 Mobile / tablette";
+  return "💻 Tous appareils";
+}
+
+/* =====================================================
+   CATALOGUE DES JEUX ET MAINTENANCE
+   ===================================================== */
+
+function renderGames() {
+  const search = $("searchInput").value.trim().toLowerCase();
+  const platform = $("platformFilter").value;
+
+  const visible = games.filter(game => {
+    const title = safeText(game.title).toLowerCase();
+
+    const matchesSearch = title.includes(search);
+    const matchesPlatform =
+      platform === "all" ||
+      game.platform === "all" ||
+      game.platform === platform;
+
+    return matchesSearch && matchesPlatform;
+  });
+
+  const maintenanceCount =
+    visible.filter(game => game.maintenance === true).length;
+
+  $("gameCount").textContent =
+    `${visible.length} jeu${visible.length > 1 ? "x" : ""}` +
+    (maintenanceCount ? ` • ${maintenanceCount} en maintenance` : "");
+
+  const grid = $("gameGrid");
+  grid.replaceChildren();
+
+  if (!visible.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = gamesLoaded
+      ? "🍽️ Aucun jeu trouvé. Essaie une autre recherche !"
+      : "🍳 Chargement du menu…";
+
+    grid.append(empty);
+    return;
+  }
+
+  visible.forEach(game => {
+    const card = document.createElement("article");
+    card.className = "game-card";
+
+    if (game.maintenance === true) {
+      card.classList.add("maintenance");
+    }
+
+    const cover = document.createElement("div");
+    cover.className = "game-cover";
+    cover.style.background =
+      game.background || "linear-gradient(135deg,#55304d,#282142)";
+
+    const emoji = document.createElement("div");
+    emoji.className = "game-emoji";
+    emoji.textContent = game.emoji || "🎮";
+
+    const badge = document.createElement("span");
+    badge.className = "platform-badge";
+    badge.textContent = platformLabel(game.platform);
+
+    cover.append(emoji, badge);
+
+    const info = document.createElement("div");
+    info.className = "game-info";
+
+    const title = document.createElement("h3");
+    title.textContent = game.title || "Jeu sans nom";
+
+    const description = document.createElement("p");
+    description.textContent = game.description || "Prêt à jouer ?";
+
+    info.append(title, description);
+
+    const buttons = document.createElement("div");
+    buttons.className = "game-buttons";
+
+    if (game.maintenance === true) {
+      const maintenanceBadge = document.createElement("span");
+      maintenanceBadge.className = "maintenance-badge";
+      maintenanceBadge.textContent = "🛠️ TEMPORAIREMENT INDISPONIBLE";
+
+      const message = document.createElement("div");
+      message.className = "maintenance-message";
+      message.textContent =
         game.maintenanceMessage ||
-        "Ce jeu est temporairement indisponible."
-      );
-      return;
-    }
+        "Ce jeu est actuellement en maintenance. Reviens bientôt !";
 
-    launchGame(game);
-  }
+      const disabledButton = document.createElement("button");
+      disabledButton.className = "btn";
+      disabledButton.textContent = "🛠️ En maintenance";
+      disabledButton.disabled = true;
 
-  function launchGame(game) {
-    // Deuxième vérification pour éviter un lancement accidentel.
-    if (game.maintenance) {
-      toast("Ce jeu est actuellement en maintenance.");
-      return;
-    }
-
-    const frame = $("gameFrame");
-    const modal = $("gameModal");
-
-    $("gameModalTitle").textContent = "🎮 " + (game.title || "Jeu");
-
-    if (game.type === "url") {
-      let url;
-
-      try {
-        url = new URL(game.content);
-      } catch {
-        toast("L'adresse du jeu est invalide.");
-        return;
-      }
-
-      if (!["http:", "https:"].includes(url.protocol)) {
-        toast("Cette adresse n'est pas autorisée.");
-        return;
-      }
-
-      frame.removeAttribute("srcdoc");
-      frame.src = url.href;
+      buttons.append(disabledButton);
+      info.append(maintenanceBadge, message, buttons);
     } else {
-      frame.removeAttribute("src");
-      frame.srcdoc = game.content || "<h1>Ce jeu n'a pas de code.</h1>";
+      const play = document.createElement("button");
+      play.className = "btn";
+      play.textContent = "▶ Jouer";
+      play.addEventListener("click", () => playGame(game));
+
+      buttons.append(play);
+      info.append(buttons);
     }
 
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    document.body.style.overflow = "hidden";
+    card.append(cover, info);
+    grid.append(card);
+  });
+}
+
+$("searchInput").addEventListener("input", renderGames);
+$("platformFilter").addEventListener("change", renderGames);
+
+/* =====================================================
+   COMPATIBILITÉ ET LANCEMENT DES JEUX
+   ===================================================== */
+
+function playGame(game) {
+  if (game.maintenance === true) {
+    toast(
+      game.maintenanceMessage ||
+      "🛠️ Ce jeu est temporairement indisponible."
+    );
+    return;
   }
 
-  function closeGame() {
-    const modal = $("gameModal");
-    const frame = $("gameFrame");
+  const device = detectDevice();
 
-    modal.classList.remove("open");
-    modal.setAttribute("aria-hidden", "true");
+  const incompatible =
+    (game.platform === "pc" && device !== "pc") ||
+    (game.platform === "mobile" && device === "pc");
 
-    // Arrête le jeu lorsqu'on ferme sa fenêtre.
-    frame.src = "about:blank";
-    frame.removeAttribute("srcdoc");
-
-    document.body.style.overflow = "";
+  if (!incompatible) {
+    launchGame(game);
+    return;
   }
 
-  $("closeGameBtn").addEventListener("click", closeGame);
+  pendingGame = game;
 
-  $("gameModal").addEventListener("click", event => {
-    if (event.target === $("gameModal")) closeGame();
-  });
+  if (game.platform === "pc") {
+    $("platformWarningIcon").textContent = "🖥️";
+    $("platformWarningTitle").textContent = "Jeu conçu pour PC";
 
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && $("gameModal").classList.contains("open")) {
-      closeGame();
-    }
-  });
+    $("platformWarningMessage").textContent =
+      `Ton appareil semble être un ${deviceLabel(device)}.\n\n` +
+      "Ce jeu peut nécessiter un clavier, une souris ou un grand écran. " +
+      "Des ralentissements peuvent apparaître selon les capacités de ton appareil.\n\n" +
+      "Il risque de ne pas fonctionner correctement. Tu peux quand même essayer.";
+  } else {
+    $("platformWarningIcon").textContent = "📱";
+    $("platformWarningTitle").textContent = "Jeu conçu pour mobile";
 
-  // ============================================================
-  // ANNONCES
-  // ============================================================
+    $("platformWarningMessage").textContent =
+      "Ton appareil semble être un ordinateur.\n\n" +
+      "Ce jeu est principalement prévu pour un écran tactile. " +
+      "Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.\n\n" +
+      "Tu peux quand même essayer.";
+  }
 
-  function renderAnnouncements() {
-    const container = $("announcementsList");
-    container.replaceChildren();
+  openOverlay("platformWarningOverlay");
+}
 
-    if (!announcements.length) {
-      container.append(makeElement(
-        "div",
-        "empty",
-        "Pas d'annonce pour le moment. À bientôt !"
-      ));
+$("cancelPlatformWarningBtn").addEventListener("click", () => {
+  pendingGame = null;
+  closeOverlay("platformWarningOverlay");
+});
+
+$("continuePlatformWarningBtn").addEventListener("click", () => {
+  const game = pendingGame;
+  pendingGame = null;
+  closeOverlay("platformWarningOverlay");
+
+  if (game) launchGame(game);
+});
+
+function launchGame(game) {
+  if (game.maintenance === true) {
+    toast("🛠️ Ce jeu est actuellement en maintenance.");
+    return;
+  }
+
+  currentGame = game;
+
+  $("playerTitle").textContent =
+    `${game.emoji || "🎮"} ${game.title || "Jeu"}`;
+
+  const frame = $("gameFrame");
+
+  frame.src = "about:blank";
+  frame.removeAttribute("srcdoc");
+  frame.removeAttribute("sandbox");
+
+  if (game.type === "html") {
+    frame.setAttribute(
+      "sandbox",
+      "allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals"
+    );
+
+    frame.srcdoc = game.content || "<p>Ce jeu n'a pas de code.</p>";
+  } else {
+    const url = validateGameUrl(game.content);
+
+    if (!url) {
+      toast("Le lien de ce jeu n'est pas valide.");
+      currentGame = null;
       return;
     }
 
-    announcements.forEach(announcement => {
-      const card = makeElement("article", "announcement");
-      const title = makeElement(
-        "h3",
-        "",
-        announcement.title || "Annonce du club"
-      );
-      const text = makeElement("p", "", announcement.text || "");
-      const date = makeElement(
-        "small",
-        "muted",
-        formatDate(announcement.createdAt)
-      );
-
-      card.append(title, text, date);
-      container.append(card);
-    });
+    frame.src = url;
   }
 
-  function renderAdminAnnouncements() {
-    const container = $("adminAnnouncementsList");
-    container.replaceChildren();
-
-    if (!announcements.length) {
-      container.append(makeElement(
-        "div",
-        "empty",
-        "Aucune annonce à gérer."
-      ));
+  $("openGameTabBtn").onclick = () => {
+    if (game.type === "html") {
+      toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
       return;
     }
 
-    announcements.forEach(announcement => {
-      const row = makeElement("div", "admin-row");
-      const left = document.createElement("div");
+    const url = validateGameUrl(game.content);
 
-      left.append(
-        makeElement("h3", "", announcement.title || "Annonce"),
-        makeElement("p", "", announcement.text || "")
-      );
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else {
+      toast("Le lien de ce jeu n'est pas valide.");
+    }
+  };
 
-      const removeButton = makeElement(
-        "button",
-        "btn danger small",
-        "🗑️ Supprimer"
-      );
+  openOverlay("gameOverlay");
+}
 
-      removeButton.addEventListener("click", async () => {
-        if (!isAdmin()) return toast("Accès refusé.");
+function validateGameUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
 
-        if (!confirm(`Supprimer l'annonce « ${announcement.title} » ?`)) {
+    if (url.protocol === "https:" || url.protocol === "http:") {
+      return url.href;
+    }
+  } catch (error) {
+    console.warn("URL de jeu invalide", error);
+  }
+
+  return null;
+}
+
+function stopCurrentGame() {
+  const frame = $("gameFrame");
+
+  frame.src = "about:blank";
+  frame.removeAttribute("srcdoc");
+
+  closeOverlay("gameOverlay");
+  currentGame = null;
+}
+
+$("closeGameBtn").addEventListener("click", stopCurrentGame);
+
+/* =====================================================
+   CONNEXION ADMINISTRATEUR
+   ===================================================== */
+
+$("adminLoginBtn").addEventListener("click", () => {
+  if (isAdmin()) {
+    openOverlay("adminOverlay");
+  } else {
+    openOverlay("loginOverlay");
+  }
+});
+
+$("googleLoginBtn").addEventListener("click", async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+
+    if (
+      result.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()
+    ) {
+      await signOut(auth);
+      toast("Ce compte Google n'est pas autorisé.");
+      return;
+    }
+
+    closeOverlay("loginOverlay");
+    openOverlay("adminOverlay");
+    toast("Connexion administrateur réussie !");
+  } catch (error) {
+    console.error("Erreur de connexion Google :", error);
+    toast("Connexion impossible. Vérifie Firebase et les fenêtres pop-up.");
+  }
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    closeOverlay("adminOverlay");
+    toast("Déconnexion réussie.");
+  } catch (error) {
+    console.error(error);
+    toast("La déconnexion a échoué.");
+  }
+});
+
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+
+  $("logoutBtn").hidden = !user;
+  $("adminLoginBtn").textContent =
+    isAdmin() ? "🧑‍🍳 Administration" : "🔐 Administration";
+
+  if (user && !isAdmin()) {
+    toast("Ce compte n'a pas les droits administrateur.");
+    signOut(auth).catch(console.error);
+    return;
+  }
+
+  if (isAdmin()) {
+    renderAdminGames();
+    renderAdminAnnouncements();
+  } else {
+    closeOverlay("adminOverlay");
+  }
+});
+
+/* =====================================================
+   GESTION DES JEUX
+   ===================================================== */
+
+$("gameForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!isAdmin()) {
+    toast("Accès refusé.");
+    return;
+  }
+
+  const title = $("gameTitle").value.trim();
+  const content = $("gameContent").value.trim();
+  const type = $("gameType").value;
+
+  if (!title || !content) {
+    toast("Remplis le nom et le contenu du jeu.");
+    return;
+  }
+
+  if (type === "url" && !validateGameUrl(content)) {
+    toast("Pour un lien, utilise une adresse commençant par https:// ou http://");
+    return;
+  }
+
+  const data = {
+    title,
+    emoji: $("gameEmoji").value.trim() || "🎮",
+    background: $("gameBackground").value,
+    type,
+    platform: $("gamePlatform").value,
+    content,
+    updatedAt: serverTimestamp()
+  };
+
+  try {
+    if (editingGame) {
+      await updateDoc(doc(db, "games", editingGame), data);
+      toast("Jeu modifié !");
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(gamesRef, data);
+      toast("Jeu ajouté au menu !");
+    }
+
+    resetGameForm();
+  } catch (error) {
+    console.error("Erreur d'enregistrement du jeu :", error);
+    toast("Impossible d'enregistrer. Vérifie les règles Firestore.");
+  }
+});
+
+function resetGameForm() {
+  editingGame = null;
+  $("gameForm").reset();
+  $("gameEmoji").value = "🎮";
+  $("gameEditId").value = "";
+  $("saveGameBtn").textContent = "➕ Enregistrer le jeu";
+  $("cancelGameEditBtn").hidden = true;
+}
+
+$("cancelGameEditBtn").addEventListener("click", resetGameForm);
+
+function renderAdminGames() {
+  if (!isAdmin()) return;
+
+  const list = $("adminGameList");
+  list.replaceChildren();
+
+  if (!games.length) {
+    list.textContent = "Aucun jeu pour le moment.";
+    return;
+  }
+
+  games.forEach(game => {
+    const row = document.createElement("div");
+    row.className = "admin-item";
+
+    const left = document.createElement("div");
+
+    const title = document.createElement("strong");
+    title.textContent =
+      `${game.emoji || "🎮"} ${game.title || "Jeu sans nom"}`;
+
+    const status = document.createElement("span");
+    status.className =
+      `status ${game.maintenance ? "maintenance" : "on"}`;
+    status.textContent =
+      game.maintenance ? "EN MAINTENANCE" : "DISPONIBLE";
+
+    const detail = document.createElement("p");
+    detail.textContent =
+      `${game.type === "html" ? "Code HTML" : "Lien"} • ` +
+      platformLabel(game.platform);
+
+    left.append(title, document.createTextNode(" "), status, detail);
+
+    if (game.maintenanceMessage) {
+      const messagePreview = document.createElement("p");
+      messagePreview.textContent =
+        `Message : ${game.maintenanceMessage}`;
+      left.append(messagePreview);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "admin-item-actions";
+
+    /* Modifier un jeu */
+    const edit = document.createElement("button");
+    edit.className = "btn secondary small";
+    edit.textContent = "✏️ Modifier";
+
+    edit.onclick = () => {
+      editingGame = game.id;
+
+      $("gameEditId").value = game.id;
+      $("gameTitle").value = game.title || "";
+      $("gameEmoji").value = game.emoji || "🎮";
+
+      $("gameBackground").value =
+        game.background || "linear-gradient(135deg,#55304d,#282142)";
+
+      $("gameType").value = game.type || "url";
+      $("gamePlatform").value = game.platform || "all";
+      $("gameContent").value = game.content || "";
+
+      $("saveGameBtn").textContent = "💾 Enregistrer les modifications";
+      $("cancelGameEditBtn").hidden = false;
+
+      $("gameForm").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    };
+
+    /* Mettre en maintenance ou réactiver */
+    const maintenanceButton = document.createElement("button");
+
+    maintenanceButton.className =
+      "btn small " + (game.maintenance ? "green" : "secondary");
+
+    maintenanceButton.textContent =
+      game.maintenance ? "🟢 Réactiver" : "🛠️ Maintenance";
+
+    maintenanceButton.onclick = async () => {
+      if (!isAdmin()) {
+        toast("Accès refusé.");
+        return;
+      }
+
+      const enablingMaintenance = !game.maintenance;
+      let message = game.maintenanceMessage || "";
+
+      if (enablingMaintenance) {
+        message = prompt(
+          "Pourquoi ce jeu est-il en maintenance ?",
+          message ||
+          "Ce jeu est temporairement indisponible. Nous travaillons à son retour !"
+        );
+
+        if (message === null) return;
+
+        message = message.trim();
+
+        if (!message) {
+          message =
+            "Ce jeu est temporairement indisponible. Reviens bientôt !";
+        }
+
+        if (message.length > 1000) {
+          toast("Le message ne doit pas dépasser 1000 caractères.");
           return;
         }
-
-        try {
-          await deleteDoc(doc(db, "announcements", announcement.id));
-          toast("Annonce supprimée.");
-        } catch (error) {
-          console.error(error);
-          toast("Impossible de supprimer cette annonce.");
-        }
-      });
-
-      row.append(left, removeButton);
-      container.append(row);
-    });
-  }
-
-  // ============================================================
-  // ADMINISTRATION DES JEUX
-  // ============================================================
-
-  function renderAdminGames() {
-    const container = $("adminGamesList");
-    container.replaceChildren();
-
-    if (!games.length) {
-      container.append(makeElement(
-        "div",
-        "empty",
-        "Aucun jeu à gérer pour le moment."
-      ));
-      return;
-    }
-
-    games.forEach(game => {
-      const row = makeElement("div", "admin-row");
-      const left = document.createElement("div");
-
-      left.append(
-        makeElement("h3", "", game.title || "Jeu sans titre"),
-        makeElement(
-          "p",
-          "",
-          game.maintenance
-            ? "🟠 Statut : EN MAINTENANCE"
-            : "🟢 Statut : DISPONIBLE"
-        ),
-        makeElement(
-          "p",
-          "",
-          game.type === "url" ? "Type : jeu en ligne" : "Type : HTML intégré"
-        )
-      );
-
-      if (game.maintenance && game.maintenanceMessage) {
-        left.append(makeElement(
-          "p",
-          "",
-          "Message : " + game.maintenanceMessage
-        ));
       }
 
-      const actions = makeElement("div", "admin-actions");
+      maintenanceButton.disabled = true;
 
-      // Bouton pour activer ou désactiver la maintenance.
-      const maintenanceButton = makeElement(
-        "button",
-        "btn small " + (game.maintenance ? "green" : "secondary"),
-        game.maintenance ? "🟢 Réactiver" : "🛠️ Mettre en maintenance"
+      try {
+        await updateDoc(doc(db, "games", game.id), {
+          maintenance: enablingMaintenance,
+          maintenanceMessage: message,
+          updatedAt: serverTimestamp()
+        });
+
+        toast(
+          enablingMaintenance
+            ? "🛠️ Jeu mis en maintenance."
+            : "🟢 Jeu réactivé !"
+        );
+      } catch (error) {
+        console.error("Erreur de maintenance :", error);
+        toast("Impossible de modifier la maintenance. Vérifie les règles Firestore.");
+      } finally {
+        maintenanceButton.disabled = false;
+      }
+    };
+
+    /* Supprimer un jeu */
+    const remove = document.createElement("button");
+    remove.className = "btn red small";
+    remove.textContent = "🗑️ Supprimer";
+
+    remove.onclick = async () => {
+      if (!isAdmin()) {
+        toast("Accès refusé.");
+        return;
+      }
+
+      if (!confirm(`Supprimer le jeu « ${game.title} » ?`)) return;
+
+      try {
+        await deleteDoc(doc(db, "games", game.id));
+        toast("Jeu supprimé.");
+      } catch (error) {
+        console.error(error);
+        toast("Suppression impossible. Vérifie les règles Firestore.");
+      }
+    };
+
+    actions.append(edit, maintenanceButton, remove);
+    row.append(left, actions);
+    list.append(row);
+  });
+}
+
+/* =====================================================
+   GESTION DES ANNONCES
+   ===================================================== */
+
+const announcementTypes = {
+  info: { label:"INFORMATION", icon:"ℹ️" },
+  update: { label:"MISE À JOUR", icon:"🆕" },
+  maintenance: { label:"MAINTENANCE", icon:"🛠️" },
+  issue: { label:"PROBLÈME TECHNIQUE", icon:"🚨" }
+};
+
+$("announcementForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!isAdmin()) {
+    toast("Accès refusé.");
+    return;
+  }
+
+  const title = $("announcementTitle").value.trim();
+  const message = $("announcementMessage").value.trim();
+  const expiresInput = $("announcementExpires").value;
+  const expiresAt = expiresInput
+    ? new Date(expiresInput).getTime()
+    : null;
+
+  if (!title || !message) {
+    toast("Remplis le titre et le message.");
+    return;
+  }
+
+  if (
+    expiresAt !== null &&
+    (!Number.isFinite(expiresAt) || expiresAt <= Date.now())
+  ) {
+    toast("La date de fin doit être dans le futur.");
+    return;
+  }
+
+  const data = {
+    title,
+    message,
+    type: $("announcementType").value,
+    active: $("announcementActive").checked,
+    expiresAt,
+    updatedAt: serverTimestamp()
+  };
+
+  try {
+    if (editingAnnouncement) {
+      await updateDoc(
+        doc(db, "announcements", editingAnnouncement),
+        data
       );
 
-      maintenanceButton.addEventListener("click", async () => {
+      toast("Annonce modifiée !");
+    } else {
+      data.createdAt = serverTimestamp();
+      await addDoc(announcementsRef, data);
+
+      toast(
+        data.active
+          ? "Annonce publiée !"
+          : "Annonce enregistrée comme inactive."
+      );
+    }
+
+    resetAnnouncementForm();
+  } catch (error) {
+    console.error(error);
+    toast("Impossible d'enregistrer l'annonce. Vérifie les règles Firestore.");
+  }
+});
+
+function resetAnnouncementForm() {
+  editingAnnouncement = null;
+  $("announcementForm").reset();
+  $("announcementActive").checked = true;
+  $("announcementEditId").value = "";
+  $("saveAnnouncementBtn").textContent = "📢 Publier l'annonce";
+  $("cancelAnnouncementEditBtn").hidden = true;
+}
+
+$("cancelAnnouncementEditBtn").addEventListener(
+  "click",
+  resetAnnouncementForm
+);
+
+function formatExpiry(value) {
+  if (!value) return "Sans date de fin";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "Date inconnue";
+
+  return "Fin : " + date.toLocaleString("fr-FR");
+}
+
+function renderAdminAnnouncements() {
+  if (!isAdmin()) return;
+
+  const list = $("adminAnnouncementList");
+  list.replaceChildren();
+
+  if (!announcements.length) {
+    list.textContent = "Aucune annonce enregistrée.";
+    return;
+  }
+
+  [...announcements]
+    .sort((a, b) => {
+      const at = a.createdAt?.toMillis?.() || 0;
+      const bt = b.createdAt?.toMillis?.() || 0;
+      return bt - at;
+    })
+    .forEach(item => {
+      const type =
+        announcementTypes[item.type] || announcementTypes.info;
+
+      const row = document.createElement("div");
+      row.className = "admin-item";
+
+      const left = document.createElement("div");
+
+      const title = document.createElement("strong");
+      title.textContent =
+        `${type.icon} ${item.title || "Annonce sans titre"}`;
+
+      const status = document.createElement("span");
+      status.className = `status ${item.active ? "on" : "off"}`;
+      status.textContent = item.active ? "ACTIVE" : "INACTIVE";
+
+      const detail = document.createElement("p");
+      detail.textContent =
+        `${type.label} • ${formatExpiry(item.expiresAt)}`;
+
+      const message = document.createElement("p");
+      const preview = safeText(item.message);
+
+      message.textContent =
+        preview.length > 150 ? preview.slice(0, 150) + "…" : preview;
+
+      left.append(
+        title,
+        document.createTextNode(" "),
+        status,
+        detail,
+        message
+      );
+
+      const actions = document.createElement("div");
+      actions.className = "admin-item-actions";
+
+      /* Modifier une annonce */
+      const edit = document.createElement("button");
+      edit.className = "btn secondary small";
+      edit.textContent = "✏️ Modifier";
+
+      edit.onclick = () => {
+        editingAnnouncement = item.id;
+
+        $("announcementEditId").value = item.id;
+        $("announcementTitle").value = item.title || "";
+        $("announcementMessage").value = item.message || "";
+        $("announcementType").value = item.type || "info";
+        $("announcementActive").checked = !!item.active;
+
+        if (item.expiresAt) {
+          const d = new Date(item.expiresAt);
+          const local = new Date(
+            d.getTime() - d.getTimezoneOffset() * 60000
+          );
+
+          $("announcementExpires").value =
+            local.toISOString().slice(0, 16);
+        } else {
+          $("announcementExpires").value = "";
+        }
+
+        $("saveAnnouncementBtn").textContent =
+          "💾 Enregistrer les modifications";
+
+        $("cancelAnnouncementEditBtn").hidden = false;
+
+        $("announcementForm").scrollIntoView({
+          behavior:"smooth",
+          block:"start"
+        });
+      };
+
+      /* Activer ou désactiver */
+      const toggle = document.createElement("button");
+      toggle.className =
+        "btn small " + (item.active ? "secondary" : "green");
+
+      toggle.textContent =
+        item.active ? "⏸️ Désactiver" : "▶️ Activer";
+
+      toggle.onclick = async () => {
         if (!isAdmin()) {
           toast("Accès refusé.");
           return;
         }
 
-        let message = "";
-
-        if (!game.maintenance) {
-          const answer = prompt(
-            "Pourquoi ce jeu est-il en maintenance ?",
-            "Ce jeu rencontre un problème technique. Nous travaillons à sa réparation !"
-          );
-
-          if (answer === null) return;
-
-          message = answer.trim();
-
-          if (!message) {
-            message =
-              "Ce jeu est temporairement indisponible. Nous travaillons à sa réparation !";
-          }
-        }
-
-        maintenanceButton.disabled = true;
-
         try {
-          await updateDoc(doc(db, "games", game.id), {
-            maintenance: !game.maintenance,
-            maintenanceMessage: message,
+          await updateDoc(doc(db, "announcements", item.id), {
+            active: !item.active,
             updatedAt: serverTimestamp()
           });
 
           toast(
-            game.maintenance
-              ? "✅ Jeu réactivé !"
-              : "🛠️ Jeu mis en maintenance !"
+            item.active
+              ? "Annonce désactivée."
+              : "Annonce activée."
           );
         } catch (error) {
-          console.error("Erreur de maintenance :", error);
-          toast(
-            "Impossible de modifier la maintenance. Vérifie les règles Firestore."
-          );
-        } finally {
-          maintenanceButton.disabled = false;
+          console.error(error);
+          toast("Impossible de changer le statut.");
         }
-      });
+      };
 
-      const editButton = makeElement("button", "btn small secondary", "✏️ Modifier");
+      /* Supprimer */
+      const remove = document.createElement("button");
+      remove.className = "btn red small";
+      remove.textContent = "🗑️ Supprimer";
 
-      editButton.addEventListener("click", () => {
-        $("gameId").value = game.id;
-        $("gameTitle").value = game.title || "";
-        $("gameType").value = game.type || "html";
-        $("gameDescription").value = game.description || "";
-        $("gameCover").value = game.cover || "";
-        $("gameContent").value = game.content || "";
-
-        $("saveGameBtn").textContent = "💾 Enregistrer les modifications";
-        $("cancelEditBtn").classList.remove("hidden");
-
-        updateContentLabel();
-
-        $("gameForm").scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-      });
-
-      const deleteButton = makeElement("button", "btn danger small", "🗑️ Supprimer");
-
-      deleteButton.addEventListener("click", async () => {
+      remove.onclick = async () => {
         if (!isAdmin()) {
           toast("Accès refusé.");
           return;
         }
 
-        if (!confirm(
-          `Supprimer définitivement « ${game.title || "ce jeu"} » ?`
-        )) {
+        if (!confirm(`Supprimer l'annonce « ${item.title} » ?`)) {
           return;
         }
 
         try {
-          await deleteDoc(doc(db, "games", game.id));
-          toast("Jeu supprimé.");
+          await deleteDoc(doc(db, "announcements", item.id));
+          toast("Annonce supprimée.");
         } catch (error) {
           console.error(error);
-          toast("Impossible de supprimer ce jeu.");
+          toast("Suppression impossible.");
         }
-      });
+      };
 
-      actions.append(maintenanceButton, editButton, deleteButton);
+      actions.append(edit, toggle, remove);
       row.append(left, actions);
-      container.append(row);
+      list.append(row);
     });
+}
+
+/* =====================================================
+   ANNONCES PUBLIQUES
+   ===================================================== */
+
+function getDismissedIds() {
+  try {
+    return JSON.parse(
+      localStorage.getItem("gourmandDismissedAnnouncementIds") || "[]"
+    );
+  } catch {
+    return [];
   }
+}
 
-  // ============================================================
-  // FORMULAIRE D'AJOUT ET DE MODIFICATION DES JEUX
-  // ============================================================
+function saveDismissedId(id) {
+  const ids = getDismissedIds();
 
-  function updateContentLabel() {
-    const isUrl = $("gameType").value === "url";
+  if (!ids.includes(id)) ids.push(id);
 
-    $("gameContentLabel").textContent = isUrl
-      ? "Adresse du jeu en ligne *"
-      : "Code HTML du jeu *";
-
-    $("gameContent").placeholder = isUrl
-      ? "https://exemple.com/mon-jeu"
-      : "Colle ici le code HTML complet du jeu.";
+  try {
+    localStorage.setItem(
+      "gourmandDismissedAnnouncementIds",
+      JSON.stringify(ids)
+    );
+  } catch (error) {
+    console.warn("Impossible de mémoriser les annonces ignorées.", error);
   }
+}
 
-  $("gameType").addEventListener("change", updateContentLabel);
+function activeAnnouncementList() {
+  const now = Date.now();
 
-  function resetGameForm() {
-    $("gameForm").reset();
-    $("gameId").value = "";
-    $("saveGameBtn").textContent = "💾 Enregistrer le jeu";
-    $("cancelEditBtn").classList.add("hidden");
-    updateContentLabel();
-  }
+  return announcements.filter(item => {
+    if (!item.active) return false;
 
-  $("cancelEditBtn").addEventListener("click", resetGameForm);
-
-  $("gameForm").addEventListener("submit", async event => {
-    event.preventDefault();
-
-    if (!isAdmin()) {
-      toast("Tu dois être administrateur.");
-      return;
+    if (item.expiresAt && Number(item.expiresAt) <= now) {
+      return false;
     }
 
-    const id = $("gameId").value;
-    const title = $("gameTitle").value.trim();
-    const type = $("gameType").value;
-    const description = $("gameDescription").value.trim();
-    const cover = $("gameCover").value.trim();
-    const content = $("gameContent").value;
+    return true;
+  });
+}
 
-    if (!title || !content.trim()) {
-      toast("Remplis le nom et le contenu du jeu.");
-      return;
-    }
+function displayAnnouncement(item) {
+  currentAnnouncement = item;
+  shownThisPage.add(item.id);
 
-    if (type === "url") {
-      try {
-        const parsed = new URL(content.trim());
+  const type =
+    announcementTypes[item.type] || announcementTypes.info;
 
-        if (!["http:", "https:"].includes(parsed.protocol)) {
-          throw new Error("Protocole non autorisé");
-        }
-      } catch {
-        toast("Entre une adresse HTTP ou HTTPS valide.");
-        return;
-      }
-    }
+  $("announcementModal").dataset.type = item.type || "info";
+  $("publicAnnouncementIcon").textContent = type.icon;
+  $("publicAnnouncementType").textContent = type.label;
+  $("publicAnnouncementTitle").textContent = item.title || "Annonce";
+  $("publicAnnouncementMessage").textContent = item.message || "";
+  $("neverShowAnnouncement").checked = false;
 
-    const saveButton = $("saveGameBtn");
-    saveButton.disabled = true;
+  openOverlay("announcementOverlay");
+}
 
-    const gameData = {
-      title,
-      type,
-      description,
-      cover,
-      content: content.trim(),
-      updatedAt: serverTimestamp()
-    };
+function showNextAnnouncement() {
+  if (
+    !announcementsLoaded ||
+    currentAnnouncement ||
+    $("announcementOverlay").classList.contains("open")
+  ) {
+    return;
+  }
 
-    try {
-      if (id) {
-        await updateDoc(doc(db, "games", id), gameData);
-        toast("Jeu modifié avec succès !");
-      } else {
-        gameData.maintenance = false;
-        gameData.maintenanceMessage = "";
+  const dismissed = getDismissedIds();
 
-        await addDoc(collection(db, "games"), {
-          ...gameData,
-          createdAt: serverTimestamp()
-        });
+  const next = activeAnnouncementList().find(item =>
+    !dismissed.includes(item.id) &&
+    !shownThisPage.has(item.id)
+  );
 
-        toast("Jeu ajouté avec succès !");
-      }
+  if (next) displayAnnouncement(next);
+}
 
-      resetGameForm();
-      setAdminNotice("Le jeu a bien été enregistré.", "success");
-    } catch (error) {
-      console.error("Erreur lors de l'enregistrement :", error);
-      toast("Erreur d'enregistrement. Vérifie les règles Firestore.");
-      setAdminNotice(
-        "Impossible d'enregistrer le jeu. Vérifie les autorisations Firestore.",
-        "error"
+function closePublicAnnouncement() {
+  if (!currentAnnouncement) {
+    closeOverlay("announcementOverlay");
+    return;
+  }
+
+  const id = currentAnnouncement.id;
+
+  if ($("neverShowAnnouncement").checked) {
+    saveDismissedId(id);
+  }
+
+  currentAnnouncement = null;
+  closeOverlay("announcementOverlay");
+
+  setTimeout(showNextAnnouncement, 250);
+}
+
+$("closeAnnouncementBtn").addEventListener(
+  "click",
+  closePublicAnnouncement
+);
+
+$("closeAnnouncementX").addEventListener(
+  "click",
+  closePublicAnnouncement
+);
+
+$("showAnnouncementsBtn").addEventListener("click", () => {
+  const active = activeAnnouncementList();
+
+  if (!active.length) {
+    toast("Aucune annonce active pour le moment.");
+    return;
+  }
+
+  const dismissed = getDismissedIds();
+
+  const next = active.find(item =>
+    !shownThisPage.has(item.id) &&
+    !dismissed.includes(item.id)
+  ) || active[0];
+
+  displayAnnouncement(next);
+});
+
+/* =====================================================
+   FIRESTORE : SYNCHRONISATION
+   ===================================================== */
+
+onSnapshot(gamesRef, snapshot => {
+  games = snapshot.docs.map(item => ({
+    id:item.id,
+    ...item.data()
+  }));
+
+  gamesLoaded = true;
+
+  renderGames();
+  renderAdminGames();
+
+  /*
+   * Si le jeu actuellement ouvert vient d'être mis en maintenance,
+   * on arrête sa partie et on informe le joueur.
+   */
+  if (currentGame) {
+    const latestGame = games.find(game => game.id === currentGame.id);
+
+    if (latestGame?.maintenance === true) {
+      stopCurrentGame();
+
+      toast(
+        latestGame.maintenanceMessage ||
+        "🛠️ Ce jeu vient d'être placé en maintenance."
       );
-    } finally {
-      saveButton.disabled = false;
     }
-  });
+  }
+}, error => {
+  console.error("Erreur de chargement des jeux :", error);
 
-  // ============================================================
-  // FORMULAIRE DES ANNONCES
-  // ============================================================
+  $("gameGrid").replaceChildren();
 
-  $("announcementForm").addEventListener("submit", async event => {
-    event.preventDefault();
+  const errorMessage = document.createElement("div");
+  errorMessage.className = "empty";
+  errorMessage.textContent =
+    "😵 Impossible de charger les jeux. Vérifie ta connexion et les règles Firestore.";
 
-    if (!isAdmin()) {
-      toast("Tu dois être administrateur.");
-      return;
-    }
+  $("gameGrid").append(errorMessage);
+  $("gameCount").textContent = "Erreur";
 
-    const title = $("announcementTitle").value.trim();
-    const text = $("announcementText").value.trim();
+  toast("Erreur de chargement des jeux.");
+});
 
-    if (!title || !text) {
-      toast("Remplis le titre et le message.");
-      return;
-    }
+onSnapshot(announcementsRef, snapshot => {
+  announcements = snapshot.docs.map(item => ({
+    id:item.id,
+    ...item.data()
+  }));
 
-    try {
-      await addDoc(collection(db, "announcements"), {
-        title,
-        text,
-        createdAt: serverTimestamp()
-      });
+  announcementsLoaded = true;
 
-      $("announcementForm").reset();
-      toast("Annonce publiée !");
-    } catch (error) {
-      console.error(error);
-      toast("Impossible de publier l'annonce. Vérifie Firestore.");
-    }
-  });
-
-  // ============================================================
-  // CONNEXION ADMIN GOOGLE
-  // ============================================================
-
-  $("loginBtn").addEventListener("click", async () => {
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      console.error("Erreur de connexion :", error);
-      toast("Connexion impossible. Vérifie la configuration Firebase.");
-    }
-  });
-
-  $("logoutBtn").addEventListener("click", async () => {
-    try {
-      await signOut(auth);
-      toast("Déconnexion réussie.");
-    } catch (error) {
-      console.error(error);
-      toast("Impossible de se déconnecter.");
-    }
-  });
-
-  $("adminNavBtn").addEventListener("click", () => {
-    $("adminPanel").classList.toggle("hidden");
-
-    if (!$("adminPanel").classList.contains("hidden")) {
-      $("adminPanel").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  });
-
-  $("exploreBtn").addEventListener("click", () => {
-    $("gamesSection").scrollIntoView({
-      behavior: "smooth"
-    });
-  });
-
-  $("announcementBtn").addEventListener("click", () => {
-    $("announcementsSection").scrollIntoView({
-      behavior: "smooth"
-    });
-  });
-
-  $("searchInput").addEventListener("input", renderGames);
-
-  // ============================================================
-  // ÉCOUTE DES DONNÉES FIRESTORE
-  // ============================================================
-
-  function startFirestoreListeners() {
-    if (unsubscribeGames) unsubscribeGames();
-    if (unsubscribeAnnouncements) unsubscribeAnnouncements();
-
-    unsubscribeGames = onSnapshot(
-      collection(db, "games"),
-      snapshot => {
-        games = snapshot.docs.map(documentSnapshot => ({
-          id: documentSnapshot.id,
-          ...documentSnapshot.data()
-        }));
-
-        games.sort((a, b) =>
-          String(a.title || "").localeCompare(
-            String(b.title || ""),
-            "fr"
-          )
-        );
-
-        renderGames();
-
-        if (isAdmin()) renderAdminGames();
-      },
-      error => {
-        console.error("Erreur de chargement des jeux :", error);
-
-        $("gamesGrid").replaceChildren(
-          makeElement(
-            "div",
-            "empty",
-            "Impossible de charger les jeux. Vérifie la configuration Firebase."
-          )
-        );
-      }
+  if (currentAnnouncement) {
+    const latest = announcements.find(
+      item => item.id === currentAnnouncement.id
     );
 
-    unsubscribeAnnouncements = onSnapshot(
-      collection(db, "announcements"),
-      snapshot => {
-        announcements = snapshot.docs.map(documentSnapshot => ({
-          id: documentSnapshot.id,
-          ...documentSnapshot.data()
-        }));
+    const expired =
+      latest?.expiresAt &&
+      Number(latest.expiresAt) <= Date.now();
 
-        announcements.sort((a, b) => {
-          const dateA = a.createdAt?.toMillis?.() || 0;
-          const dateB = b.createdAt?.toMillis?.() || 0;
-          return dateB - dateA;
-        });
-
-        renderAnnouncements();
-
-        if (isAdmin()) renderAdminAnnouncements();
-      },
-      error => {
-        console.error("Erreur de chargement des annonces :", error);
-
-        $("announcementsList").replaceChildren(
-          makeElement(
-            "div",
-            "empty",
-            "Impossible de charger les annonces."
-          )
-        );
-      }
-    );
+    if (!latest || !latest.active || expired) {
+      currentAnnouncement = null;
+      closeOverlay("announcementOverlay");
+    } else {
+      currentAnnouncement = latest;
+    }
   }
 
-  onAuthStateChanged(auth, user => {
-    currentUser = user;
+  renderAdminAnnouncements();
+  showNextAnnouncement();
+}, error => {
+  console.error("Erreur de chargement des annonces :", error);
+  toast("Impossible de charger les annonces.");
+});
 
-    const admin = isAdmin();
+/* Vérification des dates d'expiration */
+setInterval(() => {
+  const now = Date.now();
 
-    $("loginBtn").classList.toggle("hidden", Boolean(user));
-    $("logoutBtn").classList.toggle("hidden", !user);
-    $("adminNavBtn").classList.toggle("hidden", !admin);
-    $("adminPanel").classList.toggle("hidden", !admin);
+  if (currentAnnouncement) {
+    const expiresAt = Number(currentAnnouncement.expiresAt);
 
-    if (admin) {
-      setAdminNotice(
-        `Connecté en tant que ${user.email}.`,
-        "success"
-      );
-
-      renderAdminGames();
-      renderAdminAnnouncements();
-    } else if (user) {
-      toast("Ce compte n'a pas accès à l'administration.");
+    if (
+      currentAnnouncement.expiresAt &&
+      Number.isFinite(expiresAt) &&
+      expiresAt <= now
+    ) {
+      currentAnnouncement = null;
+      closeOverlay("announcementOverlay");
     }
+  }
 
-    renderGames();
-  });
+  showNextAnnouncement();
+}, 15000);
 
-  // Lancement initial
-  startFirestoreListeners();
-  updateContentLabel();
+/* Informations de diagnostic */
+console.info(
+  "Gourmand.fun — appareil détecté :",
+  detectDevice()
+);
+
+console.info("User-Agent :", navigator.userAgent);
+console.info("Maintenance des jeux activée.");
+
 </script>
-
 </body>
 </html>
