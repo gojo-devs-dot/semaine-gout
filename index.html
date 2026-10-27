@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#17111f">
-<title>Gourmand.fun — Les jeux du club informatique</title>
-
-<style>
+<title>Gourmand.fun — Les jeux du club informatique</title><style>
 :root {
   --bg:#17111f;
   --panel:#241b30;
@@ -22,7 +19,6 @@
 }
 
 * { box-sizing:border-box; }
-
 html { scroll-behavior:smooth; }
 
 body {
@@ -172,13 +168,13 @@ h1 {
 }
 
 .notice {
-  padding:13px 16px;
+  padding:16px;
   background:#6ee7b715;
   border:1px solid #6ee7b738;
   border-radius:14px;
   color:#d4ffed;
   margin-bottom:25px;
-  line-height:1.5;
+  line-height:1.7;
 }
 
 .toolbar {
@@ -568,6 +564,39 @@ textarea.field {
   height:18px;
 }
 
+/* Fenêtre d'information sur les jeux open source */
+.open-source-copy {
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.open-source-copy strong { color:var(--text); }
+
+/* Notifications */
+.toast {
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  z-index:300;
+  width:max-content;
+  max-width:calc(100% - 30px);
+  padding:13px 17px;
+  border-radius:13px;
+  background:#fff8f0;
+  color:#211526;
+  font-weight:800;
+  box-shadow:0 10px 35px #0006;
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,20px);
+  transition:opacity .2s,transform .2s;
+}
+
+.toast.show {
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
 @media(max-width:800px) {
   .hero {
     grid-template-columns:1fr;
@@ -604,25 +633,16 @@ textarea.field {
 
   .compatibility-actions { flex-direction:column; }
 }
-</style>
-</head>
-
-<body>
-
-<header>
+</style></head><body><header>
   <div class="logo">
     <div class="logo-icon">🍔</div>
     <span>Gourmand<span class="gradient-text">.fun</span></span>
-  </div>
-
-  <div class="header-actions">
+  </div>  <div class="header-actions">
     <button class="btn secondary" id="showAnnouncementsBtn">📢 Annonces</button>
     <button class="btn secondary" id="adminLoginBtn">🔐 Administration</button>
     <button class="btn secondary" id="logoutBtn" hidden>Déconnexion</button>
   </div>
-</header>
-
-<main>
+</header><main>
   <section class="hero">
     <div>
       <span class="eyebrow">🎮 LES JEUX DU CLUB INFORMATIQUE</span>
@@ -632,296 +652,294 @@ textarea.field {
         lance une partie et amuse-toi. Il y a toujours quelque chose à tester !
       </p>
       <button class="btn" id="discoverBtn">🍟 Découvrir les jeux</button>
-    </div>
+    </div><div class="hero-art" aria-hidden="true">🍔🎮🍟</div>
 
-    <div class="hero-art" aria-hidden="true">🍔🎮🍟</div>
-  </section>
-
-  <div class="notice">
+  </section>  <div class="notice">
     💻 <strong>Les jeux du club informatique :</strong>
     certains jeux sont jouables directement sur le site.
     D'autres peuvent ouvrir une page externe.
     <br>
-    📦 Les jeux proposés ici peuvent être téléchargés lorsque leur licence
-    et leur page de distribution le permettent.
-  </div>
+    📦 Les jeux peuvent être téléchargés lorsque leur licence et leur page
+    de distribution le permettent.<div style="margin-top:14px">
+  <button class="btn green" id="openSourceInfoBtn">
+    💚 À propos des jeux open source
+  </button>
+</div>
 
-  <section id="catalogue">
+  </div>  <section id="catalogue">
     <div class="section-title">
       <h2>🍕 Le menu des jeux</h2>
       <span class="muted" id="gameCount">Chargement…</span>
-    </div>
+    </div><div class="toolbar">
+  <input class="field search" id="searchInput" type="search"
+    placeholder="🔎 Chercher un jeu…">
 
-    <div class="toolbar">
-      <input class="field search" id="searchInput" type="search"
-        placeholder="🔎 Chercher un jeu…">
+  <select class="field" id="platformFilter" aria-label="Filtrer par appareil">
+    <option value="all">💻 Tous les appareils</option>
+    <option value="pc">🖥️ PC uniquement</option>
+    <option value="mobile">📱 Mobile / tablette</option>
+  </select>
+</div>
 
-      <select class="field" id="platformFilter" aria-label="Filtrer par appareil">
-        <option value="all">💻 Tous les appareils</option>
-        <option value="pc">🖥️ PC uniquement</option>
-        <option value="mobile">📱 Mobile / tablette</option>
-      </select>
-    </div>
+<div class="game-grid" id="gameGrid">
+  <div class="empty">🍳 Chargement du menu…</div>
+</div>
 
-    <div class="game-grid" id="gameGrid">
-      <div class="empty">🍳 Chargement du menu…</div>
-    </div>
   </section>
-</main>
-
-<footer>
+</main><footer>
   <strong>🍔 Gourmand.fun</strong><br>
   Les jeux du club informatique.<br>
   <span>En cas de problème, consulte les annonces du site.</span>
-</footer>
+</footer><!-- Informations sur les jeux open source --><div class="overlay" id="openSourceOverlay">
+  <div class="modal" role="dialog" aria-modal="true"
+    aria-labelledby="openSourceTitle"><div class="modal-head">
+  <h2 id="openSourceTitle">💚 Les jeux du club informatique</h2>
+  <button class="close-btn" id="closeOpenSourceBtn"
+    aria-label="Fermer">✕</button>
+</div>
 
-<!-- Lecteur de jeu -->
-<div class="overlay" id="gameOverlay">
+<div class="open-source-copy">
+  <p>🎮 Les jeux présentés sur Gourmand.fun sont proposés dans le cadre du club informatique.</p>
+
+  <p>📦 Lorsqu'un jeu est distribué sous une licence autorisant le partage, tu peux consulter sa page officielle pour le télécharger.</p>
+
+  <p>💻 Certains jeux sont jouables directement sur notre site.</p>
+
+  <p>⚠️ <strong>Attention :</strong> tous les jeux ne sont pas nécessairement open source. Vérifie la licence de chaque jeu avant de le télécharger, de le modifier ou de le redistribuer.</p>
+</div>
+
+<div class="form-actions">
+  <button class="btn green" id="confirmOpenSourceBtn">
+    👍 Compris !
+  </button>
+</div>
+
+  </div>
+</div><!-- Lecteur de jeu --><div class="overlay" id="gameOverlay">
   <div class="modal wide">
     <div class="modal-head">
       <h2 id="playerTitle">🎮 Jeu</h2>
       <button class="close-btn" id="closeGameBtn">✕ Fermer</button>
-    </div>
+    </div><div id="gameWarning" class="game-warning" hidden></div>
 
-    <div id="gameWarning" class="game-warning" hidden></div>
+<iframe id="gameFrame" title="Jeu"
+  allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
+  allowfullscreen></iframe>
 
-    <iframe id="gameFrame" title="Jeu"
-      allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
-      allowfullscreen></iframe>
-
-    <div class="form-actions">
-      <button class="btn secondary" id="openGameTabBtn">
-        ↗ Ouvrir dans un nouvel onglet
-      </button>
-    </div>
-  </div>
+<div class="form-actions">
+  <button class="btn secondary" id="openGameTabBtn">
+    ↗ Ouvrir dans un nouvel onglet
+  </button>
 </div>
 
-<!-- Avertissement de compatibilité -->
-<div class="overlay" id="platformWarningOverlay">
+  </div>
+</div><!-- Avertissement de compatibilité --><div class="overlay" id="platformWarningOverlay">
   <div class="modal" role="dialog" aria-modal="true"
     aria-labelledby="platformWarningTitle">
     <div class="compatibility-icon" id="platformWarningIcon">⚠️</div>
     <h2 id="platformWarningTitle">Attention !</h2>
-    <div class="compatibility-message" id="platformWarningMessage"></div>
-
-    <div class="compatibility-actions">
-      <button class="btn secondary" id="cancelPlatformWarningBtn">❌ Annuler</button>
-      <button class="btn" id="continuePlatformWarningBtn">🎮 Continuer quand même</button>
-    </div>
-  </div>
+    <div class="compatibility-message" id="platformWarningMessage"></div><div class="compatibility-actions">
+  <button class="btn secondary" id="cancelPlatformWarningBtn">❌ Annuler</button>
+  <button class="btn" id="continuePlatformWarningBtn">🎮 Continuer quand même</button>
 </div>
 
-<!-- Connexion administrateur -->
-<div class="overlay" id="loginOverlay">
+  </div>
+</div><!-- Connexion administrateur --><div class="overlay" id="loginOverlay">
   <div class="modal">
     <div class="modal-head">
       <h2>🔐 Administration</h2>
       <button class="close-btn" data-close="loginOverlay">✕</button>
-    </div>
+    </div><p class="muted">
+  Connecte-toi avec le compte Google autorisé à administrer le site.
+</p>
 
-    <p class="muted">
-      Connecte-toi avec le compte Google autorisé à administrer le site.
-    </p>
+<button class="btn" id="googleLoginBtn">Continuer avec Google</button>
 
-    <button class="btn" id="googleLoginBtn">Continuer avec Google</button>
+<p class="help">
+  Les droits doivent également être protégés par les règles de sécurité Firebase.
+</p>
 
-    <p class="help">
-      Les droits doivent également être protégés par les règles de sécurité Firebase.
-    </p>
   </div>
-</div>
-
-<!-- Administration -->
-<div class="overlay" id="adminOverlay">
+</div><!-- Administration --><div class="overlay" id="adminOverlay">
   <div class="modal wide">
     <div class="modal-head">
       <h2>🧑‍🍳 Cuisine du site — Administration</h2>
       <button class="close-btn" data-close="adminOverlay">✕ Fermer</button>
-    </div>
+    </div><p class="muted">
+  Gère les jeux, leur maintenance et publie des annonces sans modifier le HTML.
+</p>
 
-    <p class="muted">
-      Gère les jeux, leur maintenance et publie des annonces sans modifier le HTML.
-    </p>
-
-    <div class="section-title">
-      <h2>🎮 Ajouter ou modifier un jeu</h2>
-    </div>
-
-    <form id="gameForm">
-      <input type="hidden" id="gameEditId">
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="gameTitle">Nom du jeu</label>
-          <input class="field" id="gameTitle" required maxlength="80"
-            placeholder="Ex. Snake">
-        </div>
-
-        <div class="form-group">
-          <label for="gameEmoji">Emoji</label>
-          <input class="field" id="gameEmoji" maxlength="12" value="🎮">
-        </div>
-
-        <div class="form-group">
-          <label for="gameBackground">Couleur du fond</label>
-          <select class="field" id="gameBackground">
-            <option value="linear-gradient(135deg,#55304d,#282142)">🍇 Violet</option>
-            <option value="linear-gradient(135deg,#7f303a,#3d1d38)">🍓 Rouge</option>
-            <option value="linear-gradient(135deg,#27644e,#1d3241)">🥑 Vert</option>
-            <option value="linear-gradient(135deg,#8a5929,#493047)">🍊 Orange</option>
-            <option value="linear-gradient(135deg,#235c86,#332b59)">🫐 Bleu</option>
-            <option value="linear-gradient(135deg,#735b24,#493047)">🍍 Jaune</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="gamePlatform">Compatibilité</label>
-          <select class="field" id="gamePlatform">
-            <option value="all">PC, tablette et téléphone</option>
-            <option value="pc">PC uniquement</option>
-            <option value="mobile">Mobile et tablette</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="gameType">Type de jeu</label>
-          <select class="field" id="gameType">
-            <option value="url">Lien vers un jeu / site</option>
-            <option value="html">Code HTML du jeu</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="gameContent">Lien ou code HTML</label>
-          <textarea class="field" id="gameContent" required
-            placeholder="Colle ici l'URL du jeu ou son code HTML"></textarea>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button class="btn green" type="submit" id="saveGameBtn">
-          ➕ Enregistrer le jeu
-        </button>
-
-        <button class="btn secondary" type="button"
-          id="cancelGameEditBtn" hidden>
-          Annuler la modification
-        </button>
-      </div>
-    </form>
-
-    <div class="section-title">
-      <h2>📚 Jeux enregistrés</h2>
-    </div>
-
-    <div id="adminGameList" class="admin-list"></div>
-
-    <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
-
-    <div class="section-title">
-      <h2>📢 Publier une annonce</h2>
-    </div>
-
-    <p class="help">
-      Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.
-    </p>
-
-    <form id="announcementForm">
-      <input type="hidden" id="announcementEditId">
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="announcementTitle">Titre de l'annonce</label>
-          <input class="field" id="announcementTitle" required maxlength="100"
-            placeholder="Ex. Maintenance ce soir">
-        </div>
-
-        <div class="form-group">
-          <label for="announcementType">Type d'annonce</label>
-          <select class="field" id="announcementType">
-            <option value="info">ℹ️ Information</option>
-            <option value="update">🆕 Mise à jour</option>
-            <option value="maintenance">🛠️ Maintenance</option>
-            <option value="issue">🚨 Problème technique</option>
-          </select>
-        </div>
-
-        <div class="form-group full">
-          <label for="announcementMessage">Message</label>
-          <textarea class="field" id="announcementMessage" required maxlength="2000"
-            placeholder="Explique aux visiteurs ce qu'ils doivent savoir…"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="announcementExpires">Date de fin (facultative)</label>
-          <input class="field" id="announcementExpires" type="datetime-local">
-          <span class="help">Laisse vide pour une annonce sans expiration automatique.</span>
-        </div>
-
-        <div class="form-group">
-          <label style="display:flex;gap:10px;align-items:center;padding:10px 0">
-            <input id="announcementActive" type="checkbox" checked
-              style="width:18px;height:18px">
-            Annonce active
-          </label>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button class="btn green" id="saveAnnouncementBtn" type="submit">
-          📢 Publier l'annonce
-        </button>
-
-        <button class="btn secondary" id="cancelAnnouncementEditBtn"
-          type="button" hidden>
-          Annuler la modification
-        </button>
-      </div>
-    </form>
-
-    <div class="section-title">
-      <h2>🗞️ Annonces enregistrées</h2>
-    </div>
-
-    <div id="adminAnnouncementList" class="admin-list"></div>
-  </div>
+<div class="section-title">
+  <h2>🎮 Ajouter ou modifier un jeu</h2>
 </div>
 
-<!-- Annonce publique -->
-<div class="overlay" id="announcementOverlay">
+<form id="gameForm">
+  <input type="hidden" id="gameEditId">
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="gameTitle">Nom du jeu</label>
+      <input class="field" id="gameTitle" required maxlength="80"
+        placeholder="Ex. Snake">
+    </div>
+
+    <div class="form-group">
+      <label for="gameEmoji">Emoji</label>
+      <input class="field" id="gameEmoji" maxlength="12" value="🎮">
+    </div>
+
+    <div class="form-group">
+      <label for="gameBackground">Couleur du fond</label>
+      <select class="field" id="gameBackground">
+        <option value="linear-gradient(135deg,#55304d,#282142)">🍇 Violet</option>
+        <option value="linear-gradient(135deg,#7f303a,#3d1d38)">🍓 Rouge</option>
+        <option value="linear-gradient(135deg,#27644e,#1d3241)">🥑 Vert</option>
+        <option value="linear-gradient(135deg,#8a5929,#493047)">🍊 Orange</option>
+        <option value="linear-gradient(135deg,#235c86,#332b59)">🫐 Bleu</option>
+        <option value="linear-gradient(135deg,#735b24,#493047)">🍍 Jaune</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="gamePlatform">Compatibilité</label>
+      <select class="field" id="gamePlatform">
+        <option value="all">PC, tablette et téléphone</option>
+        <option value="pc">PC uniquement</option>
+        <option value="mobile">Mobile et tablette</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="gameType">Type de jeu</label>
+      <select class="field" id="gameType">
+        <option value="url">Lien vers un jeu / site</option>
+        <option value="html">Code HTML du jeu</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="gameContent">Lien ou code HTML</label>
+      <textarea class="field" id="gameContent" required
+        placeholder="Colle ici l'URL du jeu ou son code HTML"></textarea>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn green" type="submit" id="saveGameBtn">
+      ➕ Enregistrer le jeu
+    </button>
+
+    <button class="btn secondary" type="button"
+      id="cancelGameEditBtn" hidden>
+      Annuler la modification
+    </button>
+  </div>
+</form>
+
+<div class="section-title">
+  <h2>📚 Jeux enregistrés</h2>
+</div>
+
+<div id="adminGameList" class="admin-list"></div>
+
+<hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
+
+<div class="section-title">
+  <h2>📢 Publier une annonce</h2>
+</div>
+
+<p class="help">
+  Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.
+</p>
+
+<form id="announcementForm">
+  <input type="hidden" id="announcementEditId">
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="announcementTitle">Titre de l'annonce</label>
+      <input class="field" id="announcementTitle" required maxlength="100"
+        placeholder="Ex. Maintenance ce soir">
+    </div>
+
+    <div class="form-group">
+      <label for="announcementType">Type d'annonce</label>
+      <select class="field" id="announcementType">
+        <option value="info">ℹ️ Information</option>
+        <option value="update">🆕 Mise à jour</option>
+        <option value="maintenance">🛠️ Maintenance</option>
+        <option value="issue">🚨 Problème technique</option>
+      </select>
+    </div>
+
+    <div class="form-group full">
+      <label for="announcementMessage">Message</label>
+      <textarea class="field" id="announcementMessage" required maxlength="2000"
+        placeholder="Explique aux visiteurs ce qu'ils doivent savoir…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="announcementExpires">Date de fin (facultative)</label>
+      <input class="field" id="announcementExpires" type="datetime-local">
+      <span class="help">Laisse vide pour une annonce sans expiration automatique.</span>
+    </div>
+
+    <div class="form-group">
+      <label style="display:flex;gap:10px;align-items:center;padding:10px 0">
+        <input id="announcementActive" type="checkbox" checked
+          style="width:18px;height:18px">
+        Annonce active
+      </label>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn green" id="saveAnnouncementBtn" type="submit">
+      📢 Publier l'annonce
+    </button>
+
+    <button class="btn secondary" id="cancelAnnouncementEditBtn"
+      type="button" hidden>
+      Annuler la modification
+    </button>
+  </div>
+</form>
+
+<div class="section-title">
+  <h2>🗞️ Annonces enregistrées</h2>
+</div>
+
+<div id="adminAnnouncementList" class="admin-list"></div>
+
+  </div>
+</div><!-- Annonce publique --><div class="overlay" id="announcementOverlay">
   <div class="modal announcement-card" id="announcementModal"
     data-type="info" role="dialog" aria-modal="true"
-    aria-labelledby="publicAnnouncementTitle">
-
-    <div class="modal-head">
-      <div class="announcement-icon" id="publicAnnouncementIcon">📢</div>
-      <button class="close-btn" id="closeAnnouncementX"
-        aria-label="Fermer l'annonce">✕</button>
-    </div>
-
-    <span class="announcement-label" id="publicAnnouncementType">
-      INFORMATION
-    </span>
-
-    <h2 id="publicAnnouncementTitle">Une annonce</h2>
-
-    <div class="announcement-message" id="publicAnnouncementMessage"></div>
-
-    <label class="check-row">
-      <input type="checkbox" id="neverShowAnnouncement">
-      Ne plus afficher cette annonce sur ce navigateur
-    </label>
-
-    <div class="form-actions">
-      <button class="btn" id="closeAnnouncementBtn">J'ai compris 👍</button>
-    </div>
-  </div>
+    aria-labelledby="publicAnnouncementTitle"><div class="modal-head">
+  <div class="announcement-icon" id="publicAnnouncementIcon">📢</div>
+  <button class="close-btn" id="closeAnnouncementX"
+    aria-label="Fermer l'annonce">✕</button>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<span class="announcement-label" id="publicAnnouncementType">
+  INFORMATION
+</span>
 
-<script type="module">
+<h2 id="publicAnnouncementTitle">Une annonce</h2>
+
+<div class="announcement-message" id="publicAnnouncementMessage"></div>
+
+<label class="check-row">
+  <input type="checkbox" id="neverShowAnnouncement">
+  Ne plus afficher cette annonce sur ce navigateur
+</label>
+
+<div class="form-actions">
+  <button class="btn" id="closeAnnouncementBtn">J'ai compris 👍</button>
+</div>
+
+  </div>
+</div><div class="toast" id="toast" role="status" aria-live="polite"></div><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
 import {
@@ -1047,6 +1065,7 @@ document.addEventListener("keydown", event => {
   closeOverlay("loginOverlay");
   closeOverlay("adminOverlay");
   closeOverlay("platformWarningOverlay");
+  closeOverlay("openSourceOverlay");
 
   pendingGame = null;
 
@@ -1057,6 +1076,19 @@ document.addEventListener("keydown", event => {
 
 $("discoverBtn").addEventListener("click", () => {
   $("catalogue").scrollIntoView({ behavior:"smooth" });
+});
+
+/* FENÊTRE D'INFORMATION OPEN SOURCE */
+$("openSourceInfoBtn").addEventListener("click", () => {
+  openOverlay("openSourceOverlay");
+});
+
+$("closeOpenSourceBtn").addEventListener("click", () => {
+  closeOverlay("openSourceOverlay");
+});
+
+$("confirmOpenSourceBtn").addEventListener("click", () => {
+  closeOverlay("openSourceOverlay");
 });
 
 /* DÉTECTION DE L'APPAREIL */
@@ -1108,10 +1140,7 @@ function platformLabel(platform) {
   return "💻 Tous appareils";
 }
 
-/* =====================================================
-   CATALOGUE DES JEUX
-   ===================================================== */
-
+/* CATALOGUE DES JEUX */
 function renderGames() {
   const search = $("searchInput").value.trim().toLowerCase();
   const platform = $("platformFilter").value;
@@ -1158,13 +1187,10 @@ function renderGames() {
     const inMaintenance = game.maintenance === true;
     const admin = isAdmin();
 
-    if (inMaintenance) {
-      card.classList.add("maintenance");
-    }
+    if (inMaintenance) card.classList.add("maintenance");
 
     const cover = document.createElement("div");
     cover.className = "game-cover";
-
     cover.style.background =
       game.background || "linear-gradient(135deg,#55304d,#282142)";
 
@@ -1195,34 +1221,26 @@ function renderGames() {
     if (inMaintenance) {
       const maintenanceBadge = document.createElement("span");
       maintenanceBadge.className = "maintenance-badge";
-
       maintenanceBadge.textContent = admin
         ? "🛠️ MAINTENANCE — MODE ADMIN"
         : "🛠️ TEMPORAIREMENT INDISPONIBLE";
 
       const message = document.createElement("div");
       message.className = "maintenance-message";
-
-      message.textContent =
-        game.maintenanceMessage ||
+      message.textContent = game.maintenanceMessage ||
         "Ce jeu est actuellement en maintenance. Reviens bientôt !";
 
       if (admin) {
         const testButton = document.createElement("button");
         testButton.className = "btn";
         testButton.textContent = "🧪 Tester en tant qu’admin";
-
-        testButton.addEventListener("click", () => {
-          playGame(game, true);
-        });
-
+        testButton.addEventListener("click", () => playGame(game, true));
         buttons.append(testButton);
       } else {
         const disabledButton = document.createElement("button");
         disabledButton.className = "btn";
         disabledButton.textContent = "🛠️ En maintenance";
         disabledButton.disabled = true;
-
         buttons.append(disabledButton);
       }
 
@@ -1231,11 +1249,7 @@ function renderGames() {
       const play = document.createElement("button");
       play.className = "btn";
       play.textContent = "▶ Jouer";
-
-      play.addEventListener("click", () => {
-        playGame(game);
-      });
-
+      play.addEventListener("click", () => playGame(game));
       buttons.append(play);
       info.append(buttons);
     }
@@ -1248,19 +1262,11 @@ function renderGames() {
 $("searchInput").addEventListener("input", renderGames);
 $("platformFilter").addEventListener("change", renderGames);
 
-/* =====================================================
-   COMPATIBILITÉ ET LANCEMENT DES JEUX
-   ===================================================== */
-
+/* COMPATIBILITÉ ET LANCEMENT DES JEUX */
 function playGame(game, adminTest = false) {
-  if (
-    game.maintenance === true &&
-    !(adminTest && isAdmin())
-  ) {
-    toast(
-      game.maintenanceMessage ||
-      "🛠️ Ce jeu est temporairement indisponible."
-    );
+  if (game.maintenance === true && !(adminTest && isAdmin())) {
+    toast(game.maintenanceMessage ||
+      "🛠️ Ce jeu est temporairement indisponible.");
     return;
   }
 
@@ -1280,7 +1286,6 @@ function playGame(game, adminTest = false) {
   if (game.platform === "pc") {
     $("platformWarningIcon").textContent = "🖥️";
     $("platformWarningTitle").textContent = "Jeu conçu pour PC";
-
     $("platformWarningMessage").textContent =
       `Ton appareil semble être un ${deviceLabel(device)}.\n\n` +
       "Ce jeu peut nécessiter un clavier, une souris ou un grand écran. " +
@@ -1289,7 +1294,6 @@ function playGame(game, adminTest = false) {
   } else {
     $("platformWarningIcon").textContent = "📱";
     $("platformWarningTitle").textContent = "Jeu conçu pour mobile";
-
     $("platformWarningMessage").textContent =
       "Ton appareil semble être un ordinateur.\n\n" +
       "Ce jeu est principalement prévu pour un écran tactile. " +
@@ -1308,17 +1312,11 @@ $("cancelPlatformWarningBtn").addEventListener("click", () => {
 $("continuePlatformWarningBtn").addEventListener("click", () => {
   const game = pendingGame;
   pendingGame = null;
-
   closeOverlay("platformWarningOverlay");
-
   if (game) launchGame(game);
 });
 
 function launchGame(game) {
-  /*
-   * Les visiteurs ne peuvent pas lancer un jeu en maintenance.
-   * L'administrateur connecté peut continuer à le tester.
-   */
   if (game.maintenance === true && !isAdmin()) {
     toast("🛠️ Ce jeu est actuellement en maintenance.");
     return;
@@ -1340,7 +1338,6 @@ function launchGame(game) {
       "sandbox",
       "allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals"
     );
-
     frame.srcdoc = game.content || "<p>Ce jeu n'a pas de code.</p>";
   } else {
     const url = validateGameUrl(game.content);
@@ -1356,19 +1353,14 @@ function launchGame(game) {
 
   $("openGameTabBtn").onclick = () => {
     if (game.type === "html") {
-      toast(
-        "Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet."
-      );
+      toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
       return;
     }
 
     const url = validateGameUrl(game.content);
 
-    if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
-    } else {
-      toast("Le lien de ce jeu n'est pas valide.");
-    }
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    else toast("Le lien de ce jeu n'est pas valide.");
   };
 
   openOverlay("gameOverlay");
@@ -1377,7 +1369,6 @@ function launchGame(game) {
 function validateGameUrl(value) {
   try {
     const url = new URL(String(value || ""));
-
     if (url.protocol === "https:" || url.protocol === "http:") {
       return url.href;
     }
@@ -1390,20 +1381,15 @@ function validateGameUrl(value) {
 
 function stopCurrentGame() {
   const frame = $("gameFrame");
-
   frame.src = "about:blank";
   frame.removeAttribute("srcdoc");
-
   closeOverlay("gameOverlay");
   currentGame = null;
 }
 
 $("closeGameBtn").addEventListener("click", stopCurrentGame);
 
-/* =====================================================
-   CONNEXION ADMINISTRATEUR
-   ===================================================== */
-
+/* CONNEXION ADMINISTRATEUR */
 $("adminLoginBtn").addEventListener("click", () => {
   if (isAdmin()) {
     renderAdminGames();
@@ -1418,9 +1404,7 @@ $("googleLoginBtn").addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
 
-    if (
-      result.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()
-    ) {
+    if (result.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
       await signOut(auth);
       toast("Ce compte Google n'est pas autorisé.");
       return;
@@ -1449,19 +1433,16 @@ $("logoutBtn").addEventListener("click", async () => {
 
 onAuthStateChanged(auth, user => {
   currentUser = user;
-
   $("logoutBtn").hidden = !user;
 
   $("adminLoginBtn").textContent =
     isAdmin() ? "🧑‍🍳 Administration" : "🔐 Administration";
 
-  // Actualise les boutons du catalogue selon le compte connecté.
   renderGames();
 
   if (user && !isAdmin()) {
     closeOverlay("adminOverlay");
     closeOverlay("loginOverlay");
-
     toast("Ce compte n'a pas les droits administrateur.");
     signOut(auth).catch(console.error);
     return;
@@ -1475,10 +1456,7 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-/* =====================================================
-   AJOUT ET MODIFICATION DES JEUX
-   ===================================================== */
-
+/* AJOUT ET MODIFICATION DES JEUX */
 $("gameForm").addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -1562,17 +1540,12 @@ function renderAdminGames() {
     row.className = "admin-item";
 
     const left = document.createElement("div");
-
     const title = document.createElement("strong");
-    title.textContent =
-      `${game.emoji || "🎮"} ${game.title || "Jeu sans nom"}`;
+    title.textContent = `${game.emoji || "🎮"} ${game.title || "Jeu sans nom"}`;
 
     const status = document.createElement("span");
-    status.className =
-      `status ${game.maintenance ? "maintenance" : "on"}`;
-
-    status.textContent =
-      game.maintenance ? "EN MAINTENANCE" : "DISPONIBLE";
+    status.className = `status ${game.maintenance ? "maintenance" : "on"}`;
+    status.textContent = game.maintenance ? "EN MAINTENANCE" : "DISPONIBLE";
 
     const detail = document.createElement("p");
     detail.textContent =
@@ -1590,25 +1563,20 @@ function renderAdminGames() {
     const actions = document.createElement("div");
     actions.className = "admin-item-actions";
 
-    /* Modifier */
     const edit = document.createElement("button");
     edit.className = "btn secondary small";
     edit.textContent = "✏️ Modifier";
 
     edit.onclick = () => {
       editingGame = game.id;
-
       $("gameEditId").value = game.id;
       $("gameTitle").value = game.title || "";
       $("gameEmoji").value = game.emoji || "🎮";
-
       $("gameBackground").value =
         game.background || "linear-gradient(135deg,#55304d,#282142)";
-
       $("gameType").value = game.type || "url";
       $("gamePlatform").value = game.platform || "all";
       $("gameContent").value = game.content || "";
-
       $("saveGameBtn").textContent = "💾 Enregistrer les modifications";
       $("cancelGameEditBtn").hidden = false;
 
@@ -1618,12 +1586,9 @@ function renderAdminGames() {
       });
     };
 
-    /* Maintenance */
     const maintenanceButton = document.createElement("button");
-
     maintenanceButton.className =
       "btn small " + (game.maintenance ? "green" : "secondary");
-
     maintenanceButton.textContent =
       game.maintenance ? "🟢 Réactiver" : "🛠️ Maintenance";
 
@@ -1648,8 +1613,7 @@ function renderAdminGames() {
         message = message.trim();
 
         if (!message) {
-          message =
-            "Ce jeu est temporairement indisponible. Reviens bientôt !";
+          message = "Ce jeu est temporairement indisponible. Reviens bientôt !";
         }
 
         if (message.length > 1000) {
@@ -1667,11 +1631,9 @@ function renderAdminGames() {
           updatedAt: serverTimestamp()
         });
 
-        toast(
-          enablingMaintenance
-            ? "🛠️ Jeu mis en maintenance."
-            : "🟢 Jeu réactivé !"
-        );
+        toast(enablingMaintenance
+          ? "🛠️ Jeu mis en maintenance."
+          : "🟢 Jeu réactivé !");
       } catch (error) {
         console.error("Erreur de maintenance :", error);
         toast("Impossible de modifier la maintenance. Vérifie les règles Firestore.");
@@ -1680,7 +1642,6 @@ function renderAdminGames() {
       }
     };
 
-    /* Supprimer */
     const remove = document.createElement("button");
     remove.className = "btn red small";
     remove.textContent = "🗑️ Supprimer";
@@ -1710,10 +1671,7 @@ function renderAdminGames() {
   });
 }
 
-/* =====================================================
-   ANNONCES : TYPES
-   ===================================================== */
-
+/* ANNONCES : TYPES */
 const announcementTypes = {
   info: { label:"INFORMATION", icon:"ℹ️" },
   update: { label:"MISE À JOUR", icon:"🆕" },
@@ -1721,10 +1679,7 @@ const announcementTypes = {
   issue: { label:"PROBLÈME TECHNIQUE", icon:"🚨" }
 };
 
-/* =====================================================
-   AJOUT ET MODIFICATION DES ANNONCES
-   ===================================================== */
-
+/* AJOUT ET MODIFICATION DES ANNONCES */
 $("announcementForm").addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -1768,21 +1723,14 @@ $("announcementForm").addEventListener("submit", async event => {
 
   try {
     if (editingAnnouncement) {
-      await updateDoc(
-        doc(db, "announcements", editingAnnouncement),
-        data
-      );
-
+      await updateDoc(doc(db, "announcements", editingAnnouncement), data);
       toast("Annonce modifiée !");
     } else {
       data.createdAt = serverTimestamp();
       await addDoc(announcementsRef, data);
-
-      toast(
-        data.active
-          ? "Annonce publiée !"
-          : "Annonce enregistrée comme inactive."
-      );
+      toast(data.active
+        ? "Annonce publiée !"
+        : "Annonce enregistrée comme inactive.");
     }
 
     resetAnnouncementForm();
@@ -1803,16 +1751,12 @@ function resetAnnouncementForm() {
   $("cancelAnnouncementEditBtn").hidden = true;
 }
 
-$("cancelAnnouncementEditBtn").addEventListener(
-  "click",
-  resetAnnouncementForm
-);
+$("cancelAnnouncementEditBtn").addEventListener("click", resetAnnouncementForm);
 
 function formatExpiry(value) {
   if (!value) return "Sans date de fin";
 
   const date = new Date(value);
-
   if (Number.isNaN(date.getTime())) return "Date inconnue";
 
   return "Fin : " + date.toLocaleString("fr-FR");
@@ -1838,51 +1782,38 @@ function renderAdminAnnouncements() {
       return bt - at;
     })
     .forEach(item => {
-      const type =
-        announcementTypes[item.type] || announcementTypes.info;
+      const type = announcementTypes[item.type] || announcementTypes.info;
 
       const row = document.createElement("div");
       row.className = "admin-item";
 
       const left = document.createElement("div");
-
       const title = document.createElement("strong");
-      title.textContent =
-        `${type.icon} ${item.title || "Annonce sans titre"}`;
+      title.textContent = `${type.icon} ${item.title || "Annonce sans titre"}`;
 
       const status = document.createElement("span");
       status.className = `status ${item.active ? "on" : "off"}`;
       status.textContent = item.active ? "ACTIVE" : "INACTIVE";
 
       const detail = document.createElement("p");
-      detail.textContent =
-        `${type.label} • ${formatExpiry(item.expiresAt)}`;
+      detail.textContent = `${type.label} • ${formatExpiry(item.expiresAt)}`;
 
       const message = document.createElement("p");
       const preview = safeText(item.message);
-
       message.textContent =
         preview.length > 150 ? preview.slice(0, 150) + "…" : preview;
 
-      left.append(
-        title,
-        document.createTextNode(" "),
-        status,
-        detail,
-        message
-      );
+      left.append(title, document.createTextNode(" "), status, detail, message);
 
       const actions = document.createElement("div");
       actions.className = "admin-item-actions";
 
-      /* Modifier */
       const edit = document.createElement("button");
       edit.className = "btn secondary small";
       edit.textContent = "✏️ Modifier";
 
       edit.onclick = () => {
         editingAnnouncement = item.id;
-
         $("announcementEditId").value = item.id;
         $("announcementTitle").value = item.title || "";
         $("announcementMessage").value = item.message || "";
@@ -1891,19 +1822,13 @@ function renderAdminAnnouncements() {
 
         if (item.expiresAt) {
           const d = new Date(item.expiresAt);
-          const local = new Date(
-            d.getTime() - d.getTimezoneOffset() * 60000
-          );
-
-          $("announcementExpires").value =
-            local.toISOString().slice(0, 16);
+          const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+          $("announcementExpires").value = local.toISOString().slice(0, 16);
         } else {
           $("announcementExpires").value = "";
         }
 
-        $("saveAnnouncementBtn").textContent =
-          "💾 Enregistrer les modifications";
-
+        $("saveAnnouncementBtn").textContent = "💾 Enregistrer les modifications";
         $("cancelAnnouncementEditBtn").hidden = false;
 
         $("announcementForm").scrollIntoView({
@@ -1912,13 +1837,9 @@ function renderAdminAnnouncements() {
         });
       };
 
-      /* Activer ou désactiver */
       const toggle = document.createElement("button");
-      toggle.className =
-        "btn small " + (item.active ? "secondary" : "green");
-
-      toggle.textContent =
-        item.active ? "⏸️ Désactiver" : "▶️ Activer";
+      toggle.className = "btn small " + (item.active ? "secondary" : "green");
+      toggle.textContent = item.active ? "⏸️ Désactiver" : "▶️ Activer";
 
       toggle.onclick = async () => {
         if (!isAdmin()) {
@@ -1932,18 +1853,13 @@ function renderAdminAnnouncements() {
             updatedAt: serverTimestamp()
           });
 
-          toast(
-            item.active
-              ? "Annonce désactivée."
-              : "Annonce activée."
-          );
+          toast(item.active ? "Annonce désactivée." : "Annonce activée.");
         } catch (error) {
           console.error(error);
           toast("Impossible de changer le statut.");
         }
       };
 
-      /* Supprimer */
       const remove = document.createElement("button");
       remove.className = "btn red small";
       remove.textContent = "🗑️ Supprimer";
@@ -1973,10 +1889,7 @@ function renderAdminAnnouncements() {
     });
 }
 
-/* =====================================================
-   ANNONCES PUBLIQUES
-   ===================================================== */
-
+/* ANNONCES PUBLIQUES */
 function getDismissedIds() {
   try {
     return JSON.parse(
@@ -1990,9 +1903,7 @@ function getDismissedIds() {
 function saveDismissedId(id) {
   const ids = getDismissedIds();
 
-  if (!ids.includes(id)) {
-    ids.push(id);
-  }
+  if (!ids.includes(id)) ids.push(id);
 
   try {
     localStorage.setItem(
@@ -2009,14 +1920,7 @@ function activeAnnouncementList() {
 
   return announcements.filter(item => {
     if (!item.active) return false;
-
-    if (
-      item.expiresAt &&
-      Number(item.expiresAt) <= now
-    ) {
-      return false;
-    }
-
+    if (item.expiresAt && Number(item.expiresAt) <= now) return false;
     return true;
   });
 }
@@ -2025,8 +1929,7 @@ function displayAnnouncement(item) {
   currentAnnouncement = item;
   shownThisPage.add(item.id);
 
-  const type =
-    announcementTypes[item.type] || announcementTypes.info;
+  const type = announcementTypes[item.type] || announcementTypes.info;
 
   $("announcementModal").dataset.type = item.type || "info";
   $("publicAnnouncementIcon").textContent = type.icon;
@@ -2043,9 +1946,7 @@ function showNextAnnouncement() {
     !announcementsLoaded ||
     currentAnnouncement ||
     $("announcementOverlay").classList.contains("open")
-  ) {
-    return;
-  }
+  ) return;
 
   const dismissed = getDismissedIds();
 
@@ -2054,9 +1955,7 @@ function showNextAnnouncement() {
     !shownThisPage.has(item.id)
   );
 
-  if (next) {
-    displayAnnouncement(next);
-  }
+  if (next) displayAnnouncement(next);
 }
 
 function closePublicAnnouncement() {
@@ -2067,9 +1966,7 @@ function closePublicAnnouncement() {
 
   const id = currentAnnouncement.id;
 
-  if ($("neverShowAnnouncement").checked) {
-    saveDismissedId(id);
-  }
+  if ($("neverShowAnnouncement").checked) saveDismissedId(id);
 
   currentAnnouncement = null;
   closeOverlay("announcementOverlay");
@@ -2077,15 +1974,8 @@ function closePublicAnnouncement() {
   setTimeout(showNextAnnouncement, 250);
 }
 
-$("closeAnnouncementBtn").addEventListener(
-  "click",
-  closePublicAnnouncement
-);
-
-$("closeAnnouncementX").addEventListener(
-  "click",
-  closePublicAnnouncement
-);
+$("closeAnnouncementBtn").addEventListener("click", closePublicAnnouncement);
+$("closeAnnouncementX").addEventListener("click", closePublicAnnouncement);
 
 $("showAnnouncementsBtn").addEventListener("click", () => {
   const active = activeAnnouncementList();
@@ -2105,10 +1995,7 @@ $("showAnnouncementsBtn").addEventListener("click", () => {
   displayAnnouncement(next);
 });
 
-/* =====================================================
-   FIRESTORE : SYNCHRONISATION DES JEUX
-   ===================================================== */
-
+/* FIRESTORE : SYNCHRONISATION DES JEUX */
 onSnapshot(gamesRef, snapshot => {
   games = snapshot.docs.map(item => ({
     id:item.id,
@@ -2120,23 +2007,11 @@ onSnapshot(gamesRef, snapshot => {
   renderGames();
   renderAdminGames();
 
-  /*
-   * Si un jeu actuellement ouvert est placé en maintenance,
-   * le joueur normal est interrompu.
-   *
-   * L'administrateur peut continuer à tester le jeu.
-   */
   if (currentGame) {
-    const latestGame = games.find(
-      game => game.id === currentGame.id
-    );
+    const latestGame = games.find(game => game.id === currentGame.id);
 
-    if (
-      latestGame?.maintenance === true &&
-      !isAdmin()
-    ) {
-      const message =
-        latestGame.maintenanceMessage ||
+    if (latestGame?.maintenance === true && !isAdmin()) {
+      const message = latestGame.maintenanceMessage ||
         "🛠️ Ce jeu vient d'être placé en maintenance.";
 
       stopCurrentGame();
@@ -2160,14 +2035,10 @@ onSnapshot(gamesRef, snapshot => {
 
   $("gameGrid").append(errorMessage);
   $("gameCount").textContent = "Erreur";
-
   toast("Erreur de chargement des jeux.");
 });
 
-/* =====================================================
-   FIRESTORE : SYNCHRONISATION DES ANNONCES
-   ===================================================== */
-
+/* FIRESTORE : SYNCHRONISATION DES ANNONCES */
 onSnapshot(announcementsRef, snapshot => {
   announcements = snapshot.docs.map(item => ({
     id:item.id,
@@ -2176,17 +2047,10 @@ onSnapshot(announcementsRef, snapshot => {
 
   announcementsLoaded = true;
 
-  /*
-   * Si l'annonce actuellement affichée a été supprimée,
-   * désactivée ou expirée, on la ferme.
-   */
   if (currentAnnouncement) {
-    const latest = announcements.find(
-      item => item.id === currentAnnouncement.id
-    );
+    const latest = announcements.find(item => item.id === currentAnnouncement.id);
 
-    const expired =
-      latest?.expiresAt &&
+    const expired = latest?.expiresAt &&
       Number(latest.expiresAt) <= Date.now();
 
     if (!latest || !latest.active || expired) {
@@ -2195,16 +2059,13 @@ onSnapshot(announcementsRef, snapshot => {
     } else {
       currentAnnouncement = latest;
 
-      const type =
-        announcementTypes[latest.type] || announcementTypes.info;
+      const type = announcementTypes[latest.type] || announcementTypes.info;
 
       $("announcementModal").dataset.type = latest.type || "info";
       $("publicAnnouncementIcon").textContent = type.icon;
       $("publicAnnouncementType").textContent = type.label;
-      $("publicAnnouncementTitle").textContent =
-        latest.title || "Annonce";
-      $("publicAnnouncementMessage").textContent =
-        latest.message || "";
+      $("publicAnnouncementTitle").textContent = latest.title || "Annonce";
+      $("publicAnnouncementMessage").textContent = latest.message || "";
     }
   }
 
@@ -2216,14 +2077,8 @@ onSnapshot(announcementsRef, snapshot => {
 });
 
 /* INFORMATIONS DE DIAGNOSTIC */
-console.info(
-  "Gourmand.fun — appareil détecté :",
-  detectDevice()
-);
-
+console.info("Gourmand.fun — appareil détecté :", detectDevice());
 console.info("User-Agent :", navigator.userAgent);
 console.info("Maintenance des jeux activée.");
-</script>
-
-</body>
+</script></body>
 </html>
