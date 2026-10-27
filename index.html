@@ -2,431 +2,188 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#17111f">
 <title>Gourmand.fun — Les jeux du club informatique</title>
 
 <style>
 :root {
-  --bg:#17111f;
-  --panel:#241b30;
-  --panel2:#30233d;
-  --text:#fff8f0;
-  --muted:#c5b8ce;
-  --pink:#ff668a;
-  --orange:#ffb454;
-  --green:#6ee7b7;
-  --blue:#7dd3fc;
-  --danger:#ff626c;
-  --border:rgba(255,255,255,.12);
+  --bg:#17111f;--panel:#241b30;--panel2:#30233d;
+  --text:#fff8f0;--muted:#c5b8ce;--pink:#ff668a;
+  --orange:#ffb454;--green:#6ee7b7;--blue:#7dd3fc;
+  --danger:#ff626c;--border:rgba(255,255,255,.12);
 }
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  background:
-    radial-gradient(circle at 10% 0%,#42213e 0,transparent 35%),
-    radial-gradient(circle at 100% 20%,#38264a 0,transparent 30%),
-    var(--bg);
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-  min-height:100vh;
+*{box-sizing:border-box}
+body{
+  margin:0;background:
+  radial-gradient(circle at 10% 0%,#42213e 0,transparent 35%),
+  radial-gradient(circle at 100% 20%,#38264a 0,transparent 30%),
+  var(--bg);color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh
 }
-button,input,textarea,select { font:inherit; }
-button { cursor:pointer; }
-button:focus-visible,input:focus-visible,
-textarea:focus-visible,select:focus-visible {
-  outline:3px solid var(--blue);
-  outline-offset:2px;
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:3px solid var(--blue);outline-offset:2px
 }
-header {
-  position:sticky;
-  top:0;
-  z-index:20;
-  padding:14px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  background:rgba(23,17,31,.94);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(14px);
+header{
+  position:sticky;top:0;z-index:20;padding:14px 5%;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  background:rgba(23,17,31,.96);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(14px)
 }
-.logo {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:950;
-  font-size:1.35rem;
-  letter-spacing:-.6px;
-}
-.logo-icon {
-  display:grid;
-  place-items:center;
-  width:44px;
-  height:44px;
+.logo{display:flex;align-items:center;gap:10px;font-weight:950;font-size:1.35rem}
+.logo-icon{
+  display:grid;place-items:center;width:44px;height:44px;
   background:linear-gradient(135deg,var(--orange),var(--pink));
-  border-radius:15px;
-  font-size:1.5rem;
+  border-radius:15px;font-size:1.5rem
 }
-.header-actions {
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  border:0;border-radius:12px;padding:10px 14px;font-weight:800;
+  color:#211526;background:linear-gradient(135deg,var(--orange),var(--pink));
+  transition:transform .15s,filter .15s
 }
-.btn {
-  border:0;
-  border-radius:12px;
-  padding:10px 14px;
-  font-weight:800;
-  color:#211526;
-  background:linear-gradient(135deg,var(--orange),var(--pink));
-  transition:transform .15s,filter .15s;
-}
-.btn:hover { transform:translateY(-2px); filter:brightness(1.08); }
-.btn.secondary {
-  background:var(--panel2);
-  color:var(--text);
-  border:1px solid var(--border);
-}
-.btn.green { background:var(--green); }
-.btn.red { background:var(--danger); color:#2b1017; }
-.btn.small { padding:7px 10px; font-size:.85rem; }
-main { width:min(1200px,92%); margin:auto; }
-.hero {
-  padding:55px 0 35px;
-  display:grid;
-  grid-template-columns:1.4fr .6fr;
-  gap:25px;
-  align-items:center;
-}
-.eyebrow {
-  display:inline-block;
-  color:var(--orange);
-  background:rgba(255,180,84,.12);
-  border:1px solid rgba(255,180,84,.25);
-  padding:7px 12px;
-  border-radius:30px;
-  font-weight:800;
-  font-size:.82rem;
-}
-h1 {
-  font-size:clamp(2.4rem,6vw,4.7rem);
-  line-height:1.03;
-  margin:18px 0;
-  letter-spacing:-2px;
-}
-.gradient-text {
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.btn.green{background:var(--green)}
+.btn.red{background:var(--danger);color:#2b1017}
+.btn.small{padding:7px 10px;font-size:.85rem}
+.gradient-text{
   background:linear-gradient(90deg,var(--orange),var(--pink));
-  color:transparent;
-  background-clip:text;
+  color:transparent;background-clip:text
 }
-.hero p {
-  color:var(--muted);
-  font-size:1.08rem;
-  line-height:1.7;
+main{width:min(1200px,92%);margin:auto}
+.hero{
+  padding:55px 0 35px;display:grid;grid-template-columns:1.4fr .6fr;
+  gap:25px;align-items:center
 }
-.hero-art {
-  text-align:center;
-  font-size:clamp(5rem,12vw,9rem);
-  filter:drop-shadow(0 18px 25px rgba(0,0,0,.35));
-  animation:bob 3s ease-in-out infinite;
+.eyebrow{
+  display:inline-block;color:var(--orange);background:#ffb4541f;
+  border:1px solid #ffb45440;padding:7px 12px;border-radius:30px;
+  font-weight:800;font-size:.82rem
 }
-@keyframes bob {
-  50% { transform:translateY(-10px) rotate(3deg); }
+h1{font-size:clamp(2.4rem,6vw,4.7rem);line-height:1.03;margin:18px 0;letter-spacing:-2px}
+.hero p{color:var(--muted);font-size:1.08rem;line-height:1.7}
+.hero-art{text-align:center;font-size:clamp(5rem,12vw,9rem);animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(3deg)}}
+.notice{
+  padding:13px 16px;background:#6ee7b715;border:1px solid #6ee7b738;
+  border-radius:14px;color:#d4ffed;margin-bottom:25px;line-height:1.5
 }
-.notice {
-  padding:13px 16px;
-  background:rgba(110,231,183,.09);
-  border:1px solid rgba(110,231,183,.22);
-  border-radius:14px;
-  color:#d4ffed;
-  margin-bottom:25px;
-  line-height:1.5;
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.field{
+  width:100%;padding:12px 13px;color:var(--text);background:#1f1729;
+  border:1px solid var(--border);border-radius:12px
 }
-.toolbar {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin:20px 0;
+.toolbar .search{flex:1 1 240px}
+.toolbar select{flex:0 1 190px}
+.section-title{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin:25px 0 16px
 }
-.field {
-  width:100%;
-  padding:12px 13px;
-  color:var(--text);
-  background:#1f1729;
-  border:1px solid var(--border);
-  border-radius:12px;
+.section-title h2{margin:0;font-size:1.55rem}
+.muted{color:var(--muted)}
+.game-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;padding-bottom:50px}
+.game-card{
+  overflow:hidden;border:1px solid var(--border);border-radius:20px;
+  background:linear-gradient(145deg,#ffffff0e,#ffffff05);transition:.2s
 }
-.toolbar .search { flex:1 1 240px; }
-.toolbar select { flex:0 1 190px; }
-.section-title {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin:25px 0 16px;
+.game-card:hover{transform:translateY(-4px);border-color:#ffb45480}
+.game-cover{
+  min-height:150px;display:grid;place-items:center;position:relative;
+  background:var(--cover,linear-gradient(135deg,#55304d,#282142))
 }
-.section-title h2 { margin:0; font-size:1.55rem; }
-.muted { color:var(--muted); }
-.game-grid {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:17px;
-  padding-bottom:50px;
+.game-emoji{font-size:4rem;filter:drop-shadow(0 8px 10px #0005)}
+.platform-badge{
+  position:absolute;left:10px;top:10px;font-size:.75rem;
+  background:#1d1424e8;border:1px solid var(--border);border-radius:20px;padding:5px 9px
 }
-.game-card {
-  overflow:hidden;
-  border:1px solid var(--border);
-  border-radius:20px;
-  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
-  transition:transform .2s,border-color .2s;
+.game-info{padding:16px}
+.game-info h3{margin:0 0 8px;font-size:1.15rem}
+.game-info p{margin:0 0 15px;color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
+.game-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.game-buttons .btn{flex:1}
+.empty{
+  grid-column:1/-1;text-align:center;padding:45px 20px;
+  border:1px dashed var(--border);border-radius:18px;color:var(--muted)
 }
-.game-card:hover {
-  transform:translateY(-5px);
-  border-color:rgba(255,180,84,.5);
+footer{padding:25px 5%;border-top:1px solid var(--border);text-align:center;color:var(--muted);line-height:1.7}
+footer strong{color:var(--text)}
+.overlay{
+  position:fixed;inset:0;z-index:100;display:none;align-items:center;
+  justify-content:center;padding:16px;background:#07050cd9;backdrop-filter:blur(8px)
 }
-.game-cover {
-  min-height:150px;
-  display:grid;
-  place-items:center;
-  position:relative;
-  background:var(--cover,linear-gradient(135deg,#55304d,#282142));
+.overlay.open{display:flex}
+.modal{
+  width:min(600px,100%);max-height:90vh;overflow-y:auto;padding:23px;
+  background:var(--panel);border:1px solid var(--border);border-radius:22px;
+  box-shadow:0 25px 90px #0008
 }
-.game-emoji {
-  font-size:4rem;
-  filter:drop-shadow(0 8px 10px #0005);
+.modal.wide{width:min(950px,100%)}
+.modal h2{margin:0 0 16px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}
+.close-btn{border:0;background:var(--panel2);color:var(--text);border-radius:10px;padding:8px 12px;font-weight:900}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-group{display:flex;flex-direction:column;gap:7px;margin-bottom:13px;min-width:0}
+.form-group label{font-size:.9rem;font-weight:800;color:#f2e8fa}
+.form-group.full{grid-column:1/-1}
+textarea.field{min-height:110px;resize:vertical}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.admin-list{display:grid;gap:10px;margin-top:18px}
+.admin-item{
+  background:var(--panel2);border:1px solid var(--border);padding:13px;
+  border-radius:13px;display:flex;justify-content:space-between;gap:12px;align-items:center
 }
-.platform-badge {
-  position:absolute;
-  left:10px;
-  top:10px;
-  font-size:.75rem;
-  background:#1d1424d9;
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:5px 9px;
+.admin-item p{margin:5px 0 0;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
+.admin-item-actions{display:flex;gap:6px;flex-wrap:wrap}
+.status{display:inline-block;padding:4px 8px;border-radius:20px;font-size:.75rem;font-weight:900}
+.status.on{color:#c9ffe6;background:#1b6848}
+.status.off{color:#ffe1e1;background:#71323a}
+.help{color:var(--muted);font-size:.85rem;line-height:1.5}
+#gameFrame{width:100%;height:min(70vh,650px);background:#fff;border:0;border-radius:12px}
+.game-warning{padding:10px;margin-bottom:12px;border-radius:10px;background:#ffb4541f;color:#ffe3b9}
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;
+  padding:12px 18px;border-radius:12px;background:var(--green);color:#13251d;
+  font-weight:800;box-shadow:0 8px 35px #0005;display:none;max-width:90%
 }
-.game-info { padding:16px; }
-.game-info h3 { margin:0 0 8px; font-size:1.15rem; }
-.game-info p {
-  margin:0 0 15px;
-  color:var(--muted);
-  font-size:.9rem;
-}
-.game-buttons { display:flex; gap:8px; flex-wrap:wrap; }
-.game-buttons .btn { flex:1; }
-.empty {
-  grid-column:1/-1;
-  text-align:center;
-  padding:45px 20px;
-  border:1px dashed var(--border);
-  border-radius:18px;
-  color:var(--muted);
-}
-footer {
-  padding:25px 5%;
-  border-top:1px solid var(--border);
-  text-align:center;
-  color:var(--muted);
-  line-height:1.7;
-}
-footer strong { color:var(--text); }
-
-/* Fenêtres */
-.overlay {
-  position:fixed;
-  inset:0;
-  z-index:100;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:16px;
-  background:rgba(7,5,12,.82);
-  backdrop-filter:blur(8px);
-}
-.overlay.open { display:flex; }
-.modal {
-  width:min(600px,100%);
-  max-height:90vh;
-  overflow-y:auto;
-  padding:23px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:22px;
-  box-shadow:0 25px 90px #0008;
-}
-.modal.wide { width:min(950px,100%); }
-.modal h2 { margin:0 0 16px; }
-.modal-head {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:15px;
-}
-.close-btn {
-  border:0;
-  background:var(--panel2);
-  color:var(--text);
-  border-radius:10px;
-  padding:8px 12px;
-  font-weight:900;
-}
-.form-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:13px;
-}
-.form-group {
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-  margin-bottom:13px;
-}
-.form-group label {
-  font-size:.9rem;
-  font-weight:800;
-  color:#f2e8fa;
-}
-.form-group.full { grid-column:1/-1; }
-textarea.field { min-height:110px; resize:vertical; }
-.form-actions {
-  display:flex;
-  gap:9px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-.admin-list { display:grid; gap:10px; margin-top:18px; }
-.admin-item {
-  background:var(--panel2);
-  border:1px solid var(--border);
-  padding:13px;
-  border-radius:13px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  align-items:center;
-}
-.admin-item p {
-  margin:5px 0 0;
-  color:var(--muted);
-  font-size:.85rem;
-}
-.admin-item-actions { display:flex; gap:6px; flex-wrap:wrap; }
-.status {
-  display:inline-block;
-  padding:4px 8px;
-  border-radius:20px;
-  font-size:.75rem;
-  font-weight:900;
-}
-.status.on { color:#c9ffe6; background:#1b6848; }
-.status.off { color:#ffe1e1; background:#71323a; }
-.help { color:var(--muted); font-size:.85rem; line-height:1.5; }
-#gameFrame {
-  width:100%;
-  height:min(70vh,650px);
-  background:#fff;
-  border:0;
-  border-radius:12px;
-}
-.game-warning {
-  padding:10px;
-  margin-bottom:12px;
-  border-radius:10px;
-  background:rgba(255,180,84,.12);
-  color:#ffe3b9;
-}
-.toast {
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:500;
-  padding:12px 18px;
-  border-radius:12px;
-  background:var(--green);
-  color:#13251d;
-  font-weight:800;
-  box-shadow:0 8px 35px #0005;
-  display:none;
-  max-width:90%;
-}
-.toast.show { display:block; }
-
-/* Avertissement de compatibilité */
-.compatibility-icon {
-  font-size:3.5rem;
-  text-align:center;
-  margin-bottom:12px;
-}
-.compatibility-message {
-  color:var(--muted);
-  line-height:1.7;
-  margin-bottom:20px;
-  white-space:pre-line;
-}
-.compatibility-actions {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.compatibility-actions .btn {
-  flex:1;
-  min-width:140px;
-}
-
-/* Annonces */
-.announcement-card { --announce-color:var(--blue); }
-.announcement-card[data-type="update"] { --announce-color:var(--green); }
-.announcement-card[data-type="maintenance"] { --announce-color:var(--orange); }
-.announcement-card[data-type="issue"] { --announce-color:var(--pink); }
-.announcement-card { border-top:5px solid var(--announce-color); }
-.announcement-icon { font-size:2.8rem; margin-bottom:8px; }
-.announcement-label {
-  display:inline-block;
-  color:var(--announce-color);
+.toast.show{display:block}
+.compatibility-icon{text-align:center;font-size:3.5rem;margin-bottom:12px}
+.compatibility-message{color:var(--muted);line-height:1.7;margin-bottom:20px;white-space:pre-line}
+.compatibility-actions{display:flex;gap:10px;flex-wrap:wrap}
+.compatibility-actions .btn{flex:1;min-width:140px}
+.announcement-card{--announce-color:var(--blue);border-top:5px solid var(--announce-color)}
+.announcement-card[data-type="update"]{--announce-color:var(--green)}
+.announcement-card[data-type="maintenance"]{--announce-color:var(--orange)}
+.announcement-card[data-type="issue"]{--announce-color:var(--pink)}
+.announcement-icon{font-size:2.8rem;margin-bottom:8px}
+.announcement-label{
+  display:inline-block;color:var(--announce-color);
   background:color-mix(in srgb,var(--announce-color) 12%,transparent);
   border:1px solid color-mix(in srgb,var(--announce-color) 40%,transparent);
-  border-radius:30px;
-  padding:5px 10px;
-  font-weight:900;
-  font-size:.78rem;
-  margin-bottom:10px;
+  border-radius:30px;padding:5px 10px;font-weight:900;font-size:.78rem;margin-bottom:10px
 }
-.announcement-message {
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  line-height:1.7;
-  color:var(--muted);
+.announcement-message{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:var(--muted)}
+.check-row{display:flex;gap:9px;align-items:center;margin-top:16px;color:var(--muted);font-size:.9rem}
+.check-row input{width:18px;height:18px}
+@media(max-width:800px){
+  .hero{grid-template-columns:1fr;padding-top:35px}
+  .hero-art{display:none}
+  .game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-.check-row {
-  display:flex;
-  gap:9px;
-  align-items:center;
-  margin-top:16px;
-  color:var(--muted);
-  font-size:.9rem;
-}
-.check-row input { width:18px; height:18px; }
-
-@media (max-width:800px) {
-  .hero { grid-template-columns:1fr; padding-top:35px; }
-  .hero-art { display:none; }
-  .game-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-}
-@media (max-width:520px) {
-  header { align-items:flex-start; }
-  .logo { font-size:1.05rem; }
-  .logo-icon { width:38px; height:38px; }
-  .header-actions { flex-direction:column; }
-  .header-actions .btn { padding:8px 10px; }
-  .game-grid { grid-template-columns:1fr; }
-  .form-grid { grid-template-columns:1fr; }
-  .form-group.full { grid-column:auto; }
-  .modal { padding:17px; }
-  .admin-item { align-items:flex-start; flex-direction:column; }
-  .compatibility-actions { flex-direction:column; }
+@media(max-width:520px){
+  header{align-items:flex-start}
+  .logo{font-size:1.05rem}
+  .logo-icon{width:38px;height:38px}
+  .header-actions{flex-direction:column}
+  .header-actions .btn{padding:8px 10px}
+  .game-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:auto}
+  .modal{padding:17px}
+  .admin-item{align-items:flex-start;flex-direction:column}
+  .compatibility-actions{flex-direction:column}
 }
 </style>
 </head>
@@ -450,14 +207,14 @@ textarea.field { min-height:110px; resize:vertical; }
       <span class="eyebrow">🎮 LES JEUX DU CLUB INFORMATIQUE</span>
       <h1>Une petite faim de <span class="gradient-text">jeux ?</span></h1>
       <p>Bienvenue sur Gourmand.fun ! Découvre les jeux du club informatique, lance une partie et amuse-toi. Il y a toujours quelque chose à tester !</p>
-      <button class="btn" onclick="document.querySelector('#catalogue').scrollIntoView({behavior:'smooth'})">🍟 Découvrir les jeux</button>
+      <button class="btn" id="discoverBtn">🍟 Découvrir les jeux</button>
     </div>
     <div class="hero-art" aria-hidden="true">🍔🎮🍟</div>
   </section>
 
   <div class="notice">
     💻 <strong>Les jeux du club informatique :</strong> certains jeux sont jouables directement sur le site. D'autres peuvent ouvrir une page externe.
-    <br>📦 Les jeux proposés ici sont open source et peuvent être téléchargés directement lorsque leur licence et leur page de distribution le permettent.
+    <br>📦 Les jeux proposés ici peuvent être téléchargés lorsque leur licence et leur page de distribution le permettent.
   </div>
 
   <section id="catalogue">
@@ -502,7 +259,7 @@ textarea.field { min-height:110px; resize:vertical; }
   </div>
 </div>
 
-<!-- Avertissement PC / mobile -->
+<!-- Avertissement de compatibilité -->
 <div class="overlay" id="platformWarningOverlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="platformWarningTitle">
     <div class="compatibility-icon" id="platformWarningIcon">⚠️</div>
@@ -524,11 +281,11 @@ textarea.field { min-height:110px; resize:vertical; }
     </div>
     <p class="muted">Connecte-toi avec le compte Google autorisé à administrer le site.</p>
     <button class="btn" id="googleLoginBtn">Continuer avec Google</button>
-    <p class="help">Les droits d'administration doivent également être protégés par les règles de sécurité Firebase.</p>
+    <p class="help">Les droits doivent également être protégés par les règles de sécurité Firebase.</p>
   </div>
 </div>
 
-<!-- Panneau admin -->
+<!-- Administration -->
 <div class="overlay" id="adminOverlay">
   <div class="modal wide">
     <div class="modal-head">
@@ -592,7 +349,7 @@ textarea.field { min-height:110px; resize:vertical; }
     <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
 
     <div class="section-title"><h2>📢 Publier une annonce</h2></div>
-    <p class="help">Les annonces actives apparaissent aux visiteurs. Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.</p>
+    <p class="help">Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.</p>
 
     <form id="announcementForm">
       <input type="hidden" id="announcementEditId">
@@ -620,7 +377,6 @@ textarea.field { min-height:110px; resize:vertical; }
           <span class="help">Laisse vide pour une annonce sans expiration automatique.</span>
         </div>
         <div class="form-group">
-          <label>Publication</label>
           <label style="display:flex;gap:10px;align-items:center;padding:10px 0">
             <input id="announcementActive" type="checkbox" checked style="width:18px;height:18px">
             Annonce active
@@ -658,7 +414,7 @@ textarea.field { min-height:110px; resize:vertical; }
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -667,10 +423,11 @@ import {
   onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut
+  getAuth, GoogleAuthProvider, signInWithPopup,
+  onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-/* CONFIGURATION FIREBASE */
+/* CONFIGURATION FIREBASE : conservée */
 const firebaseConfig = {
   apiKey: "AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
   authDomain: "jeux-feuxxx.firebaseapp.com",
@@ -683,6 +440,7 @@ const firebaseConfig = {
 };
 
 const ADMIN_EMAIL = "x.kaboom.x02@gmail.com";
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -698,6 +456,8 @@ let editingGame = null;
 let editingAnnouncement = null;
 let currentAnnouncement = null;
 let pendingGame = null;
+let gamesLoaded = false;
+let announcementsLoaded = false;
 
 const shownThisPage = new Set();
 const $ = id => document.getElementById(id);
@@ -707,11 +467,12 @@ function toast(message) {
   el.textContent = message;
   el.classList.add("show");
   clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.classList.remove("show"), 3200);
+  toast.timer = setTimeout(() => el.classList.remove("show"), 3500);
 }
 
 function isAdmin() {
-  return !!currentUser && currentUser.email === ADMIN_EMAIL;
+  return !!currentUser &&
+    currentUser.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 }
 
 function openOverlay(id) {
@@ -722,9 +483,13 @@ function closeOverlay(id) {
   $(id).classList.remove("open");
 }
 
-/* Fermeture des fenêtres */
-document.querySelectorAll("[data-close]").forEach(btn => {
-  btn.addEventListener("click", () => closeOverlay(btn.dataset.close));
+function safeText(value) {
+  return String(value ?? "");
+}
+
+/* Fermer les fenêtres */
+document.querySelectorAll("[data-close]").forEach(button => {
+  button.addEventListener("click", () => closeOverlay(button.dataset.close));
 });
 
 document.querySelectorAll(".overlay").forEach(overlay => {
@@ -732,7 +497,12 @@ document.querySelectorAll(".overlay").forEach(overlay => {
     if (event.target !== overlay) return;
 
     if (overlay.id === "gameOverlay") stopCurrentGame();
-    if (overlay.id === "announcementOverlay") closePublicAnnouncement();
+
+    if (overlay.id === "announcementOverlay") {
+      closePublicAnnouncement();
+      return;
+    }
+
     if (overlay.id === "platformWarningOverlay") {
       pendingGame = null;
     }
@@ -744,16 +514,9 @@ document.querySelectorAll(".overlay").forEach(overlay => {
 document.addEventListener("keydown", event => {
   if (event.key !== "Escape") return;
 
-  if ($("gameOverlay").classList.contains("open")) {
-    stopCurrentGame();
-  }
+  if ($("gameOverlay").classList.contains("open")) stopCurrentGame();
 
-  [
-    "loginOverlay",
-    "adminOverlay",
-    "platformWarningOverlay"
-  ].forEach(closeOverlay);
-
+  ["loginOverlay", "adminOverlay", "platformWarningOverlay"].forEach(closeOverlay);
   pendingGame = null;
 
   if ($("announcementOverlay").classList.contains("open")) {
@@ -761,7 +524,57 @@ document.addEventListener("keydown", event => {
   }
 });
 
-/* ---------------- JEUX ---------------- */
+$("discoverBtn").addEventListener("click", () => {
+  $("catalogue").scrollIntoView({ behavior: "smooth" });
+});
+
+/* =====================================================
+   DÉTECTION AMÉLIORÉE : PC, TABLETTE OU TÉLÉPHONE
+   ===================================================== */
+
+function detectDevice() {
+  const ua = navigator.userAgent || "";
+  const uaData = navigator.userAgentData;
+
+  // Détection des iPad, y compris ceux qui se présentent comme des Mac.
+  const isIPad =
+    /iPad/i.test(ua) ||
+    (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+
+  if (isIPad) return "tablet";
+
+  // Certains navigateurs fournissent directement cette information.
+  if (uaData && uaData.mobile === true) return "phone";
+
+  // Téléphones connus.
+  if (/iPhone|iPod|Windows Phone|IEMobile/i.test(ua)) return "phone";
+
+  // Android : le mot Mobile distingue souvent un téléphone d'une tablette.
+  if (/Android/i.test(ua)) {
+    return /Mobile/i.test(ua) ? "phone" : "tablet";
+  }
+
+  // Autres appareils mobiles ou tablettes.
+  if (/Tablet|PlayBook|Silk/i.test(ua)) return "tablet";
+  if (/Mobile/i.test(ua)) return "phone";
+
+  // Solution de secours pour certains navigateurs de tablette.
+  const touchPoints = navigator.maxTouchPoints || 0;
+  const smallestScreenSide = Math.min(
+    window.screen?.width || window.innerWidth,
+    window.screen?.height || window.innerHeight
+  );
+
+  if (touchPoints > 1 && smallestScreenSide < 1100) return "tablet";
+
+  return "pc";
+}
+
+function deviceLabel(device) {
+  if (device === "phone") return "téléphone";
+  if (device === "tablet") return "tablette";
+  return "ordinateur";
+}
 
 function platformLabel(platform) {
   if (platform === "pc") return "🖥️ PC uniquement";
@@ -769,9 +582,9 @@ function platformLabel(platform) {
   return "💻 Tous appareils";
 }
 
-function safeText(value) {
-  return String(value ?? "");
-}
+/* =====================================================
+   CATALOGUE DES JEUX
+   ===================================================== */
 
 function renderGames() {
   const search = $("searchInput").value.trim().toLowerCase();
@@ -791,13 +604,18 @@ function renderGames() {
   $("gameCount").textContent =
     `${visible.length} jeu${visible.length > 1 ? "x" : ""}`;
 
+  const grid = $("gameGrid");
+  grid.replaceChildren();
+
   if (!visible.length) {
-    $("gameGrid").innerHTML =
-      '<div class="empty">🍽️ Aucun jeu trouvé. Essaie une autre recherche !</div>';
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = gamesLoaded
+      ? "🍽️ Aucun jeu trouvé. Essaie une autre recherche !"
+      : "🍳 Chargement du menu…";
+    grid.append(empty);
     return;
   }
-
-  $("gameGrid").replaceChildren();
 
   visible.forEach(game => {
     const card = document.createElement("article");
@@ -838,38 +656,26 @@ function renderGames() {
     buttons.append(play);
     info.append(title, description, buttons);
     card.append(cover, info);
-    $("gameGrid").append(card);
+    grid.append(card);
   });
 }
 
 $("searchInput").addEventListener("input", renderGames);
 $("platformFilter").addEventListener("change", renderGames);
 
-/* Détection de l'appareil */
-function isMobileDevice() {
-  const ua = navigator.userAgent || "";
+/* =====================================================
+   COMPATIBILITÉ ET LANCEMENT
+   ===================================================== */
 
-  if (navigator.userAgentData?.mobile === true) return true;
-
-  if (/Android|iPhone|iPod|Mobile|Tablet|iPad/i.test(ua)) {
-    return true;
-  }
-
-  // Les iPad récents peuvent se présenter comme des ordinateurs Mac.
-  if (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1) {
-    return true;
-  }
-
-  return false;
-}
-
-/* Vérification de compatibilité */
 function playGame(game) {
-  const mobile = isMobileDevice();
+  const device = detectDevice();
 
+  // PC : avertir sur téléphone/tablette.
+  // Mobile : avertir uniquement sur ordinateur.
+  // All : ne jamais bloquer selon le type d'appareil.
   const incompatible =
-    (game.platform === "pc" && mobile) ||
-    (game.platform === "mobile" && !mobile);
+    (game.platform === "pc" && device !== "pc") ||
+    (game.platform === "mobile" && device === "pc");
 
   if (!incompatible) {
     launchGame(game);
@@ -882,18 +688,18 @@ function playGame(game) {
     $("platformWarningIcon").textContent = "🖥️";
     $("platformWarningTitle").textContent = "Jeu conçu pour PC";
     $("platformWarningMessage").textContent =
-      "Tu utilises un téléphone ou une tablette.\n\n" +
+      `Ton appareil semble être un ${deviceLabel(device)}.\n\n` +
       "Ce jeu peut nécessiter un clavier, une souris ou un grand écran. " +
       "Il risque de ne pas fonctionner correctement.\n\n" +
-      "Veux-tu quand même essayer ?";
+      "Tu peux quand même essayer.";
   } else {
     $("platformWarningIcon").textContent = "📱";
     $("platformWarningTitle").textContent = "Jeu conçu pour mobile";
     $("platformWarningMessage").textContent =
-      "Tu utilises un ordinateur.\n\n" +
+      "Ton appareil semble être un ordinateur.\n\n" +
       "Ce jeu est principalement prévu pour un écran tactile. " +
       "Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.\n\n" +
-      "Veux-tu quand même essayer ?";
+      "Tu peux quand même essayer.";
   }
 
   openOverlay("platformWarningOverlay");
@@ -905,63 +711,83 @@ $("cancelPlatformWarningBtn").addEventListener("click", () => {
 });
 
 $("continuePlatformWarningBtn").addEventListener("click", () => {
-  if (!pendingGame) {
-    closeOverlay("platformWarningOverlay");
-    return;
-  }
-
   const game = pendingGame;
   pendingGame = null;
-  launchGame(game);
+  closeOverlay("platformWarningOverlay");
+
+  if (game) launchGame(game);
 });
 
-/* Lancement du jeu */
 function launchGame(game) {
   currentGame = game;
 
   $("playerTitle").textContent =
     `${game.emoji || "🎮"} ${game.title || "Jeu"}`;
 
-  $("gameWarning").hidden = true;
-
   const frame = $("gameFrame");
-
   frame.src = "about:blank";
   frame.removeAttribute("srcdoc");
   frame.removeAttribute("sandbox");
 
   if (game.type === "html") {
+    // Les jeux HTML sont isolés dans une iframe.
     frame.setAttribute(
       "sandbox",
-      "allow-scripts allow-forms allow-pointer-lock allow-popups"
+      "allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals"
     );
     frame.srcdoc = game.content || "<p>Ce jeu n'a pas de code.</p>";
   } else {
-    frame.src = game.content || "about:blank";
+    const url = validateGameUrl(game.content);
+
+    if (!url) {
+      toast("Le lien de ce jeu n'est pas valide.");
+      return;
+    }
+
+    frame.src = url;
   }
 
   $("openGameTabBtn").onclick = () => {
     if (game.type === "html") {
-      toast("Ce jeu est intégré au site. Pour l'ouvrir ailleurs, ajoute une URL dans ses réglages.");
-    } else if (game.content) {
-      window.open(game.content, "_blank", "noopener,noreferrer");
+      toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
+      return;
     }
+
+    const url = validateGameUrl(game.content);
+
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+    else toast("Le lien de ce jeu n'est pas valide.");
   };
 
-  closeOverlay("platformWarningOverlay");
   openOverlay("gameOverlay");
 }
 
+function validateGameUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    if (url.protocol === "https:" || url.protocol === "http:") {
+      return url.href;
+    }
+  } catch (error) {
+    console.warn("URL de jeu invalide", error);
+  }
+
+  return null;
+}
+
 function stopCurrentGame() {
-  $("gameFrame").src = "about:blank";
-  $("gameFrame").removeAttribute("srcdoc");
+  const frame = $("gameFrame");
+  frame.src = "about:blank";
+  frame.removeAttribute("srcdoc");
   closeOverlay("gameOverlay");
   currentGame = null;
 }
 
 $("closeGameBtn").addEventListener("click", stopCurrentGame);
 
-/* ---------------- AUTHENTIFICATION ---------------- */
+/* =====================================================
+   CONNEXION ADMINISTRATEUR
+   ===================================================== */
 
 $("adminLoginBtn").addEventListener("click", () => {
   if (isAdmin()) openOverlay("adminOverlay");
@@ -972,7 +798,7 @@ $("googleLoginBtn").addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
 
-    if (result.user.email !== ADMIN_EMAIL) {
+    if (result.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
       await signOut(auth);
       toast("Ce compte Google n'est pas autorisé.");
       return;
@@ -982,8 +808,8 @@ $("googleLoginBtn").addEventListener("click", async () => {
     openOverlay("adminOverlay");
     toast("Connexion administrateur réussie !");
   } catch (error) {
-    console.error(error);
-    toast("Connexion impossible. Vérifie la configuration Firebase.");
+    console.error("Erreur de connexion Google :", error);
+    toast("Connexion impossible. Vérifie la configuration Firebase et les fenêtres pop-up.");
   }
 });
 
@@ -1018,39 +844,41 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-/* ---------------- GESTION DES JEUX ---------------- */
+/* =====================================================
+   GESTION DES JEUX
+   ===================================================== */
 
 $("gameForm").addEventListener("submit", async event => {
   event.preventDefault();
-  if (!isAdmin()) return toast("Accès refusé.");
+
+  if (!isAdmin()) {
+    toast("Accès refusé.");
+    return;
+  }
 
   const title = $("gameTitle").value.trim();
   const content = $("gameContent").value.trim();
+  const type = $("gameType").value;
 
   if (!title || !content) {
-    return toast("Remplis le nom et le contenu du jeu.");
+    toast("Remplis le nom et le contenu du jeu.");
+    return;
+  }
+
+  if (type === "url" && !validateGameUrl(content)) {
+    toast("Pour un lien, utilise une adresse commençant par https:// ou http://");
+    return;
   }
 
   const data = {
     title,
     emoji: $("gameEmoji").value.trim() || "🎮",
     background: $("gameBackground").value,
-    type: $("gameType").value,
+    type,
     platform: $("gamePlatform").value,
     content,
     updatedAt: serverTimestamp()
   };
-
-  if (data.type === "url") {
-    try {
-      const url = new URL(content);
-      if (!["https:", "http:"].includes(url.protocol)) {
-        throw new Error("URL invalide");
-      }
-    } catch {
-      return toast("Pour un lien, utilise une adresse commençant par https://");
-    }
-  }
 
   try {
     if (editingGame) {
@@ -1064,8 +892,8 @@ $("gameForm").addEventListener("submit", async event => {
 
     resetGameForm();
   } catch (error) {
-    console.error(error);
-    toast("Impossible d'enregistrer le jeu. Vérifie les règles Firestore.");
+    console.error("Erreur d'enregistrement du jeu :", error);
+    toast("Impossible d'enregistrer. Vérifie les règles Firestore.");
   }
 });
 
@@ -1097,8 +925,7 @@ function renderAdminGames() {
 
     const left = document.createElement("div");
     const title = document.createElement("strong");
-    title.textContent =
-      `${game.emoji || "🎮"} ${game.title || "Jeu sans nom"}`;
+    title.textContent = `${game.emoji || "🎮"} ${game.title || "Jeu sans nom"}`;
 
     const detail = document.createElement("p");
     detail.textContent =
@@ -1150,7 +977,9 @@ function renderAdminGames() {
   });
 }
 
-/* ---------------- GESTION DES ANNONCES ---------------- */
+/* =====================================================
+   GESTION DES ANNONCES
+   ===================================================== */
 
 const announcementTypes = {
   info: { label: "INFORMATION", icon: "ℹ️" },
@@ -1161,24 +990,26 @@ const announcementTypes = {
 
 $("announcementForm").addEventListener("submit", async event => {
   event.preventDefault();
-  if (!isAdmin()) return toast("Accès refusé.");
+
+  if (!isAdmin()) {
+    toast("Accès refusé.");
+    return;
+  }
 
   const title = $("announcementTitle").value.trim();
   const message = $("announcementMessage").value.trim();
   const expiresInput = $("announcementExpires").value;
-  const expiresAt = expiresInput
-    ? new Date(expiresInput).getTime()
-    : null;
+  const expiresAt = expiresInput ? new Date(expiresInput).getTime() : null;
 
   if (!title || !message) {
-    return toast("Remplis le titre et le message.");
+    toast("Remplis le titre et le message.");
+    return;
   }
 
-  if (
-    expiresAt !== null &&
-    (!Number.isFinite(expiresAt) || expiresAt <= Date.now())
-  ) {
-    return toast("La date de fin doit être dans le futur.");
+  if (expiresAt !== null &&
+      (!Number.isFinite(expiresAt) || expiresAt <= Date.now())) {
+    toast("La date de fin doit être dans le futur.");
+    return;
   }
 
   const data = {
@@ -1192,17 +1023,12 @@ $("announcementForm").addEventListener("submit", async event => {
 
   try {
     if (editingAnnouncement) {
-      await updateDoc(
-        doc(db, "announcements", editingAnnouncement),
-        data
-      );
+      await updateDoc(doc(db, "announcements", editingAnnouncement), data);
       toast("Annonce modifiée !");
     } else {
       data.createdAt = serverTimestamp();
       await addDoc(announcementsRef, data);
-      toast(data.active
-        ? "Annonce publiée !"
-        : "Annonce enregistrée comme inactive.");
+      toast(data.active ? "Annonce publiée !" : "Annonce enregistrée comme inactive.");
     }
 
     resetAnnouncementForm();
@@ -1221,10 +1047,7 @@ function resetAnnouncementForm() {
   $("cancelAnnouncementEditBtn").hidden = true;
 }
 
-$("cancelAnnouncementEditBtn").addEventListener(
-  "click",
-  resetAnnouncementForm
-);
+$("cancelAnnouncementEditBtn").addEventListener("click", resetAnnouncementForm);
 
 function formatExpiry(value) {
   if (!value) return "Sans date de fin";
@@ -1242,8 +1065,7 @@ function renderAdminAnnouncements() {
   list.replaceChildren();
 
   if (!announcements.length) {
-    list.textContent =
-      "Aucune annonce enregistrée. Crée-en une avec le formulaire ci-dessus.";
+    list.textContent = "Aucune annonce enregistrée.";
     return;
   }
 
@@ -1269,8 +1091,7 @@ function renderAdminAnnouncements() {
 
     const message = document.createElement("p");
     const preview = safeText(item.message);
-    message.textContent =
-      preview.length > 150 ? preview.slice(0, 150) + "…" : preview;
+    message.textContent = preview.length > 150 ? preview.slice(0, 150) + "…" : preview;
 
     left.append(title, document.createTextNode(" "), status, detail, message);
 
@@ -1291,26 +1112,19 @@ function renderAdminAnnouncements() {
 
       if (item.expiresAt) {
         const d = new Date(item.expiresAt);
-        const local = new Date(
-          d.getTime() - d.getTimezoneOffset() * 60000
-        );
+        const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
         $("announcementExpires").value = local.toISOString().slice(0, 16);
       } else {
         $("announcementExpires").value = "";
       }
 
-      $("saveAnnouncementBtn").textContent =
-        "💾 Enregistrer les modifications";
+      $("saveAnnouncementBtn").textContent = "💾 Enregistrer les modifications";
       $("cancelAnnouncementEditBtn").hidden = false;
-      $("announcementForm").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+      $("announcementForm").scrollIntoView({ behavior: "smooth", block: "start" });
     };
 
     const toggle = document.createElement("button");
-    toggle.className =
-      "btn small " + (item.active ? "secondary" : "green");
+    toggle.className = "btn small " + (item.active ? "secondary" : "green");
     toggle.textContent = item.active ? "⏸️ Désactiver" : "▶️ Activer";
 
     toggle.onclick = async () => {
@@ -1348,13 +1162,13 @@ function renderAdminAnnouncements() {
   });
 }
 
-/* ---------------- POP-UPS PUBLICS ---------------- */
+/* =====================================================
+   ANNONCES PUBLIQUES
+   ===================================================== */
 
 function getDismissedIds() {
   try {
-    return JSON.parse(
-      localStorage.getItem("gourmandDismissedAnnouncementIds") || "[]"
-    );
+    return JSON.parse(localStorage.getItem("gourmandDismissedAnnouncementIds") || "[]");
   } catch {
     return [];
   }
@@ -1365,10 +1179,7 @@ function saveDismissedId(id) {
   if (!ids.includes(id)) ids.push(id);
 
   try {
-    localStorage.setItem(
-      "gourmandDismissedAnnouncementIds",
-      JSON.stringify(ids)
-    );
+    localStorage.setItem("gourmandDismissedAnnouncementIds", JSON.stringify(ids));
   } catch (error) {
     console.warn("Impossible de mémoriser les annonces ignorées.", error);
   }
@@ -1401,13 +1212,10 @@ function displayAnnouncement(item) {
 }
 
 function showNextAnnouncement() {
-  if (
-    currentAnnouncement ||
-    $("announcementOverlay").classList.contains("open")
-  ) return;
+  if (!announcementsLoaded || currentAnnouncement ||
+      $("announcementOverlay").classList.contains("open")) return;
 
   const dismissed = getDismissedIds();
-
   const next = activeAnnouncementList().find(item =>
     !dismissed.includes(item.id) && !shownThisPage.has(item.id)
   );
@@ -1423,9 +1231,7 @@ function closePublicAnnouncement() {
 
   const id = currentAnnouncement.id;
 
-  if ($("neverShowAnnouncement").checked) {
-    saveDismissedId(id);
-  }
+  if ($("neverShowAnnouncement").checked) saveDismissedId(id);
 
   currentAnnouncement = null;
   closeOverlay("announcementOverlay");
@@ -1433,15 +1239,8 @@ function closePublicAnnouncement() {
   setTimeout(showNextAnnouncement, 250);
 }
 
-$("closeAnnouncementBtn").addEventListener(
-  "click",
-  closePublicAnnouncement
-);
-
-$("closeAnnouncementX").addEventListener(
-  "click",
-  closePublicAnnouncement
-);
+$("closeAnnouncementBtn").addEventListener("click", closePublicAnnouncement);
+$("closeAnnouncementX").addEventListener("click", closePublicAnnouncement);
 
 $("showAnnouncementsBtn").addEventListener("click", () => {
   const active = activeAnnouncementList();
@@ -1451,11 +1250,17 @@ $("showAnnouncementsBtn").addEventListener("click", () => {
     return;
   }
 
-  const next = active.find(item => !shownThisPage.has(item.id)) || active[0];
+  const dismissed = getDismissedIds();
+  const next = active.find(item =>
+    !shownThisPage.has(item.id) && !dismissed.includes(item.id)
+  ) || active[0];
+
   displayAnnouncement(next);
 });
 
-/* ---------------- SYNCHRONISATION EN TEMPS RÉEL ---------------- */
+/* =====================================================
+   FIRESTORE : SYNCHRONISATION
+   ===================================================== */
 
 onSnapshot(gamesRef, snapshot => {
   games = snapshot.docs.map(item => ({
@@ -1463,15 +1268,17 @@ onSnapshot(gamesRef, snapshot => {
     ...item.data()
   }));
 
+  gamesLoaded = true;
   renderGames();
   renderAdminGames();
 }, error => {
   console.error("Erreur de chargement des jeux :", error);
 
   $("gameGrid").innerHTML =
-    '<div class="empty">😵 Impossible de charger les jeux. Vérifie la connexion et les règles Firestore.</div>';
+    '<div class="empty">😵 Impossible de charger les jeux. Vérifie ta connexion et les règles Firestore.</div>';
 
   $("gameCount").textContent = "Erreur";
+  toast("Erreur de chargement des jeux.");
 });
 
 onSnapshot(announcementsRef, snapshot => {
@@ -1480,15 +1287,11 @@ onSnapshot(announcementsRef, snapshot => {
     ...item.data()
   }));
 
-  // Si l'annonce ouverte a été supprimée ou désactivée,
-  // on ferme sa fenêtre.
-  if (currentAnnouncement) {
-    const latest = announcements.find(
-      item => item.id === currentAnnouncement.id
-    );
+  announcementsLoaded = true;
 
-    const expired = latest?.expiresAt &&
-      Number(latest.expiresAt) <= Date.now();
+  if (currentAnnouncement) {
+    const latest = announcements.find(item => item.id === currentAnnouncement.id);
+    const expired = latest?.expiresAt && Number(latest.expiresAt) <= Date.now();
 
     if (!latest || !latest.active || expired) {
       currentAnnouncement = null;
@@ -1502,22 +1305,18 @@ onSnapshot(announcementsRef, snapshot => {
   showNextAnnouncement();
 }, error => {
   console.error("Erreur de chargement des annonces :", error);
+  toast("Impossible de charger les annonces.");
 });
 
-/* ---------------- EXPIRATION AUTOMATIQUE ---------------- */
-
-// Vérifie les dates d'expiration même si personne ne recharge la page.
+/* Vérification des dates d'expiration */
 setInterval(() => {
   const now = Date.now();
 
   if (currentAnnouncement) {
     const expiresAt = Number(currentAnnouncement.expiresAt);
 
-    if (
-      currentAnnouncement.expiresAt &&
-      Number.isFinite(expiresAt) &&
-      expiresAt <= now
-    ) {
+    if (currentAnnouncement.expiresAt &&
+        Number.isFinite(expiresAt) && expiresAt <= now) {
       currentAnnouncement = null;
       closeOverlay("announcementOverlay");
     }
@@ -1526,6 +1325,9 @@ setInterval(() => {
   showNextAnnouncement();
 }, 15000);
 
+/* Affichage pratique du type d'appareil dans la console du navigateur */
+console.info("Gourmand.fun — appareil détecté :", detectDevice());
+console.info("User-Agent :", navigator.userAgent);
 </script>
 </body>
 </html>
