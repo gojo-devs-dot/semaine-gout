@@ -308,6 +308,11 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn{display:none}
     </div>
     <button class="btn" id="saveNicknameBtn">💾 Enregistrer mon pseudo</button>
     <p class="help">Ton pseudo sera visible dans le classement. Ne mets pas d'informations personnelles.</p>
+    <div id="deleteAccountZone" style="margin-top:22px;padding-top:16px;border-top:1px solid var(--border)">
+      <h3 style="margin:0 0 8px">⚠️ Zone dangereuse</h3>
+      <p class="help">Supprime définitivement ton compte, ton XP, tes succès et ta place dans le classement. Action irréversible.</p>
+      <button class="btn red" id="deleteAccountBtn">🗑️ Supprimer mon compte</button>
+    </div>
   </div>
 </div>
 
@@ -388,6 +393,22 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn{display:none}
   </div>
 </div>
 
+<div class="overlay" id="deleteAccountOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>🗑️ Supprimer mon compte</h2><button class="close-btn" data-close="deleteAccountOverlay">✕</button></div>
+    <p class="muted">Ton profil, ton XP, tes succès et ta place dans le classement seront supprimés définitivement. Cette action est irréversible.</p>
+    <div class="form-group">
+      <label for="deleteConfirmInput">Écris SUPPRIMER pour confirmer</label>
+      <input class="field" id="deleteConfirmInput" autocomplete="off" placeholder="SUPPRIMER">
+    </div>
+    <p class="help">Avec un compte Google, une fenêtre te demandera de confirmer ton identité.</p>
+    <div class="form-actions">
+      <button class="btn red" id="confirmDeleteBtn">Supprimer définitivement</button>
+      <button class="btn secondary" data-close="deleteAccountOverlay">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <!-- Écran affiché à un joueur banni ou expulsé -->
 <div class="overlay" id="banOverlay">
   <div class="modal">
@@ -433,7 +454,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import {
   getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,
-  signOut,signInAnonymously
+  signOut,signInAnonymously,deleteUser,reauthenticateWithPopup
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 /* Configuration Firebase du projet */
@@ -1018,6 +1039,7 @@ function renderPlayerProfile(){
   if(!currentUser||!playerProfile)return;
 
   $("playerNickname").value=playerProfile.nickname||"";
+  $("deleteAccountZone").hidden=isAdmin();
   const xp=Number(playerProfile.xp)||0;
   const level=levelFromXP(xp);
   const progress=xp%100;
@@ -1041,6 +1063,55 @@ $("profileBtn").onclick=()=>{
   openOverlay("playerProfileOverlay");
 };
 $("saveNicknameBtn").onclick=savePlayerNickname;
+
+/* Suppression du compte (impossible pour l'admin et pour un joueur banni,
+   sinon un ban pourrait être contourné en supprimant son compte) */
+$("deleteAccountBtn").onclick=()=>{
+  if(!currentUser)return toast("Connecte-toi d'abord.");
+  if(isAdmin())return toast("Le compte administrateur ne peut pas être supprimé ici.");
+  if(bannedLock)return toast("Un compte banni ne peut pas être supprimé.");
+  $("deleteConfirmInput").value="";
+  closeOverlay("playerProfileOverlay");
+  openOverlay("deleteAccountOverlay");
+};
+
+$("confirmDeleteBtn").onclick=async()=>{
+  const user=currentUser;
+  if(!user||isAdmin()||bannedLock)return;
+  if($("deleteConfirmInput").value.trim()!=="SUPPRIMER"){
+    return toast("Écris SUPPRIMER pour confirmer.");
+  }
+
+  $("confirmDeleteBtn").disabled=true;
+  try{
+    if(!user.isAnonymous)await reauthenticateWithPopup(user,provider);
+    await deleteDoc(doc(db,"players",user.uid));
+    await deleteUser(user);
+
+    try{
+      Object.keys(localStorage)
+        .filter(k=>k.startsWith(`gourmandXP_${user.uid}_`))
+        .forEach(k=>localStorage.removeItem(k));
+      localStorage.removeItem("gourmandEggs");
+    }catch{}
+    unlockedEggs=new Set();
+    updateEggPanel();
+
+    closeOverlay("deleteAccountOverlay");
+    toast("🗑️ Compte supprimé.");
+  }catch(e){
+    console.error("Suppression du compte :",e);
+    const code=e?.code||"";
+    toast(
+      code==="auth/user-mismatch"?"Choisis le même compte Google que celui connecté.":
+      (code==="auth/popup-closed-by-user"||code==="auth/cancelled-popup-request")?"Suppression annulée.":
+      code==="auth/requires-recent-login"?"Reconnecte-toi puis réessaie.":
+      "Suppression impossible. Vérifie les règles Firestore."
+    );
+  }finally{
+    $("confirmDeleteBtn").disabled=false;
+  }
+};
 
 async function savePlayerNickname(){
   if(!currentUser||!playerProfile)return toast("Connecte-toi avec un compte joueur.");
