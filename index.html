@@ -8,564 +8,194 @@
 <title>Gourmand.fun — Les jeux du club informatique</title>
 
 <style>
-:root {
-  --bg:#17111f;
-  --panel:#241b30;
-  --panel2:#30233d;
-  --text:#fff8f0;
-  --muted:#c5b8ce;
-  --pink:#ff668a;
-  --orange:#ffb454;
-  --green:#6ee7b7;
-  --blue:#7dd3fc;
-  --danger:#ff626c;
-  --border:rgba(255,255,255,.12);
+:root{
+  --bg:#17111f;--panel:#241b30;--panel2:#30233d;
+  --text:#fff8f0;--muted:#c5b8ce;--pink:#ff668a;
+  --orange:#ffb454;--green:#6ee7b7;--blue:#7dd3fc;
+  --danger:#ff626c;--border:rgba(255,255,255,.12)
 }
-
-* { box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-
-body {
-  margin:0;
-  background:
-    radial-gradient(circle at 10% 0%,#42213e 0,transparent 35%),
-    radial-gradient(circle at 100% 20%,#38264a 0,transparent 30%),
-    var(--bg);
-  color:var(--text);
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;min-height:100vh;overflow-x:hidden;color:var(--text);
   font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-  min-height:100vh;
-  overflow-x:hidden;
+  background:radial-gradient(circle at 10% 0%,#42213e 0,transparent 35%),
+  radial-gradient(circle at 100% 20%,#38264a 0,transparent 30%),var(--bg)
 }
-
-button,input,textarea,select { font:inherit; }
-button { cursor:pointer; }
-
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline:3px solid var(--blue);
-  outline-offset:2px;
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+  outline:3px solid var(--blue);outline-offset:2px
 }
-
-header {
-  position:sticky;
-  top:0;
-  z-index:20;
-  padding:14px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  background:rgba(23,17,31,.96);
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(14px);
+header{
+  position:sticky;top:0;z-index:20;padding:12px 4%;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:#17111ff5;border-bottom:1px solid var(--border);backdrop-filter:blur(14px)
 }
-
-.logo {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:950;
-  font-size:1.35rem;
-  user-select:none;
+.logo{display:flex;align-items:center;gap:9px;font-weight:950;font-size:1.3rem;cursor:pointer}
+.logo-icon{
+  display:grid;place-items:center;width:43px;height:43px;border-radius:15px;
+  background:linear-gradient(135deg,var(--orange),var(--pink));font-size:1.5rem
 }
-
-.logo-icon {
-  display:grid;
-  place-items:center;
-  width:44px;
-  height:44px;
-  background:linear-gradient(135deg,var(--orange),var(--pink));
-  border-radius:15px;
-  font-size:1.5rem;
-  cursor:pointer;
-  transition:transform .2s;
+.header-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.btn{
+  border:0;border-radius:11px;padding:10px 13px;font-weight:800;
+  color:#211526;background:linear-gradient(135deg,var(--orange),var(--pink));
+  transition:transform .15s,filter .15s
 }
-
-.logo-icon:hover { transform:rotate(-10deg) scale(1.08); }
-
-.header-actions {
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.btn {
-  border:0;
-  border-radius:12px;
-  padding:10px 14px;
-  font-weight:800;
-  color:#211526;
-  background:linear-gradient(135deg,var(--orange),var(--pink));
-  transition:transform .15s,filter .15s;
-}
-
-.btn:hover { transform:translateY(-2px);filter:brightness(1.08); }
-.btn:disabled { opacity:.55;cursor:not-allowed;transform:none; }
-.btn.secondary { background:var(--panel2);color:var(--text);border:1px solid var(--border); }
-.btn.green { background:var(--green); }
-.btn.red { background:var(--danger);color:#2b1017; }
-.btn.small { padding:7px 10px;font-size:.85rem; }
-
-.gradient-text {
+.btn:hover{transform:translateY(-2px);filter:brightness(1.07)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--border)}
+.btn.green{background:var(--green)}
+.btn.red{background:var(--danger);color:#2b1017}
+.btn.small{padding:7px 9px;font-size:.82rem}
+.gradient-text{
   background:linear-gradient(90deg,var(--orange),var(--pink));
-  color:transparent;
-  background-clip:text;
-  -webkit-background-clip:text;
+  color:transparent;background-clip:text;-webkit-background-clip:text
 }
-
-main { width:min(1200px,92%);margin:auto; }
-
-.hero {
-  padding:55px 0 35px;
-  display:grid;
-  grid-template-columns:1.4fr .6fr;
-  gap:25px;
-  align-items:center;
+main{width:min(1200px,92%);margin:auto}
+.hero{padding:45px 0 30px;display:grid;grid-template-columns:1.4fr .6fr;gap:20px;align-items:center}
+.eyebrow{
+  display:inline-block;color:var(--orange);background:#ffb4541f;
+  border:1px solid #ffb45440;padding:7px 12px;border-radius:30px;
+  font-weight:800;font-size:.82rem
 }
-
-.eyebrow {
-  display:inline-block;
-  color:var(--orange);
-  background:#ffb4541f;
-  border:1px solid #ffb45440;
-  padding:7px 12px;
-  border-radius:30px;
-  font-weight:800;
-  font-size:.82rem;
+h1{font-size:clamp(2.4rem,6vw,4.7rem);line-height:1.03;margin:18px 0;letter-spacing:-2px}
+.hero p{color:var(--muted);font-size:1.05rem;line-height:1.7}
+.hero-art{text-align:center;font-size:clamp(5rem,12vw,9rem);animation:bob 3s ease-in-out infinite;cursor:pointer}
+@keyframes bob{50%{transform:translateY(-9px) rotate(3deg)}}
+.notice{
+  padding:15px;background:#6ee7b715;border:1px solid #6ee7b738;
+  border-radius:14px;color:#d4ffed;margin-bottom:25px;line-height:1.7
 }
-
-h1 {
-  font-size:clamp(2.4rem,6vw,4.7rem);
-  line-height:1.03;
-  margin:18px 0;
-  letter-spacing:-2px;
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.field{
+  width:100%;min-width:0;padding:12px 13px;color:var(--text);
+  background:#1f1729;border:1px solid var(--border);border-radius:12px
 }
-
-.hero p { color:var(--muted);font-size:1.08rem;line-height:1.7; }
-
-.hero-art {
-  text-align:center;
-  font-size:clamp(5rem,12vw,9rem);
-  animation:bob 3s ease-in-out infinite;
-  cursor:pointer;
-  user-select:none;
+.field option{background:var(--panel);color:var(--text)}
+.toolbar .search{flex:1 1 240px}
+.toolbar select{flex:0 1 190px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:25px 0 16px}
+.section-title h2{margin:0;font-size:1.5rem}
+.muted{color:var(--muted)}
+.game-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;padding-bottom:45px}
+.game-card{
+  overflow:hidden;border:1px solid var(--border);border-radius:19px;
+  background:linear-gradient(145deg,#ffffff0e,#ffffff05);transition:.2s;min-width:0
 }
-
-@keyframes bob { 50% { transform:translateY(-10px) rotate(3deg); } }
-
-.notice {
-  padding:16px;
-  background:#6ee7b715;
-  border:1px solid #6ee7b738;
-  border-radius:14px;
-  color:#d4ffed;
-  margin-bottom:25px;
-  line-height:1.7;
+.game-card:hover{transform:translateY(-4px);border-color:#ffb45480}
+.game-cover{min-height:145px;display:grid;place-items:center;position:relative;background:var(--cover,linear-gradient(135deg,#55304d,#282142))}
+.game-emoji{font-size:4rem;filter:drop-shadow(0 8px 10px #0005);user-select:none}
+.platform-badge{position:absolute;left:10px;top:10px;font-size:.72rem;background:#1d1424e8;border:1px solid var(--border);border-radius:20px;padding:5px 9px}
+.game-info{padding:15px;overflow-wrap:anywhere}
+.game-info h3{margin:0 0 8px;font-size:1.12rem}
+.game-info p{margin:0 0 13px;color:var(--muted);font-size:.9rem;line-height:1.5}
+.game-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.game-buttons .btn{flex:1}
+.maintenance-badge{display:inline-block;margin-bottom:10px;padding:6px 10px;border-radius:20px;background:#ffb4541f;border:1px solid #ffb45470;color:#ffda9f;font-weight:900;font-size:.78rem}
+.maintenance-message{margin:10px 0;padding:11px;border-radius:12px;background:#ffb45412;border:1px solid #ffb45430;color:#ffe3b9;font-size:.88rem;white-space:pre-wrap}
+.empty{grid-column:1/-1;text-align:center;padding:40px 18px;border:1px dashed var(--border);border-radius:18px;color:var(--muted)}
+footer{padding:25px 5%;border-top:1px solid var(--border);text-align:center;color:var(--muted);line-height:1.7}
+footer strong{color:var(--text)}
+.overlay{
+  position:fixed;inset:0;z-index:100;display:none;align-items:center;
+  justify-content:center;padding:15px;background:#07050cdb;backdrop-filter:blur(8px)
 }
-
-.toolbar { display:flex;gap:10px;flex-wrap:wrap;margin:20px 0; }
-
-.field {
-  width:100%;
-  padding:12px 13px;
-  color:var(--text);
-  background:#1f1729;
-  border:1px solid var(--border);
-  border-radius:12px;
+.overlay.open{display:flex}
+.modal{
+  width:min(600px,100%);max-height:91vh;overflow-y:auto;padding:22px;
+  background:var(--panel);border:1px solid var(--border);border-radius:21px;
+  box-shadow:0 25px 90px #0008
 }
-
-.field option { background:#241b30;color:var(--text); }
-.toolbar .search { flex:1 1 240px; }
-.toolbar select { flex:0 1 190px; }
-
-.section-title {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin:25px 0 16px;
+.modal.wide{width:min(950px,100%)}
+.modal h2{margin:0 0 15px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.close-btn{border:0;background:var(--panel2);color:var(--text);border-radius:10px;padding:8px 12px;font-weight:900}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-group{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;min-width:0}
+.form-group label{font-size:.9rem;font-weight:800}
+.form-group.full{grid-column:1/-1}
+textarea.field{min-height:100px;resize:vertical}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.admin-list{display:grid;gap:10px;margin-top:15px}
+.admin-item,.player-stat{
+  background:var(--panel2);border:1px solid var(--border);padding:12px;
+  border-radius:13px;display:flex;justify-content:space-between;gap:12px;align-items:center;min-width:0
 }
-
-.section-title h2 { margin:0;font-size:1.55rem; }
-.muted { color:var(--muted); }
-
-.game-grid {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:17px;
-  padding-bottom:50px;
+.admin-item p{margin:5px 0 0;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere}
+.admin-item-actions{display:flex;gap:6px;flex-wrap:wrap}
+.status{display:inline-block;padding:4px 8px;border-radius:20px;font-size:.75rem;font-weight:900}
+.status.on{color:#c9ffe6;background:#1b6848}
+.status.off{color:#ffe1e1;background:#71323a}
+.status.maintenance{color:#ffe3b9;background:#75491d}
+.help{color:var(--muted);font-size:.85rem;line-height:1.6}
+#gameFrame{width:100%;height:min(70vh,650px);background:#fff;border:0;border-radius:12px}
+.game-warning{padding:10px;margin-bottom:12px;border-radius:10px;background:#ffb4541f;color:#ffe3b9}
+.compatibility-icon{text-align:center;font-size:3rem;margin-bottom:10px}
+.compatibility-message{color:var(--muted);line-height:1.7;white-space:pre-line;margin-bottom:20px}
+.compatibility-actions{display:flex;gap:10px;flex-wrap:wrap}
+.announcement-icon{font-size:2.6rem;margin-bottom:8px}
+.announcement-label{display:inline-block;color:var(--blue);border:1px solid #7dd3fc40;border-radius:30px;padding:5px 10px;font-weight:900;font-size:.78rem;margin-bottom:10px}
+.announcement-message{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:var(--muted)}
+.check-row{display:flex;gap:9px;align-items:center;margin-top:16px;color:var(--muted);font-size:.9rem}
+.check-row input{width:18px;height:18px}
+.open-source-copy{color:var(--muted);line-height:1.8}
+.open-source-copy strong{color:var(--text)}
+.toast{
+  position:fixed;left:50%;bottom:22px;z-index:300;width:max-content;
+  max-width:calc(100% - 30px);padding:13px 17px;border-radius:13px;
+  background:#fff8f0;color:#211526;font-weight:800;box-shadow:0 10px 35px #0006;
+  opacity:0;pointer-events:none;transform:translate(-50%,20px);transition:.2s
 }
-
-.game-card {
-  overflow:hidden;
-  border:1px solid var(--border);
-  border-radius:20px;
-  background:linear-gradient(145deg,#ffffff0e,#ffffff05);
-  transition:transform .2s,border-color .2s;
-  min-width:0;
+.toast.show{opacity:1;transform:translate(-50%,0)}
+#eggLayer{position:fixed;inset:0;z-index:250;pointer-events:none;overflow:hidden}
+.egg-float{position:absolute;font-size:2rem;animation:eggFall 2.8s linear forwards}
+@keyframes eggFall{0%{transform:translateY(-70px) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(540deg);opacity:0}}
+body.rainbow-mode{animation:rainbowBackground 5s linear infinite}
+@keyframes rainbowBackground{to{filter:hue-rotate(360deg)}}
+body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite alternate}
+@keyframes partyBounce{to{transform:translateY(-5px) rotate(1deg)}}
+#secretBadge{position:fixed;right:12px;bottom:12px;z-index:40;padding:8px 11px;border:1px solid var(--border);border-radius:14px;background:var(--panel);color:var(--text);font-size:.8rem;box-shadow:0 5px 20px #0004}
+#secretPanel{position:fixed;inset:0;z-index:180;display:none;place-items:center;padding:16px;background:#08040ee8;backdrop-filter:blur(10px)}
+#secretPanel.open{display:grid}
+.secret-card{width:min(520px,100%);max-height:85vh;overflow:auto;padding:23px;background:var(--panel);border:1px solid #ffb45480;border-radius:22px;text-align:center}
+.secret-card h2{color:var(--orange)}
+.achievement-list{display:grid;gap:8px;margin:18px 0;text-align:left}
+.achievement{padding:12px;background:var(--panel2);border-radius:12px;border:1px solid var(--border);overflow-wrap:anywhere}
+.achievement.locked{opacity:.65}
+.achievement.unlocked{border-color:#6ee7b766}
+.achievement-title{display:flex;gap:9px;align-items:center;font-weight:850}
+.achievement-description{margin:8px 0 0 29px;color:var(--muted);font-size:.88rem;line-height:1.5}
+.secret-recipe{display:none;padding:14px;margin-top:14px;border:1px dashed var(--orange);border-radius:12px;color:var(--orange)}
+.secret-recipe.visible{display:block}
+.player-progress{height:10px;overflow:hidden;background:#17111f;border-radius:20px;margin:12px 0}
+.player-progress>div{height:100%;background:linear-gradient(90deg,var(--orange),var(--pink))}
+.player-stat{margin:8px 0}
+.player-rank{font-size:1.15rem;font-weight:900;min-width:34px}
+.player-details{flex:1;overflow-wrap:anywhere}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:32px}.hero-art{font-size:5rem}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){
+  header{align-items:flex-start}.logo{font-size:1rem}.logo-icon{width:37px;height:37px}
+  .header-actions{max-width:58%}.header-actions .btn{padding:8px 9px;font-size:.8rem}
+  .game-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}
+  .modal{padding:16px}.admin-item{align-items:flex-start;flex-direction:column}
 }
-
-.game-card:hover { transform:translateY(-4px);border-color:#ffb45480; }
-.game-card.maintenance { border-color:#ffb45480; }
-
-.game-cover {
-  min-height:150px;
-  display:grid;
-  place-items:center;
-  position:relative;
-  background:var(--cover,linear-gradient(135deg,#55304d,#282142));
-}
-
-.game-emoji { font-size:4rem;filter:drop-shadow(0 8px 10px #0005);user-select:none; }
-
-.platform-badge {
-  position:absolute;
-  left:10px;
-  top:10px;
-  font-size:.75rem;
-  background:#1d1424e8;
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:5px 9px;
-}
-
-.game-info { padding:16px;overflow-wrap:anywhere; }
-.game-info h3 { margin:0 0 8px;font-size:1.15rem; }
-.game-info p { margin:0 0 15px;color:var(--muted);font-size:.9rem; }
-.game-buttons { display:flex;gap:8px;flex-wrap:wrap; }
-.game-buttons .btn { flex:1; }
-
-.maintenance-badge {
-  display:inline-block;
-  margin-bottom:10px;
-  padding:6px 10px;
-  border-radius:20px;
-  background:#ffb4541f;
-  border:1px solid #ffb45470;
-  color:#ffda9f;
-  font-weight:900;
-  font-size:.78rem;
-}
-
-.maintenance-message {
-  margin:10px 0 15px;
-  padding:11px;
-  border-radius:12px;
-  background:#ffb45412;
-  border:1px solid #ffb45430;
-  color:#ffe3b9;
-  font-size:.88rem;
-  line-height:1.6;
-  white-space:pre-wrap;
-}
-
-.empty {
-  grid-column:1/-1;
-  text-align:center;
-  padding:45px 20px;
-  border:1px dashed var(--border);
-  border-radius:18px;
-  color:var(--muted);
-}
-
-footer {
-  padding:25px 5%;
-  border-top:1px solid var(--border);
-  text-align:center;
-  color:var(--muted);
-  line-height:1.7;
-  cursor:default;
-}
-
-footer strong { color:var(--text); }
-
-.overlay {
-  position:fixed;
-  inset:0;
-  z-index:100;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:16px;
-  background:#07050cd9;
-  backdrop-filter:blur(8px);
-}
-
-.overlay.open { display:flex; }
-
-.modal {
-  width:min(600px,100%);
-  max-height:90vh;
-  overflow-y:auto;
-  padding:23px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:22px;
-  box-shadow:0 25px 90px #0008;
-}
-
-.modal.wide { width:min(950px,100%); }
-.modal h2 { margin:0 0 16px; }
-
-.modal-head {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:15px;
-}
-
-.close-btn {
-  border:0;
-  background:var(--panel2);
-  color:var(--text);
-  border-radius:10px;
-  padding:8px 12px;
-  font-weight:900;
-}
-
-.form-grid { display:grid;grid-template-columns:1fr 1fr;gap:13px; }
-
-.form-group {
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-  margin-bottom:13px;
-  min-width:0;
-}
-
-.form-group label { font-size:.9rem;font-weight:800;color:#f2e8fa; }
-.form-group.full { grid-column:1/-1; }
-textarea.field { min-height:110px;resize:vertical; }
-
-.form-actions { display:flex;gap:9px;flex-wrap:wrap;margin-top:12px; }
-.admin-list { display:grid;gap:10px;margin-top:18px; }
-
-.admin-item {
-  background:var(--panel2);
-  border:1px solid var(--border);
-  padding:13px;
-  border-radius:13px;
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  align-items:center;
-  min-width:0;
-}
-
-.admin-item p { margin:5px 0 0;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere; }
-.admin-item-actions { display:flex;gap:6px;flex-wrap:wrap; }
-
-.status { display:inline-block;padding:4px 8px;border-radius:20px;font-size:.75rem;font-weight:900; }
-.status.on { color:#c9ffe6;background:#1b6848; }
-.status.off { color:#ffe1e1;background:#71323a; }
-.status.maintenance { color:#ffe3b9;background:#75491d; }
-
-.help { color:var(--muted);font-size:.85rem;line-height:1.5; }
-
-#gameFrame {
-  width:100%;
-  height:min(70vh,650px);
-  background:#fff;
-  border:0;
-  border-radius:12px;
-}
-
-.game-warning {
-  padding:10px;
-  margin-bottom:12px;
-  border-radius:10px;
-  background:#ffb4541f;
-  color:#ffe3b9;
-}
-
-.compatibility-icon { text-align:center;font-size:3.5rem;margin-bottom:12px; }
-.compatibility-message { color:var(--muted);line-height:1.7;margin-bottom:20px;white-space:pre-line; }
-.compatibility-actions { display:flex;gap:10px;flex-wrap:wrap; }
-.compatibility-actions .btn { flex:1;min-width:140px; }
-
-.announcement-icon { font-size:2.8rem;margin-bottom:8px; }
-.announcement-label {
-  display:inline-block;
-  color:var(--announce-color,var(--blue));
-  background:#7dd3fc12;
-  border:1px solid #7dd3fc40;
-  border-radius:30px;
-  padding:5px 10px;
-  font-weight:900;
-  font-size:.78rem;
-  margin-bottom:10px;
-}
-
-.announcement-message { white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:var(--muted); }
-.check-row { display:flex;gap:9px;align-items:center;margin-top:16px;color:var(--muted);font-size:.9rem; }
-.check-row input { width:18px;height:18px; }
-.open-source-copy { color:var(--muted);line-height:1.8; }
-.open-source-copy strong { color:var(--text); }
-
-.toast {
-  position:fixed;
-  left:50%;
-  bottom:22px;
-  z-index:300;
-  width:max-content;
-  max-width:calc(100% - 30px);
-  padding:13px 17px;
-  border-radius:13px;
-  background:#fff8f0;
-  color:#211526;
-  font-weight:800;
-  box-shadow:0 10px 35px #0006;
-  opacity:0;
-  pointer-events:none;
-  transform:translate(-50%,20px);
-  transition:opacity .2s,transform .2s;
-}
-
-.toast.show { opacity:1;transform:translate(-50%,0); }
-
-#eggLayer {
-  position:fixed;
-  inset:0;
-  z-index:250;
-  pointer-events:none;
-  overflow:hidden;
-}
-
-.egg-float {
-  position:absolute;
-  font-size:2rem;
-  animation:eggFall 2.8s linear forwards;
-}
-
-@keyframes eggFall {
-  0% { transform:translateY(-70px) rotate(0deg);opacity:1; }
-  100% { transform:translateY(110vh) rotate(540deg);opacity:0; }
-}
-
-body.rainbow-mode { animation:rainbowBackground 5s linear infinite; }
-
-@keyframes rainbowBackground {
-  0% { filter:hue-rotate(0deg); }
-  100% { filter:hue-rotate(360deg); }
-}
-
-body.party-mode .game-card { animation:partyBounce .7s ease-in-out infinite alternate; }
-
-@keyframes partyBounce { to { transform:translateY(-5px) rotate(1deg); } }
-
-#secretBadge {
-  position:fixed;
-  right:12px;
-  bottom:12px;
-  z-index:40;
-  padding:8px 11px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:var(--panel);
-  color:var(--text);
-  font-size:.8rem;
-  box-shadow:0 5px 20px #0004;
-}
-
-#secretPanel {
-  position:fixed;
-  inset:0;
-  z-index:180;
-  display:none;
-  place-items:center;
-  padding:16px;
-  background:#08040ee8;
-  backdrop-filter:blur(10px);
-}
-
-#secretPanel.open { display:grid; }
-
-.secret-card {
-  width:min(520px,100%);
-  max-height:85vh;
-  overflow:auto;
-  padding:24px;
-  background:var(--panel);
-  border:1px solid #ffb45480;
-  border-radius:22px;
-  text-align:center;
-  box-shadow:0 20px 80px #0009;
-}
-
-.secret-card h2 { color:var(--orange); }
-
-.achievement-list { display:grid;gap:8px;margin:18px 0;text-align:left; }
-
-.achievement {
-  padding:12px;
-  background:var(--panel2);
-  border-radius:12px;
-  border:1px solid var(--border);
-  overflow-wrap:anywhere;
-}
-
-.achievement.locked { opacity:.6; }
-.achievement.unlocked { border-color:#6ee7b766; }
-
-.achievement-title { display:flex;gap:9px;align-items:center;font-weight:850; }
-.achievement-description { margin:8px 0 0 29px;color:var(--muted);font-size:.88rem;line-height:1.5; }
-
-.secret-recipe {
-  display:none;
-  padding:14px;
-  margin-top:14px;
-  border:1px dashed var(--orange);
-  border-radius:12px;
-  color:var(--orange);
-}
-
-.secret-recipe.visible { display:block; }
-
-@media(max-width:800px) {
-  .hero { grid-template-columns:1fr;padding-top:35px; }
-  .hero-art { font-size:5rem; }
-  .game-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
-}
-
-@media(max-width:520px) {
-  header { align-items:flex-start; }
-  .logo { font-size:1.05rem; }
-  .logo-icon { width:38px;height:38px; }
-  .header-actions { flex-direction:column; }
-  .header-actions .btn { padding:8px 10px; }
-  .game-grid { grid-template-columns:1fr; }
-  .form-grid { grid-template-columns:1fr; }
-  .form-group.full { grid-column:auto; }
-  .modal { padding:17px; }
-  .admin-item { align-items:flex-start;flex-direction:column; }
-  .compatibility-actions { flex-direction:column; }
-  #secretBadge { font-size:.7rem; }
-}
-
-@media(prefers-reduced-motion:reduce) {
-  *,*::before,*::after {
-    scroll-behavior:auto !important;
-    animation-duration:.01ms !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.01ms !important;
-  }
-}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
-
 <body>
 
 <header>
-  <div class="logo" id="siteLogo" title="🍔">
+  <div class="logo" id="siteLogo" title="Gourmand.fun">
     <div class="logo-icon" id="logoIcon">🍔</div>
     <span>Gourmand<span class="gradient-text">.fun</span></span>
   </div>
-
   <div class="header-actions">
     <button class="btn secondary" id="showAnnouncementsBtn">📢 Annonces</button>
+    <button class="btn secondary" id="playerLoginBtn">👤 Connexion joueur</button>
+    <button class="btn secondary" id="profileBtn" hidden>🏆 Mon profil</button>
+    <button class="btn secondary" id="leaderboardBtn">🥇 Classement</button>
     <button class="btn secondary" id="adminLoginBtn">🔐 Administration</button>
     <button class="btn secondary" id="logoutBtn" hidden>Déconnexion</button>
   </div>
@@ -576,35 +206,22 @@ body.party-mode .game-card { animation:partyBounce .7s ease-in-out infinite alte
     <div>
       <span class="eyebrow">🎮 LES JEUX DU CLUB INFORMATIQUE</span>
       <h1>Une petite faim de <span class="gradient-text">jeux ?</span></h1>
-      <p>
-        Bienvenue sur Gourmand.fun ! Découvre les jeux du club informatique,
-        lance une partie et amuse-toi. Il y a toujours quelque chose à tester !
-      </p>
+      <p>Bienvenue sur Gourmand.fun ! Découvre les jeux du club informatique, lance une partie et amuse-toi. Gagne de l'expérience et grimpe dans le classement !</p>
       <button class="btn" id="discoverBtn">🍟 Découvrir les jeux</button>
       <button class="btn secondary" id="achievementsBtn">🏆 Mes secrets</button>
     </div>
-
     <div class="hero-art" id="heroBurger" aria-label="Burger">🍔🎮🍟</div>
   </section>
 
   <div class="notice">
     💻 <strong>Les jeux du club informatique :</strong>
-    certains jeux sont jouables directement sur le site.
-    D'autres peuvent ouvrir une page externe.
-    <br>
-    📦 Les jeux peuvent être téléchargés lorsque leur licence et leur page
-    de distribution le permettent.
-    <div style="margin-top:14px">
-      <button class="btn green" id="openSourceInfoBtn">💚 À propos des jeux open source</button>
-    </div>
+    certains jeux sont jouables directement sur le site, d'autres peuvent ouvrir une page externe.
+    <br>📦 Les jeux peuvent être téléchargés lorsque leur licence et leur page de distribution le permettent.
+    <div style="margin-top:12px"><button class="btn green" id="openSourceInfoBtn">💚 À propos des jeux open source</button></div>
   </div>
 
   <section id="catalogue">
-    <div class="section-title">
-      <h2>🍕 Le menu des jeux</h2>
-      <span class="muted" id="gameCount">Chargement…</span>
-    </div>
-
+    <div class="section-title"><h2>🍕 Le menu des jeux</h2><span class="muted" id="gameCount">Chargement…</span></div>
     <div class="toolbar">
       <input class="field search" id="searchInput" type="search" placeholder="🔎 Chercher un jeu…">
       <select class="field" id="platformFilter" aria-label="Filtrer par appareil">
@@ -613,18 +230,13 @@ body.party-mode .game-card { animation:partyBounce .7s ease-in-out infinite alte
         <option value="mobile">📱 Mobile / tablette</option>
       </select>
     </div>
-
-    <div class="game-grid" id="gameGrid">
-      <div class="empty">🍳 Chargement du menu…</div>
-    </div>
+    <div class="game-grid" id="gameGrid"><div class="empty">🍳 Chargement du menu…</div></div>
   </section>
 </main>
 
 <footer id="siteFooter">
-  <strong>🍔 Gourmand.fun</strong><br>
-  Les jeux du club informatique.<br>
-  <span>En cas de problème, consulte les annonces du site.</span>
-  <br><small>🍟</small>
+  <strong>🍔 Gourmand.fun</strong><br>Les jeux du club informatique.<br>
+  <span>En cas de problème, consulte les annonces du site.</span><br><small>🍟</small>
 </footer>
 
 <div id="eggLayer" aria-hidden="true"></div>
@@ -632,30 +244,22 @@ body.party-mode .game-card { animation:partyBounce .7s ease-in-out infinite alte
 
 <div id="secretPanel">
   <div class="secret-card">
-    <div style="font-size:3rem">🕵️🍔</div>
-    <h2>Le laboratoire secret</h2>
+    <div style="font-size:3rem">🕵️🍔</div><h2>Le laboratoire secret</h2>
     <p class="muted">Chaque découverte compte…</p>
     <div class="achievement-list" id="achievementList"></div>
     <button class="btn" id="closeSecretPanel">Retour au site</button>
     <button class="btn secondary" id="secretPartyBtn">🎉 Mode fête</button>
-    <div class="secret-recipe" id="secretRecipe">
-      📜 RECETTE ULTRA-SECRÈTE : 2 clics, 1 code mystère et beaucoup de frites.
-      <br>Ingrédient principal : le fun ! 🍟
-    </div>
+    <div class="secret-recipe" id="secretRecipe">📜 RECETTE ULTRA-SECRÈTE : 2 clics, 1 code mystère et beaucoup de frites.<br>Ingrédient principal : le fun ! 🍟</div>
   </div>
 </div>
 
 <div class="overlay" id="openSourceOverlay">
   <div class="modal" role="dialog" aria-modal="true">
-    <div class="modal-head">
-      <h2>💚 Les jeux du club informatique</h2>
-      <button class="close-btn" id="closeOpenSourceBtn">✕</button>
-    </div>
+    <div class="modal-head"><h2>💚 Les jeux du club informatique</h2><button class="close-btn" id="closeOpenSourceBtn">✕</button></div>
     <div class="open-source-copy">
       <p>🎮 Les jeux présentés sur Gourmand.fun sont proposés dans le cadre du club informatique.</p>
       <p>📦 Lorsqu'un jeu est distribué sous une licence autorisant le partage, tu peux consulter sa page officielle pour le télécharger.</p>
-      <p>💻 Certains jeux sont jouables directement sur notre site.</p>
-      <p>⚠️ <strong>Attention :</strong> tous les jeux ne sont pas nécessairement open source. Vérifie la licence de chaque jeu avant de le télécharger, de le modifier ou de le redistribuer.</p>
+      <p>⚠️ Tous les jeux ne sont pas nécessairement open source. Vérifie la licence de chaque jeu avant de le télécharger, de le modifier ou de le redistribuer.</p>
     </div>
     <button class="btn green" id="confirmOpenSourceBtn">👍 Compris !</button>
   </div>
@@ -663,17 +267,10 @@ body.party-mode .game-card { animation:partyBounce .7s ease-in-out infinite alte
 
 <div class="overlay" id="gameOverlay">
   <div class="modal wide">
-    <div class="modal-head">
-      <h2 id="playerTitle">🎮 Jeu</h2>
-      <button class="close-btn" id="closeGameBtn">✕ Fermer</button>
-    </div>
+    <div class="modal-head"><h2 id="playerTitle">🎮 Jeu</h2><button class="close-btn" id="closeGameBtn">✕ Fermer</button></div>
     <div id="gameWarning" class="game-warning" hidden></div>
-    <iframe id="gameFrame" title="Jeu"
-      allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
-      allowfullscreen></iframe>
-    <div class="form-actions">
-      <button class="btn secondary" id="openGameTabBtn">↗ Ouvrir dans un nouvel onglet</button>
-    </div>
+    <iframe id="gameFrame" title="Jeu" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>
+    <div class="form-actions"><button class="btn secondary" id="openGameTabBtn">↗ Ouvrir dans un nouvel onglet</button></div>
   </div>
 </div>
 
@@ -691,1115 +288,672 @@ body.party-mode .game-card { animation:partyBounce .7s ease-in-out infinite alte
 
 <div class="overlay" id="loginOverlay">
   <div class="modal">
-    <div class="modal-head">
-      <h2>🔐 Administration</h2>
-      <button class="close-btn" data-close="loginOverlay">✕</button>
-    </div>
+    <div class="modal-head"><h2>🔐 Administration</h2><button class="close-btn" data-close="loginOverlay">✕</button></div>
     <p class="muted">Connecte-toi avec le compte Google autorisé à administrer le site.</p>
     <button class="btn" id="googleLoginBtn">Continuer avec Google</button>
-    <p class="help">Les droits doivent également être protégés par les règles de sécurité Firebase.</p>
+    <p class="help">Les droits administrateur doivent également être protégés par les règles Firebase.</p>
+  </div>
+</div>
+
+<div class="overlay" id="playerProfileOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>🍔 Mon profil</h2><button class="close-btn" data-close="playerProfileOverlay">✕</button></div>
+    <div id="profileContent"><p>Connecte-toi avec Google pour créer ton profil.</p></div>
+    <div class="form-group">
+      <label for="playerNickname">Ton pseudo (3 à 20 caractères)</label>
+      <input class="field" id="playerNickname" maxlength="20" placeholder="Ex. BurgerMaster">
+    </div>
+    <button class="btn" id="saveNicknameBtn">💾 Enregistrer mon pseudo</button>
+    <p class="help">Ton pseudo sera visible dans le classement. Ne mets pas d'informations personnelles.</p>
+  </div>
+</div>
+
+<div class="overlay" id="leaderboardOverlay">
+  <div class="modal wide">
+    <div class="modal-head"><h2>🥇 Classement Gourmand.fun</h2><button class="close-btn" data-close="leaderboardOverlay">✕</button></div>
+    <p class="muted">Les joueurs sont classés selon leur XP, leur niveau et leurs succès.</p>
+    <div id="leaderboardContent" class="admin-list">Chargement du classement…</div>
   </div>
 </div>
 
 <div class="overlay" id="adminOverlay">
   <div class="modal wide">
-    <div class="modal-head">
-      <h2>🧑‍🍳 Cuisine du site — Administration</h2>
-      <button class="close-btn" data-close="adminOverlay">✕ Fermer</button>
-    </div>
+    <div class="modal-head"><h2>🧑‍🍳 Administration</h2><button class="close-btn" data-close="adminOverlay">✕ Fermer</button></div>
+    <p class="muted">Gère les jeux, les annonces et consulte les statistiques des joueurs.</p>
 
-    <p class="muted">Gère les jeux, leur maintenance et publie des annonces.</p>
+    <div class="section-title"><h2>📊 Statistiques des joueurs</h2></div>
+    <div id="adminPlayerStats" class="admin-list">Chargement…</div>
 
     <div class="section-title"><h2>🎮 Ajouter ou modifier un jeu</h2></div>
-
     <form id="gameForm">
       <input type="hidden" id="gameEditId">
-
       <div class="form-grid">
-        <div class="form-group">
-          <label for="gameTitle">Nom du jeu</label>
-          <input class="field" id="gameTitle" required maxlength="80" placeholder="Ex. Snake">
-        </div>
-
-        <div class="form-group">
-          <label for="gameEmoji">Emoji</label>
-          <input class="field" id="gameEmoji" maxlength="12" value="🎮">
-        </div>
-
-        <div class="form-group">
-          <label for="gameBackground">Couleur du fond</label>
+        <div class="form-group"><label for="gameTitle">Nom du jeu</label><input class="field" id="gameTitle" required maxlength="80" placeholder="Ex. Snake"></div>
+        <div class="form-group"><label for="gameEmoji">Emoji</label><input class="field" id="gameEmoji" maxlength="12" value="🎮"></div>
+        <div class="form-group"><label for="gameBackground">Couleur</label>
           <select class="field" id="gameBackground">
             <option value="linear-gradient(135deg,#55304d,#282142)">🍇 Violet</option>
             <option value="linear-gradient(135deg,#7f303a,#3d1d38)">🍓 Rouge</option>
             <option value="linear-gradient(135deg,#27644e,#1d3241)">🥑 Vert</option>
             <option value="linear-gradient(135deg,#8a5929,#493047)">🍊 Orange</option>
             <option value="linear-gradient(135deg,#235c86,#332b59)">🫐 Bleu</option>
-            <option value="linear-gradient(135deg,#735b24,#493047)">🍍 Jaune</option>
           </select>
         </div>
-
-        <div class="form-group">
-          <label for="gamePlatform">Compatibilité</label>
+        <div class="form-group"><label for="gamePlatform">Compatibilité</label>
           <select class="field" id="gamePlatform">
-            <option value="all">PC, tablette et téléphone</option>
-            <option value="pc">PC uniquement</option>
-            <option value="mobile">Mobile et tablette</option>
+            <option value="all">PC, tablette et téléphone</option><option value="pc">PC uniquement</option><option value="mobile">Mobile et tablette</option>
           </select>
         </div>
-
-        <div class="form-group">
-          <label for="gameType">Type de jeu</label>
-          <select class="field" id="gameType">
-            <option value="url">Lien vers un jeu / site</option>
-            <option value="html">Code HTML du jeu</option>
-          </select>
+        <div class="form-group"><label for="gameType">Type de jeu</label>
+          <select class="field" id="gameType"><option value="url">Lien vers un jeu / site</option><option value="html">Code HTML du jeu</option></select>
         </div>
-
-        <div class="form-group">
-          <label for="gameDescription">Description du jeu</label>
-          <input class="field" id="gameDescription" maxlength="300" placeholder="Une petite description…">
-        </div>
-
-        <div class="form-group full">
-          <label for="gameContent">Lien ou code HTML</label>
-          <textarea class="field" id="gameContent" required placeholder="Colle ici l'URL du jeu ou son code HTML"></textarea>
-        </div>
+        <div class="form-group"><label for="gameDescription">Description</label><input class="field" id="gameDescription" maxlength="300" placeholder="Description…"></div>
+        <div class="form-group full"><label for="gameContent">Lien ou code HTML</label><textarea class="field" id="gameContent" required placeholder="Colle ici l'URL ou le code HTML"></textarea></div>
       </div>
-
-      <div class="form-actions">
-        <button class="btn green" type="submit" id="saveGameBtn">➕ Enregistrer le jeu</button>
-        <button class="btn secondary" type="button" id="cancelGameEditBtn" hidden>Annuler la modification</button>
-      </div>
+      <div class="form-actions"><button class="btn green" type="submit" id="saveGameBtn">➕ Enregistrer le jeu</button><button class="btn secondary" type="button" id="cancelGameEditBtn" hidden>Annuler</button></div>
     </form>
 
-    <div class="section-title"><h2>📚 Jeux enregistrés</h2></div>
-    <div id="adminGameList" class="admin-list"></div>
+    <div class="section-title"><h2>📚 Jeux enregistrés</h2></div><div id="adminGameList" class="admin-list"></div>
 
     <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
-
     <div class="section-title"><h2>📢 Publier une annonce</h2></div>
-    <p class="help">Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.</p>
-
     <form id="announcementForm">
       <input type="hidden" id="announcementEditId">
-
       <div class="form-grid">
-        <div class="form-group">
-          <label for="announcementTitle">Titre de l'annonce</label>
-          <input class="field" id="announcementTitle" required maxlength="100" placeholder="Ex. Maintenance ce soir">
+        <div class="form-group"><label for="announcementTitle">Titre</label><input class="field" id="announcementTitle" required maxlength="100"></div>
+        <div class="form-group"><label for="announcementType">Type</label>
+          <select class="field" id="announcementType"><option value="info">ℹ️ Information</option><option value="update">🆕 Mise à jour</option><option value="maintenance">🛠️ Maintenance</option><option value="issue">🚨 Problème technique</option></select>
         </div>
-
-        <div class="form-group">
-          <label for="announcementType">Type d'annonce</label>
-          <select class="field" id="announcementType">
-            <option value="info">ℹ️ Information</option>
-            <option value="update">🆕 Mise à jour</option>
-            <option value="maintenance">🛠️ Maintenance</option>
-            <option value="issue">🚨 Problème technique</option>
-          </select>
-        </div>
-
-        <div class="form-group full">
-          <label for="announcementMessage">Message</label>
-          <textarea class="field" id="announcementMessage" required maxlength="2000" placeholder="Explique aux visiteurs ce qu'ils doivent savoir…"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="announcementExpires">Date de fin (facultative)</label>
-          <input class="field" id="announcementExpires" type="datetime-local">
-        </div>
-
-        <div class="form-group">
-          <label style="display:flex;gap:10px;align-items:center;padding:10px 0">
-            <input id="announcementActive" type="checkbox" checked style="width:18px;height:18px">
-            Annonce active
-          </label>
-        </div>
+        <div class="form-group full"><label for="announcementMessage">Message</label><textarea class="field" id="announcementMessage" required maxlength="2000"></textarea></div>
+        <div class="form-group"><label for="announcementExpires">Date de fin (facultative)</label><input class="field" id="announcementExpires" type="datetime-local"></div>
+        <div class="form-group"><label style="display:flex;gap:10px;align-items:center"><input id="announcementActive" type="checkbox" checked> Annonce active</label></div>
       </div>
-
-      <div class="form-actions">
-        <button class="btn green" id="saveAnnouncementBtn" type="submit">📢 Publier l'annonce</button>
-        <button class="btn secondary" id="cancelAnnouncementEditBtn" type="button" hidden>Annuler la modification</button>
-      </div>
+      <div class="form-actions"><button class="btn green" id="saveAnnouncementBtn" type="submit">📢 Publier l'annonce</button><button class="btn secondary" id="cancelAnnouncementEditBtn" type="button" hidden>Annuler</button></div>
     </form>
-
-    <div class="section-title"><h2>🗞️ Annonces enregistrées</h2></div>
-    <div id="adminAnnouncementList" class="admin-list"></div>
+    <div class="section-title"><h2>🗞️ Annonces enregistrées</h2></div><div id="adminAnnouncementList" class="admin-list"></div>
   </div>
 </div>
 
 <div class="overlay" id="announcementOverlay">
   <div class="modal" id="announcementModal">
-    <div class="modal-head">
-      <div class="announcement-icon" id="publicAnnouncementIcon">📢</div>
-      <button class="close-btn" id="closeAnnouncementX">✕</button>
-    </div>
+    <div class="modal-head"><div class="announcement-icon" id="publicAnnouncementIcon">📢</div><button class="close-btn" id="closeAnnouncementX">✕</button></div>
     <span class="announcement-label" id="publicAnnouncementType">INFORMATION</span>
     <h2 id="publicAnnouncementTitle">Une annonce</h2>
     <div class="announcement-message" id="publicAnnouncementMessage"></div>
-    <label class="check-row">
-      <input type="checkbox" id="neverShowAnnouncement">
-      Ne plus afficher cette annonce sur ce navigateur
-    </label>
-    <div class="form-actions">
-      <button class="btn" id="closeAnnouncementBtn">J'ai compris 👍</button>
-    </div>
+    <label class="check-row"><input type="checkbox" id="neverShowAnnouncement"> Ne plus afficher cette annonce sur ce navigateur</label>
+    <div class="form-actions"><button class="btn" id="closeAnnouncementBtn">J'ai compris 👍</button></div>
   </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
-  onSnapshot, serverTimestamp
+  getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,
+  serverTimestamp,getDoc,setDoc,query,orderBy,limit
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup,
-  onAuthStateChanged, signOut
+  getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-/* Configuration Firebase */
-const firebaseConfig = {
-  apiKey: "AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
-  authDomain: "jeux-feuxxx.firebaseapp.com",
-  databaseURL: "https://jeux-feuxxx-default-rtdb.firebaseio.com",
-  projectId: "jeux-feuxxx",
-  storageBucket: "jeux-feuxxx.firebasestorage.app",
-  messagingSenderId: "351401695038",
-  appId: "1:351401695038:web:dd3dbd6c5ff85aeb81fe6f",
-  measurementId: "G-41PSST98ZZ"
+/* Firebase : configuration du projet existant */
+const firebaseConfig={
+  apiKey:"AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
+  authDomain:"jeux-feuxxx.firebaseapp.com",
+  databaseURL:"https://jeux-feuxxx-default-rtdb.firebaseio.com",
+  projectId:"jeux-feuxxx",
+  storageBucket:"jeux-feuxxx.firebasestorage.app",
+  messagingSenderId:"351401695038",
+  appId:"1:351401695038:web:dd3dbd6c5ff85aeb81fe6f",
+  measurementId:"G-41PSST98ZZ"
 };
+const ADMIN_EMAIL="x.kaboom.x02@gmail.com";
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const auth=getAuth(app);
+const provider=new GoogleAuthProvider();
+const gamesRef=collection(db,"games");
+const announcementsRef=collection(db,"announcements");
+const playersRef=collection(db,"players");
 
-const ADMIN_EMAIL = "x.kaboom.x02@gmail.com";
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-const gamesRef = collection(db,"games");
-const announcementsRef = collection(db,"announcements");
+let games=[],announcements=[],allPlayers=[];
+let currentUser=null,currentGame=null,editingGame=null,editingAnnouncement=null;
+let currentAnnouncement=null,pendingGame=null,playerProfile=null;
+let gamesLoaded=false,announcementsLoaded=false,profileLoadToken=0;
+const shownThisPage=new Set();
+const $=id=>document.getElementById(id);
+const safeText=value=>String(value??"");
 
-let games = [];
-let announcements = [];
-let currentUser = null;
-let currentGame = null;
-let editingGame = null;
-let editingAnnouncement = null;
-let currentAnnouncement = null;
-let pendingGame = null;
-let gamesLoaded = false;
-let announcementsLoaded = false;
-
-const shownThisPage = new Set();
-const $ = id => document.getElementById(id);
-const safeText = value => String(value ?? "");
-
-function toast(message) {
-  const el = $("toast");
-  el.textContent = message;
-  el.classList.add("show");
-  clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.classList.remove("show"),3500);
+function toast(message){
+  const el=$("toast");el.textContent=message;el.classList.add("show");
+  clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),3300);
 }
-
-function isAdmin() {
-  return !!currentUser &&
-    currentUser.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+function isAdmin(){
+  return !!currentUser&&currentUser.email?.toLowerCase()===ADMIN_EMAIL.toLowerCase();
 }
-
-function openOverlay(id) { $(id)?.classList.add("open"); }
-function closeOverlay(id) { $(id)?.classList.remove("open"); }
-
-document.querySelectorAll("[data-close]").forEach(button => {
-  button.addEventListener("click",() => closeOverlay(button.dataset.close));
-});
-
-document.querySelectorAll(".overlay").forEach(overlay => {
-  overlay.addEventListener("click",event => {
-    if (event.target !== overlay) return;
-    if (overlay.id === "gameOverlay") return stopCurrentGame();
-    if (overlay.id === "announcementOverlay") return closePublicAnnouncement();
-    if (overlay.id === "platformWarningOverlay") pendingGame = null;
-    overlay.classList.remove("open");
-  });
-});
-
-document.addEventListener("keydown",event => {
-  if (event.key !== "Escape") return;
-
+function openOverlay(id){$(id)?.classList.add("open")}
+function closeOverlay(id){$(id)?.classList.remove("open")}
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeOverlay(b.dataset.close)));
+document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{
+  if(e.target!==o)return;
+  if(o.id==="gameOverlay")return stopCurrentGame();
+  if(o.id==="announcementOverlay")return closePublicAnnouncement();
+  if(o.id==="platformWarningOverlay")pendingGame=null;
+  o.classList.remove("open");
+}));
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape")return;
   stopCurrentGame();
-  ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay"]
-    .forEach(closeOverlay);
-
+  ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay","playerProfileOverlay","leaderboardOverlay"].forEach(closeOverlay);
   $("secretPanel").classList.remove("open");
-  pendingGame = null;
-
-  if ($("announcementOverlay").classList.contains("open")) {
-    closePublicAnnouncement();
-  }
+  pendingGame=null;
+  if($("announcementOverlay").classList.contains("open"))closePublicAnnouncement();
 });
+$("discoverBtn").onclick=()=>$("catalogue").scrollIntoView({behavior:"smooth"});
+$("openSourceInfoBtn").onclick=()=>openOverlay("openSourceOverlay");
+$("closeOpenSourceBtn").onclick=()=>closeOverlay("openSourceOverlay");
+$("confirmOpenSourceBtn").onclick=()=>closeOverlay("openSourceOverlay");
 
-$("discoverBtn").addEventListener("click",() =>
-  $("catalogue").scrollIntoView({behavior:"smooth"})
-);
-
-$("openSourceInfoBtn").addEventListener("click",() => openOverlay("openSourceOverlay"));
-$("closeOpenSourceBtn").addEventListener("click",() => closeOverlay("openSourceOverlay"));
-$("confirmOpenSourceBtn").addEventListener("click",() => closeOverlay("openSourceOverlay"));
-
-/* Compatibilité des appareils */
-function detectDevice() {
-  const ua = navigator.userAgent || "";
-
-  if (/iPad/i.test(ua) ||
-      (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return "tablet";
-
-  if (navigator.userAgentData?.mobile) return "phone";
-  if (/iPhone|iPod|Windows Phone|IEMobile/i.test(ua)) return "phone";
-
-  if (/Android/i.test(ua)) return /Mobile/i.test(ua) ? "phone" : "tablet";
-  if (/Tablet|PlayBook|Silk/i.test(ua)) return "tablet";
-  if (/Mobile/i.test(ua)) return "phone";
-
+/* Compatibilité appareil */
+function detectDevice(){
+  const ua=navigator.userAgent||"";
+  if(/iPad/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1))return "tablet";
+  if(navigator.userAgentData?.mobile)return "phone";
+  if(/iPhone|iPod|Windows Phone|IEMobile/i.test(ua))return "phone";
+  if(/Android/i.test(ua))return /Mobile/i.test(ua)?"phone":"tablet";
+  if(/Tablet|PlayBook|Silk/i.test(ua))return "tablet";
+  if(/Mobile/i.test(ua))return "phone";
   return "pc";
 }
-
-function deviceLabel(device) {
-  return device === "phone" ? "téléphone" :
-    device === "tablet" ? "tablette" : "ordinateur";
+function deviceLabel(d){return d==="phone"?"téléphone":d==="tablet"?"tablette":"ordinateur"}
+function platformLabel(p){return p==="pc"?"🖥️ PC uniquement":p==="mobile"?"📱 Mobile / tablette":"💻 Tous appareils"}
+function validateGameUrl(value){
+  try{const u=new URL(String(value||""));return ["https:","http:"].includes(u.protocol)?u.href:null}catch{return null}
 }
 
-function platformLabel(platform) {
-  return platform === "pc" ? "🖥️ PC uniquement" :
-    platform === "mobile" ? "📱 Mobile / tablette" : "💻 Tous appareils";
-}
-
-function validateGameUrl(value) {
-  try {
-    const url = new URL(String(value || ""));
-    return ["https:","http:"].includes(url.protocol) ? url.href : null;
-  } catch {
-    return null;
-  }
-}
-
-/* Catalogue */
-function renderGames() {
-  const search = $("searchInput").value.trim().toLowerCase();
-  const platform = $("platformFilter").value;
-
-  const visible = games.filter(game => {
-    const searchable = [game.title,game.description,game.emoji]
-      .map(safeText).join(" ").toLowerCase();
-
-    return searchable.includes(search) &&
-      (platform === "all" || game.platform === "all" || game.platform === platform);
+/* Catalogue des jeux */
+function renderGames(){
+  const search=$("searchInput").value.trim().toLowerCase();
+  const platform=$("platformFilter").value;
+  const visible=games.filter(g=>{
+    const txt=[g.title,g.description,g.emoji].map(safeText).join(" ").toLowerCase();
+    return txt.includes(search)&&(platform==="all"||g.platform==="all"||g.platform===platform);
   });
-
-  const maintenanceCount = visible.filter(game => game.maintenance === true).length;
-
-  $("gameCount").textContent =
-    `${visible.length} jeu${visible.length > 1 ? "x" : ""}` +
-    (maintenanceCount ? ` • ${maintenanceCount} en maintenance` : "");
-
-  const grid = $("gameGrid");
-  grid.replaceChildren();
-
-  if (!visible.length) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = gamesLoaded
-      ? "🍽️ Aucun jeu trouvé. Essaie une autre recherche !"
-      : "🍳 Chargement du menu…";
-    grid.append(empty);
-    return;
+  const mc=visible.filter(g=>g.maintenance===true).length;
+  $("gameCount").textContent=`${visible.length} jeu${visible.length>1?"x":""}`+(mc?` • ${mc} en maintenance`:"");
+  const grid=$("gameGrid");grid.replaceChildren();
+  if(!visible.length){
+    const empty=document.createElement("div");empty.className="empty";
+    empty.textContent=gamesLoaded?"🍽️ Aucun jeu trouvé. Essaie une autre recherche !":"🍳 Chargement du menu…";
+    grid.append(empty);return;
   }
-
-  visible.forEach(game => {
-    const card = document.createElement("article");
-    card.className = "game-card";
-
-    if (game.maintenance) card.classList.add("maintenance");
-
-    const cover = document.createElement("div");
-    cover.className = "game-cover";
-    cover.style.background = game.background ||
-      "linear-gradient(135deg,#55304d,#282142)";
-
-    const emoji = document.createElement("div");
-    emoji.className = "game-emoji";
-    emoji.textContent = game.emoji || "🎮";
-
-    emoji.addEventListener("click",() => {
-      recordEgg("emoji");
-    });
-
-    const badge = document.createElement("span");
-    badge.className = "platform-badge";
-    badge.textContent = platformLabel(game.platform);
+  visible.forEach(game=>{
+    const card=document.createElement("article");card.className="game-card";
+    if(game.maintenance)card.classList.add("maintenance");
+    const cover=document.createElement("div");cover.className="game-cover";
+    cover.style.background=game.background||"linear-gradient(135deg,#55304d,#282142)";
+    const emoji=document.createElement("div");emoji.className="game-emoji";emoji.textContent=game.emoji||"🎮";
+    emoji.onclick=()=>recordEgg("emoji");
+    const badge=document.createElement("span");badge.className="platform-badge";badge.textContent=platformLabel(game.platform);
     cover.append(emoji,badge);
-
-    const info = document.createElement("div");
-    info.className = "game-info";
-
-    const title = document.createElement("h3");
-    title.textContent = game.title || "Jeu sans nom";
-
-    const description = document.createElement("p");
-    description.textContent = game.description || "Prêt à jouer ?";
-
+    const info=document.createElement("div");info.className="game-info";
+    const title=document.createElement("h3");title.textContent=game.title||"Jeu sans nom";
+    const description=document.createElement("p");description.textContent=game.description||"Prêt à jouer ?";
     info.append(title,description);
-
-    const buttons = document.createElement("div");
-    buttons.className = "game-buttons";
-
-    if (game.maintenance) {
-      const label = document.createElement("span");
-      label.className = "maintenance-badge";
-      label.textContent = isAdmin()
-        ? "🛠️ MAINTENANCE — MODE ADMIN"
-        : "🛠️ TEMPORAIREMENT INDISPONIBLE";
-
-      const message = document.createElement("div");
-      message.className = "maintenance-message";
-      message.textContent = game.maintenanceMessage ||
-        "Ce jeu est en maintenance. Reviens bientôt !";
-
-      if (isAdmin()) {
-        const test = document.createElement("button");
-        test.className = "btn";
-        test.textContent = "🧪 Tester en tant qu’admin";
-        test.addEventListener("click",() => playGame(game,true));
-        buttons.append(test);
-      } else {
-        const disabled = document.createElement("button");
-        disabled.className = "btn";
-        disabled.textContent = "🛠️ En maintenance";
-        disabled.disabled = true;
-        buttons.append(disabled);
+    const buttons=document.createElement("div");buttons.className="game-buttons";
+    if(game.maintenance){
+      const label=document.createElement("span");label.className="maintenance-badge";label.textContent=isAdmin()?"🛠️ MAINTENANCE — MODE ADMIN":"🛠️ TEMPORAIREMENT INDISPONIBLE";
+      const msg=document.createElement("div");msg.className="maintenance-message";msg.textContent=game.maintenanceMessage||"Ce jeu est en maintenance. Reviens bientôt !";
+      if(isAdmin()){
+        const test=document.createElement("button");test.className="btn";test.textContent="🧪 Tester en tant qu’admin";test.onclick=()=>playGame(game,true);buttons.append(test);
+      }else{
+        const b=document.createElement("button");b.className="btn";b.textContent="🛠️ En maintenance";b.disabled=true;buttons.append(b);
       }
-
-      info.append(label,message,buttons);
-    } else {
-      const play = document.createElement("button");
-      play.className = "btn";
-      play.textContent = "▶ Jouer";
-
-      play.addEventListener("click",() => {
-        recordEgg("player");
-        playGame(game);
-      });
-
-      buttons.append(play);
-      info.append(buttons);
+      info.append(label,msg,buttons);
+    }else{
+      const play=document.createElement("button");play.className="btn";play.textContent="▶ Jouer";
+      play.onclick=()=>{recordEgg("player");playGame(game)};
+      buttons.append(play);info.append(buttons);
     }
-
-    card.append(cover,info);
-    grid.append(card);
+    card.append(cover,info);grid.append(card);
   });
 }
-
-$("searchInput").addEventListener("input",() => {
+$("searchInput").addEventListener("input",()=>{
   renderGames();
-
-  if ($("searchInput").value.toLowerCase().includes("secret")) {
-    recordEgg("search");
-  }
+  if($("searchInput").value.toLowerCase().includes("secret"))recordEgg("search");
 });
-
 $("platformFilter").addEventListener("change",renderGames);
 
-function playGame(game,adminTest = false) {
-  if (game.maintenance && !(adminTest && isAdmin())) {
-    toast(game.maintenanceMessage || "🛠️ Ce jeu est temporairement indisponible.");
-    return;
-  }
-
-  const device = detectDevice();
-  const incompatible =
-    (game.platform === "pc" && device !== "pc") ||
-    (game.platform === "mobile" && device === "pc");
-
-  if (!incompatible) return launchGame(game);
-
-  pendingGame = game;
-  $("platformWarningIcon").textContent = game.platform === "pc" ? "🖥️" : "📱";
-  $("platformWarningTitle").textContent = game.platform === "pc"
-    ? "Jeu conçu pour PC" : "Jeu conçu pour mobile";
-
-  $("platformWarningMessage").textContent = game.platform === "pc"
-    ? `Ton appareil semble être un ${deviceLabel(device)}.\n\nCe jeu peut nécessiter un clavier, une souris ou un grand écran. Tu peux quand même essayer.`
-    : "Ce jeu est principalement prévu pour un écran tactile. Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.";
-
+function playGame(game,adminTest=false){
+  if(game.maintenance&&!(adminTest&&isAdmin()))return toast(game.maintenanceMessage||"🛠️ Ce jeu est temporairement indisponible.");
+  const device=detectDevice();
+  const incompatible=(game.platform==="pc"&&device!=="pc")||(game.platform==="mobile"&&device==="pc");
+  if(!incompatible)return launchGame(game);
+  pendingGame=game;
+  $("platformWarningIcon").textContent=game.platform==="pc"?"🖥️":"📱";
+  $("platformWarningTitle").textContent=game.platform==="pc"?"Jeu conçu pour PC":"Jeu conçu pour mobile";
+  $("platformWarningMessage").textContent=game.platform==="pc"
+    ?`Ton appareil semble être un ${deviceLabel(device)}.\n\nCe jeu peut nécessiter un clavier, une souris ou un grand écran. Tu peux quand même essayer.`
+    :"Ce jeu est principalement prévu pour un écran tactile. Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.";
   openOverlay("platformWarningOverlay");
 }
+$("cancelPlatformWarningBtn").onclick=()=>{pendingGame=null;closeOverlay("platformWarningOverlay")};
+$("continuePlatformWarningBtn").onclick=()=>{
+  const g=pendingGame;pendingGame=null;closeOverlay("platformWarningOverlay");if(g)launchGame(g);
+};
 
-$("cancelPlatformWarningBtn").addEventListener("click",() => {
-  pendingGame = null;
-  closeOverlay("platformWarningOverlay");
-});
-
-$("continuePlatformWarningBtn").addEventListener("click",() => {
-  const game = pendingGame;
-  pendingGame = null;
-  closeOverlay("platformWarningOverlay");
-  if (game) launchGame(game);
-});
-
-function launchGame(game) {
-  if (game.maintenance && !isAdmin()) {
-    return toast("🛠️ Ce jeu est en maintenance.");
-  }
-
-  currentGame = game;
-  $("playerTitle").textContent = `${game.emoji || "🎮"} ${game.title || "Jeu"}`;
-
-  const frame = $("gameFrame");
-  frame.src = "about:blank";
-  frame.removeAttribute("srcdoc");
-  frame.removeAttribute("sandbox");
-
-  if (game.type === "html") {
+function launchGame(game){
+  if(game.maintenance&&!isAdmin())return toast("🛠️ Ce jeu est en maintenance.");
+  currentGame=game;$("playerTitle").textContent=`${game.emoji||"🎮"} ${game.title||"Jeu"}`;
+  const frame=$("gameFrame");frame.src="about:blank";frame.removeAttribute("srcdoc");frame.removeAttribute("sandbox");
+  if(game.type==="html"){
     frame.setAttribute("sandbox","allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals");
-    frame.srcdoc = game.content || "<p>Ce jeu n'a pas de code.</p>";
-  } else {
-    const url = validateGameUrl(game.content);
-
-    if (!url) {
-      currentGame = null;
-      return toast("Le lien de ce jeu n'est pas valide.");
-    }
-
-    frame.src = url;
+    frame.srcdoc=game.content||"<p>Ce jeu n'a pas de code.</p>";
+  }else{
+    const url=validateGameUrl(game.content);
+    if(!url){currentGame=null;return toast("Le lien de ce jeu n'est pas valide.")}
+    frame.src=url;
   }
-
-  $("openGameTabBtn").onclick = () => {
-    if (game.type === "html") {
-      return toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
-    }
-
-    const url = validateGameUrl(game.content);
-
-    if (url) window.open(url,"_blank","noopener,noreferrer");
-    else toast("Le lien de ce jeu n'est pas valide.");
+  $("openGameTabBtn").onclick=()=>{
+    if(game.type==="html")return toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
+    const url=validateGameUrl(game.content);if(url)window.open(url,"_blank","noopener,noreferrer");else toast("Lien invalide.");
   };
-
+  if(currentUser&&!isAdmin())awardGameXP(game.id);
   openOverlay("gameOverlay");
 }
-
-function stopCurrentGame() {
-  const frame = $("gameFrame");
-
-  if (frame) {
-    frame.src = "about:blank";
-    frame.removeAttribute("srcdoc");
-  }
-
-  closeOverlay("gameOverlay");
-  currentGame = null;
+function stopCurrentGame(){
+  const frame=$("gameFrame");if(frame){frame.src="about:blank";frame.removeAttribute("srcdoc")}
+  closeOverlay("gameOverlay");currentGame=null;
 }
+$("closeGameBtn").onclick=stopCurrentGame;
 
-$("closeGameBtn").addEventListener("click",stopCurrentGame);
-
-/* Authentification */
-$("adminLoginBtn").addEventListener("click",() => {
-  if (isAdmin()) {
-    renderAdminGames();
-    renderAdminAnnouncements();
-    openOverlay("adminOverlay");
-  } else {
-    openOverlay("loginOverlay");
-  }
-});
-
-$("googleLoginBtn").addEventListener("click",async () => {
-  try {
-    const result = await signInWithPopup(auth,provider);
-
-    if (result.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
-      await signOut(auth);
-      return toast("Ce compte Google n'est pas autorisé.");
+/* Connexion admin séparée de la connexion joueur */
+$("adminLoginBtn").onclick=()=>{
+  if(isAdmin()){renderAdminGames();renderAdminAnnouncements();renderAdminPlayerStats();openOverlay("adminOverlay")}
+  else openOverlay("loginOverlay");
+};
+$("googleLoginBtn").onclick=async()=>{
+  try{
+    const result=await signInWithPopup(auth,provider);
+    if(result.user.email?.toLowerCase()!==ADMIN_EMAIL.toLowerCase()){
+      await signOut(auth);return toast("Ce compte Google n'est pas autorisé à administrer le site.");
     }
+    closeOverlay("loginOverlay");openOverlay("adminOverlay");toast("Connexion administrateur réussie !");
+  }catch(e){console.error(e);toast("Connexion impossible. Vérifie Firebase et les fenêtres pop-up.")}
+};
+$("playerLoginBtn").onclick=async()=>{
+  if(currentUser&&!isAdmin()){openOverlay("playerProfileOverlay");renderPlayerProfile();return}
+  try{
+    await signInWithPopup(auth,provider);
+  }catch(e){console.error(e);toast("Connexion Google impossible.")}
+};
+$("logoutBtn").onclick=async()=>{
+  try{await signOut(auth);closeOverlay("adminOverlay");closeOverlay("loginOverlay");closeOverlay("playerProfileOverlay");toast("Déconnexion réussie.")}
+  catch(e){console.error(e);toast("La déconnexion a échoué.")}
+};
 
-    closeOverlay("loginOverlay");
-    openOverlay("adminOverlay");
-    toast("Connexion administrateur réussie !");
-  } catch (error) {
-    console.error(error);
-    toast("Connexion impossible. Vérifie Firebase et les fenêtres pop-up.");
+onAuthStateChanged(auth,async user=>{
+  currentUser=user;
+  profileLoadToken++;
+  playerProfile=null;
+  $("logoutBtn").hidden=!user;
+  $("adminLoginBtn").textContent=isAdmin()?"🧑‍🍳 Administration":"🔐 Administration";
+  $("profileBtn").hidden=true;
+
+  if(!user){
+    $("playerLoginBtn").textContent="👤 Connexion joueur";
+    closeOverlay("adminOverlay");closeOverlay("playerProfileOverlay");
+    renderGames();return;
   }
-});
 
-$("logoutBtn").addEventListener("click",async () => {
-  try {
-    await signOut(auth);
-    closeOverlay("adminOverlay");
+  if(isAdmin()){
+    $("playerLoginBtn").textContent="👤 Connexion joueur";
     closeOverlay("loginOverlay");
-    toast("Déconnexion réussie.");
-  } catch (error) {
-    console.error(error);
-    toast("La déconnexion a échoué.");
+    renderAdminGames();renderAdminAnnouncements();renderAdminPlayerStats();renderGames();
+    return;
   }
-});
 
-onAuthStateChanged(auth,user => {
-  currentUser = user;
-  $("logoutBtn").hidden = !user;
-  $("adminLoginBtn").textContent = isAdmin()
-    ? "🧑‍🍳 Administration"
-    : "🔐 Administration";
-
+  closeOverlay("adminOverlay");closeOverlay("loginOverlay");
+  $("playerLoginBtn").textContent="👤 Mon compte";
+  const token=profileLoadToken;
+  await loadPlayerProfile(user,token);
   renderGames();
-
-  if (user && !isAdmin()) {
-    closeOverlay("adminOverlay");
-    closeOverlay("loginOverlay");
-    toast("Ce compte n'a pas les droits administrateur.");
-    signOut(auth).catch(console.error);
-    return;
-  }
-
-  if (isAdmin()) {
-    renderAdminGames();
-    renderAdminAnnouncements();
-  } else {
-    closeOverlay("adminOverlay");
-  }
 });
 
-/* Gestion des jeux */
-$("gameForm").addEventListener("submit",async event => {
-  event.preventDefault();
+/* Profil, niveaux, XP et succès synchronisés */
+const levelFromXP=xp=>Math.floor(Math.max(0,Number(xp)||0)/100)+1;
+const achievementCount=p=>Array.isArray(p.achievements)?p.achievements.length:0;
+function playerScore(p){return (Number(p.xp)||0)+achievementCount(p)*25+levelFromXP(p.xp)*10}
 
-  if (!isAdmin()) return toast("Accès refusé.");
-
-  const title = $("gameTitle").value.trim();
-  const content = $("gameContent").value.trim();
-  const type = $("gameType").value;
-
-  if (!title || !content) return toast("Remplis le nom et le contenu du jeu.");
-
-  if (type === "url" && !validateGameUrl(content)) {
-    return toast("Utilise une adresse commençant par https:// ou http://");
-  }
-
-  const data = {
-    title,
-    description:$("gameDescription").value.trim(),
-    emoji:$("gameEmoji").value.trim() || "🎮",
-    background:$("gameBackground").value,
-    type,
-    platform:$("gamePlatform").value,
-    content,
-    updatedAt:serverTimestamp()
-  };
-
-  $("saveGameBtn").disabled = true;
-
-  try {
-    if (editingGame) {
-      await updateDoc(doc(db,"games",editingGame),data);
-      toast("Jeu modifié !");
-    } else {
-      data.createdAt = serverTimestamp();
-      await addDoc(gamesRef,data);
-      toast("Jeu ajouté au menu !");
-
-      /* La réussite Admin n'est donnée qu'après l'ajout réussi. */
-      if (isAdmin()) recordEgg("admin");
+async function loadPlayerProfile(user,token){
+  try{
+    const ref=doc(db,"players",user.uid);
+    const snap=await getDoc(ref);
+    if(token!==profileLoadToken||currentUser?.uid!==user.uid)return;
+    if(!snap.exists()){
+      const profile={uid:user.uid,nickname:"",xp:0,level:1,gamesPlayed:0,achievements:[],createdAt:Date.now()};
+      await setDoc(ref,{...profile,updatedAt:serverTimestamp(),lastSeenAt:serverTimestamp()});
+      playerProfile=profile;
+    }else{
+      playerProfile={uid:user.uid,...snap.data()};
+      await setDoc(ref,{lastSeenAt:serverTimestamp()},{merge:true});
     }
-
-    resetGameForm();
-  } catch (error) {
-    console.error(error);
-    toast("Impossible d'enregistrer. Vérifie les règles Firestore.");
-  } finally {
-    $("saveGameBtn").disabled = false;
+    $("profileBtn").hidden=false;
+    $("playerLoginBtn").textContent="👤 "+(playerProfile.nickname||"Mon compte");
+    syncLocalAchievements();
+    renderPlayerProfile();
+  }catch(e){
+    console.error("Profil joueur :",e);
+    toast("Profil indisponible. Vérifie les règles Firestore de la collection players.");
   }
-});
-
-function resetGameForm() {
-  editingGame = null;
-  $("gameForm").reset();
-  $("gameEmoji").value = "🎮";
-  $("gameEditId").value = "";
-  $("saveGameBtn").textContent = "➕ Enregistrer le jeu";
-  $("cancelGameEditBtn").hidden = true;
 }
 
-$("cancelGameEditBtn").addEventListener("click",resetGameForm);
+function syncLocalAchievements(){
+  if(!playerProfile)return;
+  const cloud=Array.isArray(playerProfile.achievements)?playerProfile.achievements:[];
+  cloud.forEach(id=>unlockedEggs.add(id));
+  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
+  updateEggPanel();
+}
+function renderPlayerProfile(){
+  if(!currentUser||isAdmin()||!playerProfile)return;
+  $("playerNickname").value=playerProfile.nickname||"";
+  const xp=Number(playerProfile.xp)||0,level=levelFromXP(xp),progress=xp%100;
+  $("profileContent").innerHTML=`
+    <div style="text-align:center;padding:10px">
+      <div style="font-size:3rem">🍔</div>
+      <h2>${escapeHTML(playerProfile.nickname||"Nouveau joueur")}</h2>
+      <p class="muted">Niveau ${level}</p>
+    </div>
+    <div class="player-stat"><span>⭐ Expérience</span><strong>${xp} XP</strong></div>
+    <div class="player-stat"><span>🎮 Jeux lancés</span><strong>${Number(playerProfile.gamesPlayed)||0}</strong></div>
+    <div class="player-stat"><span>🏆 Succès</span><strong>${achievementCount(playerProfile)}/16</strong></div>
+    <p class="muted">Progression vers le niveau ${level+1}</p>
+    <div class="player-progress"><div style="width:${progress}%"></div></div>
+    <p class="muted">${progress}/100 XP pour le niveau suivant</p>`;
+}
 
-function renderAdminGames() {
-  if (!isAdmin()) return;
+$("profileBtn").onclick=()=>{renderPlayerProfile();openOverlay("playerProfileOverlay")};
+$("saveNicknameBtn").onclick=savePlayerNickname;
 
-  const list = $("adminGameList");
-  list.replaceChildren();
+async function savePlayerNickname(){
+  if(!currentUser||isAdmin()||!playerProfile)return toast("Connecte-toi avec un compte joueur.");
+  const nickname=$("playerNickname").value.trim();
+  if(nickname.length<3||nickname.length>20)return toast("Le pseudo doit contenir entre 3 et 20 caractères.");
+  if(!/^[\p{L}\p{N}_ -]+$/u.test(nickname))return toast("Le pseudo contient des caractères non autorisés.");
+  try{
+    await setDoc(doc(db,"players",currentUser.uid),{nickname,updatedAt:serverTimestamp()},{merge:true});
+    playerProfile.nickname=nickname;
+    $("playerLoginBtn").textContent="👤 "+nickname;
+    renderPlayerProfile();toast("🎉 Pseudo enregistré !");
+  }catch(e){console.error(e);toast("Impossible d'enregistrer le pseudo.")}
+}
 
-  if (!games.length) {
-    list.textContent = gamesLoaded ? "Aucun jeu pour le moment." : "Chargement des jeux…";
-    return;
-  }
+async function awardGameXP(gameId){
+  if(!currentUser||isAdmin()||!playerProfile)return;
+  const key=`gourmandXP_${currentUser.uid}_${gameId}`;
+  let last=0;
+  try{last=Number(localStorage.getItem(key)||0)}catch{}
+  if(Date.now()-last<10*60*1000)return;
+  try{
+    const ref=doc(db,"players",currentUser.uid),snap=await getDoc(ref);
+    if(!snap.exists())return;
+    const data=snap.data(),xp=(Number(data.xp)||0)+10;
+    const gamesPlayed=(Number(data.gamesPlayed)||0)+1;
+    await setDoc(ref,{xp,level:levelFromXP(xp),gamesPlayed,lastSeenAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+    playerProfile={...playerProfile,...data,xp,level:levelFromXP(xp),gamesPlayed};
+    try{localStorage.setItem(key,String(Date.now()))}catch{}
+    renderPlayerProfile();
+    toast(`⭐ +10 XP ! Niveau ${levelFromXP(xp)}`);
+  }catch(e){console.error("XP :",e)}
+}
 
-  games.forEach(game => {
-    const row = document.createElement("div");
-    row.className = "admin-item";
+async function syncAchievementToAccount(id){
+  if(!currentUser||isAdmin()||!playerProfile)return;
+  try{
+    const ref=doc(db,"players",currentUser.uid),snap=await getDoc(ref);
+    if(!snap.exists())return;
+    const data=snap.data(),list=Array.isArray(data.achievements)?data.achievements:[];
+    if(list.includes(id))return;
+    const updated=[...list,id],xp=(Number(data.xp)||0)+25;
+    await setDoc(ref,{achievements:updated,xp,level:levelFromXP(xp),updatedAt:serverTimestamp()},{merge:true});
+    playerProfile={...playerProfile,achievements:updated,xp,level:levelFromXP(xp)};
+    renderPlayerProfile();
+  }catch(e){console.error("Synchronisation du succès :",e)}
+}
 
-    const left = document.createElement("div");
-    const title = document.createElement("strong");
-    title.textContent = `${game.emoji || "🎮"} ${game.title || "Jeu sans nom"}`;
+/* Classement */
+function renderLeaderboard(){
+  const box=$("leaderboardContent");box.replaceChildren();
+  const sorted=[...allPlayers].filter(p=>p.nickname).sort((a,b)=>playerScore(b)-playerScore(a));
+  if(!sorted.length){box.textContent="Aucun joueur classé pour le moment.";return}
+  sorted.slice(0,100).forEach((p,i)=>{
+    const row=document.createElement("div");row.className="player-stat";
+    const rank=document.createElement("span");rank.className="player-rank";rank.textContent=["🥇","🥈","🥉"][i]||`#${i+1}`;
+    const details=document.createElement("div");details.className="player-details";
+    const name=document.createElement("strong");name.textContent=p.nickname;
+    const info=document.createElement("div");info.className="muted";
+    info.textContent=`Niveau ${levelFromXP(p.xp)} • ${Number(p.xp)||0} XP • ${achievementCount(p)} succès`;
+    details.append(name,info);row.append(rank,details);box.append(row);
+  });
+}
+$("leaderboardBtn").onclick=()=>{renderLeaderboard();openOverlay("leaderboardOverlay")};
 
-    const status = document.createElement("span");
-    status.className = `status ${game.maintenance ? "maintenance" : "on"}`;
-    status.textContent = game.maintenance ? "EN MAINTENANCE" : "DISPONIBLE";
+onSnapshot(playersRef,snap=>{
+  allPlayers=snap.docs.map(d=>({uid:d.id,...d.data()}));
+  renderLeaderboard();
+  if(isAdmin())renderAdminPlayerStats();
+},error=>{
+  console.error("Classement :",error);
+  $("leaderboardContent").textContent="Classement indisponible. Vérifie les règles Firestore.";
+});
 
-    const detail = document.createElement("p");
-    detail.textContent =
-      `${game.type === "html" ? "Code HTML" : "Lien"} • ${platformLabel(game.platform)}`;
+function renderAdminPlayerStats(){
+  if(!isAdmin())return;
+  const box=$("adminPlayerStats");box.replaceChildren();
+  const totalXP=allPlayers.reduce((s,p)=>s+(Number(p.xp)||0),0);
+  const stats=[
+    ["👥 Comptes joueurs",allPlayers.length],
+    ["⭐ XP cumulée",totalXP],
+    ["🏆 Succès obtenus",allPlayers.reduce((s,p)=>s+achievementCount(p),0)]
+  ];
+  stats.forEach(([label,value])=>{
+    const row=document.createElement("div");row.className="player-stat";
+    const a=document.createElement("span");a.textContent=label;
+    const b=document.createElement("strong");b.textContent=value;
+    row.append(a,b);box.append(row);
+  });
+  const title=document.createElement("h3");title.textContent="Joueurs";box.append(title);
+  if(!allPlayers.length){const p=document.createElement("p");p.textContent="Aucun joueur enregistré.";box.append(p)}
+  [...allPlayers].sort((a,b)=>(Number(b.xp)||0)-(Number(a.xp)||0)).forEach(p=>{
+    const row=document.createElement("div");row.className="admin-item";
+    const left=document.createElement("div");
+    const name=document.createElement("strong");name.textContent=p.nickname||"Joueur sans pseudo";
+    const detail=document.createElement("p");detail.textContent=`Niveau ${levelFromXP(p.xp)} • ${Number(p.xp)||0} XP • ${achievementCount(p)} succès • ${Number(p.gamesPlayed)||0} parties`;
+    left.append(name,detail);row.append(left);box.append(row);
+  });
+}
 
+/* Gestion des jeux dans l'administration */
+$("gameForm").onsubmit=async event=>{
+  event.preventDefault();if(!isAdmin())return toast("Accès refusé.");
+  const title=$("gameTitle").value.trim(),content=$("gameContent").value.trim(),type=$("gameType").value;
+  if(!title||!content)return toast("Remplis le nom et le contenu.");
+  if(type==="url"&&!validateGameUrl(content))return toast("Utilise une adresse commençant par https:// ou http://");
+  const data={
+    title,description:$("gameDescription").value.trim(),emoji:$("gameEmoji").value.trim()||"🎮",
+    background:$("gameBackground").value,type,platform:$("gamePlatform").value,content,updatedAt:serverTimestamp()
+  };
+  $("saveGameBtn").disabled=true;
+  try{
+    if(editingGame){await updateDoc(doc(db,"games",editingGame),data);toast("Jeu modifié !")}
+    else{data.createdAt=serverTimestamp();await addDoc(gamesRef,data);toast("Jeu ajouté !");recordEgg("admin")}
+    resetGameForm();
+  }catch(e){console.error(e);toast("Enregistrement impossible. Vérifie les règles Firestore.")}
+  finally{$("saveGameBtn").disabled=false}
+};
+function resetGameForm(){
+  editingGame=null;$("gameForm").reset();$("gameEmoji").value="🎮";$("gameEditId").value="";
+  $("saveGameBtn").textContent="➕ Enregistrer le jeu";$("cancelGameEditBtn").hidden=true;
+}
+$("cancelGameEditBtn").onclick=resetGameForm;
+
+function renderAdminGames(){
+  if(!isAdmin())return;
+  const list=$("adminGameList");list.replaceChildren();
+  if(!games.length){list.textContent=gamesLoaded?"Aucun jeu enregistré.":"Chargement…";return}
+  games.forEach(game=>{
+    const row=document.createElement("div");row.className="admin-item";
+    const left=document.createElement("div"),title=document.createElement("strong");
+    title.textContent=`${game.emoji||"🎮"} ${game.title||"Jeu sans nom"}`;
+    const status=document.createElement("span");status.className=`status ${game.maintenance?"maintenance":"on"}`;status.textContent=game.maintenance?"EN MAINTENANCE":"DISPONIBLE";
+    const detail=document.createElement("p");detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${platformLabel(game.platform)}`;
     left.append(title,document.createTextNode(" "),status,detail);
-
-    const actions = document.createElement("div");
-    actions.className = "admin-item-actions";
-
-    const edit = document.createElement("button");
-    edit.className = "btn secondary small";
-    edit.textContent = "✏️ Modifier";
-
-    edit.onclick = () => {
-      editingGame = game.id;
-      $("gameEditId").value = game.id;
-      $("gameTitle").value = game.title || "";
-      $("gameDescription").value = game.description || "";
-      $("gameEmoji").value = game.emoji || "🎮";
-      $("gameBackground").value = game.background ||
-        "linear-gradient(135deg,#55304d,#282142)";
-      $("gameType").value = game.type || "url";
-      $("gamePlatform").value = game.platform || "all";
-      $("gameContent").value = game.content || "";
-      $("saveGameBtn").textContent = "💾 Enregistrer les modifications";
-      $("cancelGameEditBtn").hidden = false;
-      $("gameForm").scrollIntoView({behavior:"smooth",block:"start"});
+    const actions=document.createElement("div");actions.className="admin-item-actions";
+    const edit=document.createElement("button");edit.className="btn secondary small";edit.textContent="✏️ Modifier";
+    edit.onclick=()=>{
+      editingGame=game.id;$("gameEditId").value=game.id;$("gameTitle").value=game.title||"";
+      $("gameDescription").value=game.description||"";$("gameEmoji").value=game.emoji||"🎮";
+      $("gameBackground").value=game.background||"linear-gradient(135deg,#55304d,#282142)";
+      $("gameType").value=game.type||"url";$("gamePlatform").value=game.platform||"all";
+      $("gameContent").value=game.content||"";$("saveGameBtn").textContent="💾 Enregistrer les modifications";
+      $("cancelGameEditBtn").hidden=false;$("gameForm").scrollIntoView({behavior:"smooth"});
     };
-
-    const maintenance = document.createElement("button");
-    maintenance.className = "btn small " +
-      (game.maintenance ? "green" : "secondary");
-
-    maintenance.textContent = game.maintenance ? "🟢 Réactiver" : "🛠️ Maintenance";
-
-    maintenance.onclick = async () => {
-      if (!isAdmin()) return toast("Accès refusé.");
-
-      const enabled = !game.maintenance;
-      let message = game.maintenanceMessage || "";
-
-      if (enabled) {
-        message = prompt(
-          "Pourquoi ce jeu est-il en maintenance ?",
-          message || "Ce jeu est temporairement indisponible. Reviens bientôt !"
-        );
-
-        if (message === null) return;
-
-        message = message.trim() ||
-          "Ce jeu est temporairement indisponible. Reviens bientôt !";
-      }
-
-      try {
-        await updateDoc(doc(db,"games",game.id),{
-          maintenance:enabled,
-          maintenanceMessage:message,
-          updatedAt:serverTimestamp()
-        });
-
-        toast(enabled ? "🛠️ Jeu mis en maintenance." : "🟢 Jeu réactivé !");
-      } catch (error) {
-        console.error(error);
-        toast("Impossible de modifier la maintenance.");
-      }
+    const maintenance=document.createElement("button");maintenance.className="btn small "+(game.maintenance?"green":"secondary");
+    maintenance.textContent=game.maintenance?"🟢 Réactiver":"🛠️ Maintenance";
+    maintenance.onclick=async()=>{
+      if(!isAdmin())return;
+      let message=game.maintenanceMessage||"";
+      if(!game.maintenance){message=prompt("Pourquoi ce jeu est-il en maintenance?",message||"Ce jeu est temporairement indisponible. Reviens bientôt !");if(message===null)return;message=message.trim()||"Ce jeu est temporairement indisponible."}
+      try{await updateDoc(doc(db,"games",game.id),{maintenance:!game.maintenance,maintenanceMessage:message,updatedAt:serverTimestamp()});toast(game.maintenance?"Jeu réactivé !":"Jeu en maintenance.")}
+      catch(e){console.error(e);toast("Impossible de changer la maintenance.")}
     };
-
-    const remove = document.createElement("button");
-    remove.className = "btn red small";
-    remove.textContent = "🗑️ Supprimer";
-
-    remove.onclick = async () => {
-      if (!isAdmin()) return toast("Accès refusé.");
-
-      if (!confirm(`Supprimer le jeu « ${game.title || "sans nom"} » ?`)) return;
-
-      try {
-        await deleteDoc(doc(db,"games",game.id));
-        toast("Jeu supprimé.");
-      } catch (error) {
-        console.error(error);
-        toast("Suppression impossible. Vérifie les règles Firestore.");
-      }
+    const remove=document.createElement("button");remove.className="btn red small";remove.textContent="🗑️ Supprimer";
+    remove.onclick=async()=>{
+      if(!isAdmin()||!confirm(`Supprimer « ${game.title} » ?`))return;
+      try{await deleteDoc(doc(db,"games",game.id));toast("Jeu supprimé.")}
+      catch(e){console.error(e);toast("Suppression impossible.")}
     };
-
-    actions.append(edit,maintenance,remove);
-    row.append(left,actions);
-    list.append(row);
+    actions.append(edit,maintenance,remove);row.append(left,actions);list.append(row);
   });
 }
 
 /* Annonces */
-const announcementTypes = {
-  info:{label:"INFORMATION",icon:"ℹ️"},
-  update:{label:"MISE À JOUR",icon:"🆕"},
-  maintenance:{label:"MAINTENANCE",icon:"🛠️"},
-  issue:{label:"PROBLÈME TECHNIQUE",icon:"🚨"}
+const announcementTypes={
+  info:{label:"INFORMATION",icon:"ℹ️"},update:{label:"MISE À JOUR",icon:"🆕"},
+  maintenance:{label:"MAINTENANCE",icon:"🛠️"},issue:{label:"PROBLÈME TECHNIQUE",icon:"🚨"}
+};
+$("announcementForm").onsubmit=async event=>{
+  event.preventDefault();if(!isAdmin())return toast("Accès refusé.");
+  const title=$("announcementTitle").value.trim(),message=$("announcementMessage").value.trim();
+  const exp=$("announcementExpires").value,expiresAt=exp?new Date(exp).getTime():null;
+  if(!title||!message)return toast("Remplis le titre et le message.");
+  if(expiresAt!==null&&(!Number.isFinite(expiresAt)||expiresAt<=Date.now()))return toast("La date de fin doit être dans le futur.");
+  const data={title,message,type:$("announcementType").value,active:$("announcementActive").checked,expiresAt,updatedAt:serverTimestamp()};
+  $("saveAnnouncementBtn").disabled=true;
+  try{
+    if(editingAnnouncement){await updateDoc(doc(db,"announcements",editingAnnouncement),data);toast("Annonce modifiée !")}
+    else{data.createdAt=serverTimestamp();await addDoc(announcementsRef,data);toast("Annonce enregistrée !")}
+    resetAnnouncementForm();
+  }catch(e){console.error(e);toast("Impossible d'enregistrer l'annonce.")}
+  finally{$("saveAnnouncementBtn").disabled=false}
+};
+function resetAnnouncementForm(){
+  editingAnnouncement=null;$("announcementForm").reset();$("announcementActive").checked=true;$("announcementEditId").value="";
+  $("saveAnnouncementBtn").textContent="📢 Publier l'annonce";$("cancelAnnouncementEditBtn").hidden=true;
+}
+$("cancelAnnouncementEditBtn").onclick=resetAnnouncementForm;
+function formatExpiry(v){if(!v)return"Sans date de fin";const d=new Date(v);return Number.isNaN(d.getTime())?"Date inconnue":"Fin : "+d.toLocaleString("fr-FR")}
+function renderAdminAnnouncements(){
+  if(!isAdmin())return;
+  const list=$("adminAnnouncementList");list.replaceChildren();
+  if(!announcements.length){list.textContent=announcementsLoaded?"Aucune annonce.":"Chargement…";return}
+  [...announcements].sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).forEach(item=>{
+    const type=announcementTypes[item.type]||announcementTypes.info;
+    const row=document.createElement("div");row.className="admin-item";
+    const left=document.createElement("div"),title=document.createElement("strong");title.textContent=`${type.icon} ${item.title||"Annonce"}`;
+    const status=document.createElement("span");status.className=`status ${item.active?"on":"off"}`;status.textContent=item.active?"ACTIVE":"INACTIVE";
+    const detail=document.createElement("p");detail.textContent=`${type.label} • ${formatExpiry(item.expiresAt)}`;
+    const msg=document.createElement("p");msg.textContent=(item.message||"").slice(0,150);
+    left.append(title,document.createTextNode(" "),status,detail,msg);
+    const actions=document.createElement("div");actions.className="admin-item-actions";
+    const edit=document.createElement("button");edit.className="btn secondary small";edit.textContent="✏️ Modifier";
+    edit.onclick=()=>{
+      editingAnnouncement=item.id;$("announcementEditId").value=item.id;$("announcementTitle").value=item.title||"";
+      $("announcementMessage").value=item.message||"";$("announcementType").value=item.type||"info";$("announcementActive").checked=!!item.active;
+      if(item.expiresAt){const d=new Date(item.expiresAt);const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);$("announcementExpires").value=local.toISOString().slice(0,16)}
+      else $("announcementExpires").value="";
+      $("saveAnnouncementBtn").textContent="💾 Enregistrer les modifications";$("cancelAnnouncementEditBtn").hidden=false;
+      $("announcementForm").scrollIntoView({behavior:"smooth"});
+    };
+    const toggle=document.createElement("button");toggle.className="btn small "+(item.active?"secondary":"green");toggle.textContent=item.active?"⏸️ Désactiver":"▶️ Activer";
+    toggle.onclick=async()=>{try{await updateDoc(doc(db,"announcements",item.id),{active:!item.active,updatedAt:serverTimestamp()});toast("Statut de l'annonce modifié.")}catch(e){console.error(e);toast("Impossible de modifier l'annonce.")}};
+    const remove=document.createElement("button");remove.className="btn red small";remove.textContent="🗑️ Supprimer";
+    remove.onclick=async()=>{if(!confirm(`Supprimer « ${item.title} » ?`))return;try{await deleteDoc(doc(db,"announcements",item.id));toast("Annonce supprimée.")}catch(e){console.error(e);toast("Suppression impossible.")}};
+    actions.append(edit,toggle,remove);row.append(left,actions);list.append(row);
+  });
+}
+
+/* Affichage public des annonces */
+function getDismissedIds(){try{return JSON.parse(localStorage.getItem("gourmandDismissedAnnouncementIds")||"[]")}catch{return[]}}
+function saveDismissedId(id){const ids=getDismissedIds();if(!ids.includes(id))ids.push(id);try{localStorage.setItem("gourmandDismissedAnnouncementIds",JSON.stringify(ids))}catch{}}
+function activeAnnouncementList(){return announcements.filter(a=>a.active&&(!a.expiresAt||Number(a.expiresAt)>Date.now()))}
+function displayAnnouncement(item){
+  currentAnnouncement=item;shownThisPage.add(item.id);const type=announcementTypes[item.type]||announcementTypes.info;
+  $("publicAnnouncementIcon").textContent=type.icon;$("publicAnnouncementType").textContent=type.label;
+  $("publicAnnouncementTitle").textContent=item.title||"Annonce";$("publicAnnouncementMessage").textContent=item.message||"";
+  $("neverShowAnnouncement").checked=false;openOverlay("announcementOverlay");
+}
+function showNextAnnouncement(){
+  if(!announcementsLoaded||currentAnnouncement||$("announcementOverlay").classList.contains("open"))return;
+  const dismissed=getDismissedIds();const next=activeAnnouncementList().find(a=>!dismissed.includes(a.id)&&!shownThisPage.has(a.id));
+  if(next)displayAnnouncement(next);
+}
+function closePublicAnnouncement(){
+  if(currentAnnouncement&&$("neverShowAnnouncement").checked)saveDismissedId(currentAnnouncement.id);
+  currentAnnouncement=null;closeOverlay("announcementOverlay");setTimeout(showNextAnnouncement,200);
+}
+$("closeAnnouncementBtn").onclick=closePublicAnnouncement;$("closeAnnouncementX").onclick=closePublicAnnouncement;
+$("showAnnouncementsBtn").onclick=()=>{
+  const active=activeAnnouncementList();if(!active.length)return toast("Aucune annonce active.");
+  const dismissed=getDismissedIds();const next=active.find(a=>!shownThisPage.has(a.id)&&!dismissed.includes(a.id))||active[0];
+  displayAnnouncement(next);
 };
 
-$("announcementForm").addEventListener("submit",async event => {
-  event.preventDefault();
-
-  if (!isAdmin()) return toast("Accès refusé.");
-
-  const title = $("announcementTitle").value.trim();
-  const message = $("announcementMessage").value.trim();
-  const expiresInput = $("announcementExpires").value;
-  const expiresAt = expiresInput ? new Date(expiresInput).getTime() : null;
-
-  if (!title || !message) return toast("Remplis le titre et le message.");
-
-  if (expiresAt !== null &&
-      (!Number.isFinite(expiresAt) || expiresAt <= Date.now())) {
-    return toast("La date de fin doit être dans le futur.");
+/* Écoute en direct des jeux et annonces */
+onSnapshot(gamesRef,snap=>{
+  games=snap.docs.map(d=>({id:d.id,...d.data()}));gamesLoaded=true;renderGames();renderAdminGames();
+  if(currentGame){
+    const latest=games.find(g=>g.id===currentGame.id);
+    if(!latest||(latest.maintenance&&!isAdmin())){stopCurrentGame();toast(!latest?"Ce jeu a été supprimé.":latest.maintenanceMessage||"Jeu en maintenance.")}
+    else currentGame=latest;
   }
-
-  const data = {
-    title,
-    message,
-    type:$("announcementType").value,
-    active:$("announcementActive").checked,
-    expiresAt,
-    updatedAt:serverTimestamp()
-  };
-
-  $("saveAnnouncementBtn").disabled = true;
-
-  try {
-    if (editingAnnouncement) {
-      await updateDoc(doc(db,"announcements",editingAnnouncement),data);
-      toast("Annonce modifiée !");
-    } else {
-      data.createdAt = serverTimestamp();
-      await addDoc(announcementsRef,data);
-      toast(data.active ? "Annonce publiée !" : "Annonce enregistrée comme inactive.");
-    }
-
-    resetAnnouncementForm();
-  } catch (error) {
-    console.error(error);
-    toast("Impossible d'enregistrer l'annonce. Vérifie Firestore.");
-  } finally {
-    $("saveAnnouncementBtn").disabled = false;
-  }
+},error=>{
+  console.error("Jeux Firestore :",error);gamesLoaded=true;
+  $("gameGrid").innerHTML='<div class="empty">😵 Impossible de charger les jeux. Vérifie ta connexion et les règles Firestore.</div>';
+  $("gameCount").textContent="Erreur";
 });
-
-function resetAnnouncementForm() {
-  editingAnnouncement = null;
-  $("announcementForm").reset();
-  $("announcementActive").checked = true;
-  $("announcementEditId").value = "";
-  $("saveAnnouncementBtn").textContent = "📢 Publier l'annonce";
-  $("cancelAnnouncementEditBtn").hidden = true;
-}
-
-$("cancelAnnouncementEditBtn").addEventListener("click",resetAnnouncementForm);
-
-function formatExpiry(value) {
-  if (!value) return "Sans date de fin";
-
-  const date = new Date(value);
-
-  return Number.isNaN(date.getTime())
-    ? "Date inconnue"
-    : "Fin : " + date.toLocaleString("fr-FR");
-}
-
-function renderAdminAnnouncements() {
-  if (!isAdmin()) return;
-
-  const list = $("adminAnnouncementList");
-  list.replaceChildren();
-
-  if (!announcements.length) {
-    list.textContent = announcementsLoaded
-      ? "Aucune annonce enregistrée."
-      : "Chargement des annonces…";
-    return;
-  }
-
-  [...announcements]
-    .sort((a,b) =>
-      (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)
-    )
-    .forEach(item => {
-      const type = announcementTypes[item.type] || announcementTypes.info;
-      const row = document.createElement("div");
-      row.className = "admin-item";
-
-      const left = document.createElement("div");
-      const title = document.createElement("strong");
-      title.textContent = `${type.icon} ${item.title || "Annonce sans titre"}`;
-
-      const status = document.createElement("span");
-      status.className = `status ${item.active ? "on" : "off"}`;
-      status.textContent = item.active ? "ACTIVE" : "INACTIVE";
-
-      const detail = document.createElement("p");
-      detail.textContent = `${type.label} • ${formatExpiry(item.expiresAt)}`;
-
-      const message = document.createElement("p");
-      const preview = safeText(item.message);
-      message.textContent = preview.length > 150
-        ? preview.slice(0,150) + "…"
-        : preview;
-
-      left.append(title,document.createTextNode(" "),status,detail,message);
-
-      const actions = document.createElement("div");
-      actions.className = "admin-item-actions";
-
-      const edit = document.createElement("button");
-      edit.className = "btn secondary small";
-      edit.textContent = "✏️ Modifier";
-
-      edit.onclick = () => {
-        editingAnnouncement = item.id;
-        $("announcementEditId").value = item.id;
-        $("announcementTitle").value = item.title || "";
-        $("announcementMessage").value = item.message || "";
-        $("announcementType").value = item.type || "info";
-        $("announcementActive").checked = !!item.active;
-
-        if (item.expiresAt) {
-          const d = new Date(item.expiresAt);
-          const local = new Date(d.getTime() - d.getTimezoneOffset()*60000);
-          $("announcementExpires").value = local.toISOString().slice(0,16);
-        } else {
-          $("announcementExpires").value = "";
-        }
-
-        $("saveAnnouncementBtn").textContent = "💾 Enregistrer les modifications";
-        $("cancelAnnouncementEditBtn").hidden = false;
-        $("announcementForm").scrollIntoView({behavior:"smooth",block:"start"});
-      };
-
-      const toggle = document.createElement("button");
-      toggle.className = "btn small " + (item.active ? "secondary" : "green");
-      toggle.textContent = item.active ? "⏸️ Désactiver" : "▶️ Activer";
-
-      toggle.onclick = async () => {
-        if (!isAdmin()) return toast("Accès refusé.");
-
-        try {
-          await updateDoc(doc(db,"announcements",item.id),{
-            active:!item.active,
-            updatedAt:serverTimestamp()
-          });
-
-          toast(item.active ? "Annonce désactivée." : "Annonce activée.");
-        } catch (error) {
-          console.error(error);
-          toast("Impossible de changer le statut.");
-        }
-      };
-
-      const remove = document.createElement("button");
-      remove.className = "btn red small";
-      remove.textContent = "🗑️ Supprimer";
-
-      remove.onclick = async () => {
-        if (!isAdmin()) return toast("Accès refusé.");
-
-        if (!confirm(`Supprimer l'annonce « ${item.title || "sans titre"} » ?`)) return;
-
-        try {
-          await deleteDoc(doc(db,"announcements",item.id));
-          toast("Annonce supprimée.");
-        } catch (error) {
-          console.error(error);
-          toast("Suppression impossible.");
-        }
-      };
-
-      actions.append(edit,toggle,remove);
-      row.append(left,actions);
-      list.append(row);
-    });
-}
-
-/* Affichage des annonces publiques */
-function getDismissedIds() {
-  try {
-    return JSON.parse(localStorage.getItem("gourmandDismissedAnnouncementIds") || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function saveDismissedId(id) {
-  const ids = getDismissedIds();
-
-  if (!ids.includes(id)) ids.push(id);
-
-  try {
-    localStorage.setItem("gourmandDismissedAnnouncementIds",JSON.stringify(ids));
-  } catch (error) {
-    console.warn(error);
-  }
-}
-
-function activeAnnouncementList() {
-  const now = Date.now();
-
-  return announcements.filter(item =>
-    item.active && (!item.expiresAt || Number(item.expiresAt) > now)
-  );
-}
-
-function displayAnnouncement(item) {
-  currentAnnouncement = item;
-  shownThisPage.add(item.id);
-
-  const type = announcementTypes[item.type] || announcementTypes.info;
-
-  $("announcementModal").style.setProperty(
-    "--announce-color",
-    item.type === "update" ? "var(--green)" :
-    item.type === "maintenance" ? "var(--orange)" :
-    item.type === "issue" ? "var(--pink)" : "var(--blue)"
-  );
-
-  $("publicAnnouncementIcon").textContent = type.icon;
-  $("publicAnnouncementType").textContent = type.label;
-  $("publicAnnouncementTitle").textContent = item.title || "Annonce";
-  $("publicAnnouncementMessage").textContent = item.message || "";
-  $("neverShowAnnouncement").checked = false;
-
-  openOverlay("announcementOverlay");
-}
-
-function showNextAnnouncement() {
-  if (!announcementsLoaded || currentAnnouncement ||
-      $("announcementOverlay").classList.contains("open")) return;
-
-  const dismissed = getDismissedIds();
-
-  const next = activeAnnouncementList().find(item =>
-    !dismissed.includes(item.id) && !shownThisPage.has(item.id)
-  );
-
-  if (next) displayAnnouncement(next);
-}
-
-function closePublicAnnouncement() {
-  if (!currentAnnouncement) {
-    closeOverlay("announcementOverlay");
-    return;
-  }
-
-  if ($("neverShowAnnouncement").checked) {
-    saveDismissedId(currentAnnouncement.id);
-  }
-
-  currentAnnouncement = null;
-  closeOverlay("announcementOverlay");
-
-  setTimeout(showNextAnnouncement,250);
-}
-
-$("closeAnnouncementBtn").addEventListener("click",closePublicAnnouncement);
-$("closeAnnouncementX").addEventListener("click",closePublicAnnouncement);
-
-$("showAnnouncementsBtn").addEventListener("click",() => {
-  const active = activeAnnouncementList();
-
-  if (!active.length) {
-    return toast("Aucune annonce active pour le moment.");
-  }
-
-  const dismissed = getDismissedIds();
-
-  const next = active.find(item =>
-    !shownThisPage.has(item.id) && !dismissed.includes(item.id)
-  ) || active[0];
-
-  displayAnnouncement(next);
-});
-
-/* Synchronisation Firestore */
-onSnapshot(gamesRef,snapshot => {
-  games = snapshot.docs.map(item => ({id:item.id,...item.data()}));
-  gamesLoaded = true;
-
-  renderGames();
-  renderAdminGames();
-
-  if (currentGame) {
-    const latest = games.find(game => game.id === currentGame.id);
-
-    if (!latest || (latest.maintenance && !isAdmin())) {
-      stopCurrentGame();
-
-      toast(!latest
-        ? "Ce jeu a été supprimé du catalogue."
-        : latest.maintenanceMessage || "Ce jeu vient d'être placé en maintenance.");
-    } else {
-      currentGame = latest;
+onSnapshot(announcementsRef,snap=>{
+  announcements=snap.docs.map(d=>({id:d.id,...d.data()}));announcementsLoaded=true;
+  if(currentAnnouncement){
+    const latest=announcements.find(a=>a.id===currentAnnouncement.id);
+    if(!latest||!latest.active||(latest.expiresAt&&Number(latest.expiresAt)<=Date.now())){
+      currentAnnouncement=null;closeOverlay("announcementOverlay");
+    }else{
+      currentAnnouncement=latest;const type=announcementTypes[latest.type]||announcementTypes.info;
+      $("publicAnnouncementIcon").textContent=type.icon;$("publicAnnouncementType").textContent=type.label;
+      $("publicAnnouncementTitle").textContent=latest.title||"Annonce";$("publicAnnouncementMessage").textContent=latest.message||"";
     }
   }
-},error => {
-  console.error("Erreur Firestore jeux :",error);
+  renderAdminAnnouncements();showNextAnnouncement();
+},error=>{console.error("Annonces Firestore :",error);announcementsLoaded=true});
 
-  $("gameGrid").textContent =
-    "😵 Impossible de charger les jeux. Vérifie ta connexion et les règles Firestore.";
-
-  $("gameCount").textContent = "Erreur";
-  toast("Erreur de chargement des jeux.");
-});
-
-onSnapshot(announcementsRef,snapshot => {
-  announcements = snapshot.docs.map(item => ({id:item.id,...item.data()}));
-  announcementsLoaded = true;
-
-  if (currentAnnouncement) {
-    const latest = announcements.find(item => item.id === currentAnnouncement.id);
-    const expired = latest?.expiresAt && Number(latest.expiresAt) <= Date.now();
-
-    if (!latest || !latest.active || expired) {
-      currentAnnouncement = null;
-      closeOverlay("announcementOverlay");
-    } else {
-      currentAnnouncement = latest;
-
-      const type = announcementTypes[latest.type] || announcementTypes.info;
-
-      $("publicAnnouncementIcon").textContent = type.icon;
-      $("publicAnnouncementType").textContent = type.label;
-      $("publicAnnouncementTitle").textContent = latest.title || "Annonce";
-      $("publicAnnouncementMessage").textContent = latest.message || "";
-    }
-  }
-
-  renderAdminAnnouncements();
-  showNextAnnouncement();
-},error => {
-  console.error("Erreur Firestore annonces :",error);
-  toast("Impossible de charger les annonces.");
-});
-
-/* ===================================================
-   LABORATOIRE SECRET : 16 RÉUSSITES
-   Les descriptions restent cachées tant que la réussite
-   n'a pas été débloquée.
-   =================================================== */
-
-const eggDefinitions = [
+/* Les 16 succès secrets */
+const eggDefinitions=[
   ["logo","Le burger curieux","Tu as beaucoup interagi avec le logo."],
   ["konami","Le joueur rétro","Tu as trouvé le code rétro caché."],
   ["word","Le mot magique","Tu as découvert le mot magique."],
@@ -1817,250 +971,84 @@ const eggDefinitions = [
   ["rainbow","Le mode arc-en-ciel","Tu as découvert un mode coloré secret."],
   ["console","Le développeur","Tu as découvert un secret lié au code."]
 ];
-
-let unlockedEggs = new Set();
-
-try {
-  unlockedEggs = new Set(
-    JSON.parse(localStorage.getItem("gourmandEggs") || "[]")
-      .filter(id => eggDefinitions.some(item => item[0] === id))
-  );
-} catch {
-  unlockedEggs = new Set();
-}
-
-/*
- * IMPORTANT :
- * - Une réussite verrouillée n'affiche que son titre.
- * - Sa description n'apparaît qu'après son déblocage.
- * - Aucun indice explicite n'est affiché dans cette liste.
- */
-function updateEggPanel() {
-  $("achievementCount").textContent = unlockedEggs.size;
-
-  const list = $("achievementList");
-  list.replaceChildren();
-
-  eggDefinitions.forEach(([id,title,description]) => {
-    const unlocked = unlockedEggs.has(id);
-
-    const row = document.createElement("div");
-    row.className = `achievement ${unlocked ? "unlocked" : "locked"}`;
-
-    const heading = document.createElement("div");
-    heading.className = "achievement-title";
-
-    const icon = document.createElement("span");
-    icon.textContent = unlocked ? "🏆" : "🔒";
-
-    const name = document.createElement("span");
-    name.textContent = title;
-
-    heading.append(icon,name);
-    row.append(heading);
-
-    if (unlocked) {
-      const details = document.createElement("p");
-      details.className = "achievement-description";
-      details.textContent = description;
-      row.append(details);
-    }
-
+let unlockedEggs=new Set();
+try{unlockedEggs=new Set(JSON.parse(localStorage.getItem("gourmandEggs")||"[]").filter(id=>eggDefinitions.some(e=>e[0]===id)))}catch{}
+function updateEggPanel(){
+  $("achievementCount").textContent=unlockedEggs.size;const list=$("achievementList");list.replaceChildren();
+  eggDefinitions.forEach(([id,title,description])=>{
+    const unlocked=unlockedEggs.has(id),row=document.createElement("div");row.className=`achievement ${unlocked?"unlocked":"locked"}`;
+    const head=document.createElement("div");head.className="achievement-title";
+    const icon=document.createElement("span");icon.textContent=unlocked?"🏆":"🔒";
+    const name=document.createElement("span");name.textContent=title;head.append(icon,name);row.append(head);
+    if(unlocked){const p=document.createElement("p");p.className="achievement-description";p.textContent=description;row.append(p)}
     list.append(row);
   });
 }
-
-function recordEgg(id) {
-  const definition = eggDefinitions.find(item => item[0] === id);
-  if (!definition) return;
-
-  /* La réussite Admin ne peut être attribuée qu'à un admin connecté. */
-  if (id === "admin" && !isAdmin()) return;
-
-  if (unlockedEggs.has(id)) return;
-
+function recordEgg(id){
+  const def=eggDefinitions.find(e=>e[0]===id);if(!def)return;
+  if(id==="admin"&&!isAdmin())return;
+  if(unlockedEggs.has(id))return;
   unlockedEggs.add(id);
-
-  try {
-    localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]));
-  } catch {}
-
-  updateEggPanel();
-  toast(`🏆 Réussite débloquée : ${definition[1]} !`);
+  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
+  updateEggPanel();toast(`🏆 Réussite débloquée : ${def[1]} !`);
+  syncAchievementToAccount(id);
 }
-
-function burgerRain(count = 22) {
-  const layer = $("eggLayer");
-  const emojis = ["🍔","🍟","🍕","🌭","🍩","🧁","🍪","🥤","🍉","🍓"];
-
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      const item = document.createElement("span");
-      item.className = "egg-float";
-      item.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      item.style.left = Math.random()*95 + "%";
-      item.style.animationDuration = (1.8 + Math.random()*2.2) + "s";
-
-      layer.append(item);
-      setTimeout(() => item.remove(),4500);
-    },i*45);
-  }
+function burgerRain(count=22){
+  const layer=$("eggLayer"),emojis=["🍔","🍟","🍕","🌭","🍩","🧁","🍪","🥤","🍉","🍓"];
+  for(let i=0;i<count;i++)setTimeout(()=>{
+    const el=document.createElement("span");el.className="egg-float";el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left=Math.random()*95+"%";el.style.animationDuration=(1.8+Math.random()*2.2)+"s";
+    layer.append(el);setTimeout(()=>el.remove(),4500);
+  },i*45);
 }
-
-/* Clics secrets */
-let logoClicks = 0;
-let logoRapidClicks = [];
-let footerClicks = 0;
-let heroClicks = 0;
-
-$("logoIcon").addEventListener("click",() => {
-  logoClicks++;
-
-  logoRapidClicks.push(Date.now());
-  logoRapidClicks = logoRapidClicks.filter(time => Date.now()-time < 2200);
-
-  if (logoClicks >= 7) {
-    recordEgg("logo");
-    burgerRain(35);
-    logoClicks = 0;
-  }
-
-  if (logoRapidClicks.length >= 5) {
-    recordEgg("rapid");
-    burgerRain(12);
-    logoRapidClicks = [];
+let logoClicks=0,rapidClicks=[],footerClicks=0,heroClicks=0;
+$("logoIcon").onclick=()=>{
+  logoClicks++;rapidClicks.push(Date.now());rapidClicks=rapidClicks.filter(t=>Date.now()-t<2200);
+  if(logoClicks>=7){recordEgg("logo");burgerRain(35);logoClicks=0}
+  if(rapidClicks.length>=5){recordEgg("rapid");burgerRain(12);rapidClicks=[]}
+};
+$("heroBurger").onclick=()=>{heroClicks++;if(heroClicks>=10){recordEgg("hero");burgerRain(45);heroClicks=0}};
+$("siteFooter").onclick=e=>{
+  if(e.target.closest("button,a"))return;footerClicks++;if(footerClicks>=5){recordEgg("footer");footerClicks=0}
+};
+const konamiSequence=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+let konamiProgress=[];
+document.addEventListener("keydown",e=>{
+  if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName))return;
+  konamiProgress.push(e.key.length===1?e.key.toLowerCase():e.key);konamiProgress=konamiProgress.slice(-konamiSequence.length);
+  if(konamiProgress.join("|")===konamiSequence.join("|")){
+    recordEgg("konami");document.body.classList.toggle("rainbow-mode");burgerRain(50);konamiProgress=[];
   }
 });
-
-$("heroBurger").addEventListener("click",() => {
-  heroClicks++;
-
-  if (heroClicks >= 10) {
-    recordEgg("hero");
-    burgerRain(45);
-    heroClicks = 0;
-  }
+let typedWord="";
+document.addEventListener("keydown",e=>{
+  if(e.key.length!==1||e.ctrlKey||e.altKey||e.metaKey)return;
+  typedWord=(typedWord+e.key.toLowerCase()).slice(-20);
+  if(typedWord.endsWith("gourmand")){recordEgg("word");burgerRain(18);typedWord=""}
 });
-
-$("siteFooter").addEventListener("click",event => {
-  if (event.target.closest("button,a")) return;
-
-  footerClicks++;
-
-  if (footerClicks >= 5) {
-    recordEgg("footer");
-    footerClicks = 0;
-  }
-});
-
-/* Code rétro */
-const konamiSequence = [
-  "ArrowUp","ArrowUp","ArrowDown","ArrowDown",
-  "ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"
-];
-
-let konamiProgress = [];
-
-document.addEventListener("keydown",event => {
-  if (["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)) return;
-
-  konamiProgress.push(
-    event.key.length === 1 ? event.key.toLowerCase() : event.key
-  );
-
-  konamiProgress = konamiProgress.slice(-konamiSequence.length);
-
-  if (konamiProgress.join("|") === konamiSequence.join("|")) {
-    recordEgg("konami");
-    document.body.classList.toggle("rainbow-mode");
-    burgerRain(50);
-    konamiProgress = [];
-  }
-});
-
-/* Mot secret */
-let typedWord = "";
-
-document.addEventListener("keydown",event => {
-  if (event.key.length !== 1 ||
-      event.ctrlKey || event.altKey || event.metaKey) return;
-
-  typedWord = (typedWord + event.key.toLowerCase()).slice(-20);
-
-  if (typedWord.endsWith("gourmand")) {
-    recordEgg("word");
-    burgerRain(18);
-    typedWord = "";
-  }
-});
-
-/* Ouverture de la liste des réussites */
-function openSecretPanel() {
-  updateEggPanel();
-  $("secretPanel").classList.add("open");
-}
-
-$("achievementsBtn").addEventListener("click",openSecretPanel);
-$("secretBadge").addEventListener("click",openSecretPanel);
-
-$("closeSecretPanel").addEventListener("click",() => {
-  $("secretPanel").classList.remove("open");
-});
-
-/* Mode fête */
-$("secretPartyBtn").addEventListener("click",() => {
-  document.body.classList.toggle("party-mode");
-  recordEgg("party");
-
-  if (document.body.classList.contains("party-mode")) {
-    burgerRain(25);
-    toast("🎉");
-  } else {
-    toast("🍟");
-  }
-});
-
-/* Recette cachée */
-$("secretRecipe").addEventListener("click",() => recordEgg("recipe"));
-
-$("siteLogo").addEventListener("dblclick",() => {
+function openSecretPanel(){updateEggPanel();$("secretPanel").classList.add("open")}
+$("achievementsBtn").onclick=openSecretPanel;$("secretBadge").onclick=openSecretPanel;
+$("closeSecretPanel").onclick=()=>$("secretPanel").classList.remove("open");
+$("secretPartyBtn").onclick=()=>{
+  document.body.classList.toggle("party-mode");recordEgg("party");
+  if(document.body.classList.contains("party-mode")){burgerRain(25);toast("🎉 Mode fête activé !")}else toast("🍟 Mode fête désactivé.");
+};
+$("siteLogo").ondblclick=()=>{
   $("secretRecipe").classList.toggle("visible");
-
-  if ($("secretRecipe").classList.contains("visible")) {
-    recordEgg("recipe");
-  }
-});
-
-/* Visite nocturne */
-if (new Date().getHours() < 5) {
-  recordEgg("midnight");
-}
-
-/* Exploration de la page */
-let scrollEggUnlocked = false;
-
-window.addEventListener("scroll",() => {
-  const bottomReached =
-    window.innerHeight + window.scrollY >=
-    document.documentElement.scrollHeight - 10;
-
-  if (bottomReached && !scrollEggUnlocked) {
-    scrollEggUnlocked = true;
-    recordEgg("scroll");
+  if($("secretRecipe").classList.contains("visible"))recordEgg("recipe");
+};
+$("secretRecipe").onclick=()=>recordEgg("recipe");
+if(new Date().getHours()<5)recordEgg("midnight");
+let scrollEggUnlocked=false;
+window.addEventListener("scroll",()=>{
+  if(!scrollEggUnlocked&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-10){
+    scrollEggUnlocked=true;recordEgg("scroll");
   }
 },{passive:true});
-
-/* Console : aucun indice affiché automatiquement */
-window.gourmand = () => {
-  recordEgg("console");
-  burgerRain(30);
-};
-
+window.gourmand=()=>{recordEgg("console");burgerRain(30)};
 updateEggPanel();
 
 console.info("%c🍔 Gourmand.fun","font-size:24px;font-weight:bold;color:#ff668a");
-console.info("%c","color:transparent");
 </script>
-
 </body>
 </html>
