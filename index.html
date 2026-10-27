@@ -1,9 +1,13 @@
-<!DOCTYPE html><html lang="fr">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#17111f">
-<title>Gourmand.fun — Les jeux du club informatique</title><style>
+<meta name="description" content="Gourmand.fun : les jeux du club informatique.">
+<title>Gourmand.fun — Les jeux du club informatique</title>
+
+<style>
 :root {
   --bg:#17111f;
   --panel:#241b30;
@@ -30,6 +34,7 @@ body {
   color:var(--text);
   font-family:system-ui,-apple-system,Segoe UI,sans-serif;
   min-height:100vh;
+  overflow-x:hidden;
 }
 
 button,input,textarea,select { font:inherit; }
@@ -63,6 +68,7 @@ header {
   gap:10px;
   font-weight:950;
   font-size:1.35rem;
+  user-select:none;
 }
 
 .logo-icon {
@@ -73,7 +79,11 @@ header {
   background:linear-gradient(135deg,var(--orange),var(--pink));
   border-radius:15px;
   font-size:1.5rem;
+  cursor:pointer;
+  transition:transform .2s;
 }
+
+.logo-icon:hover { transform:rotate(-10deg) scale(1.08); }
 
 .header-actions {
   display:flex;
@@ -100,7 +110,6 @@ header {
   opacity:.55;
   cursor:not-allowed;
   transform:none;
-  filter:none;
 }
 
 .btn.secondary {
@@ -120,10 +129,7 @@ header {
   -webkit-background-clip:text;
 }
 
-main {
-  width:min(1200px,92%);
-  margin:auto;
-}
+main { width:min(1200px,92%);margin:auto; }
 
 .hero {
   padding:55px 0 35px;
@@ -161,6 +167,8 @@ h1 {
   text-align:center;
   font-size:clamp(5rem,12vw,9rem);
   animation:bob 3s ease-in-out infinite;
+  cursor:pointer;
+  user-select:none;
 }
 
 @keyframes bob {
@@ -193,11 +201,7 @@ h1 {
   border-radius:12px;
 }
 
-.field option {
-  background:#241b30;
-  color:var(--text);
-}
-
+.field option { background:#241b30;color:var(--text); }
 .toolbar .search { flex:1 1 240px; }
 .toolbar select { flex:0 1 190px; }
 
@@ -209,11 +213,7 @@ h1 {
   margin:25px 0 16px;
 }
 
-.section-title h2 {
-  margin:0;
-  font-size:1.55rem;
-}
-
+.section-title h2 { margin:0;font-size:1.55rem; }
 .muted { color:var(--muted); }
 
 .game-grid {
@@ -228,7 +228,7 @@ h1 {
   border:1px solid var(--border);
   border-radius:20px;
   background:linear-gradient(145deg,#ffffff0e,#ffffff05);
-  transition:.2s;
+  transition:transform .2s,border-color .2s;
   min-width:0;
 }
 
@@ -238,7 +238,6 @@ h1 {
 }
 
 .game-card.maintenance { border-color:#ffb45480; }
-.game-card.maintenance:hover { border-color:var(--orange); }
 
 .game-cover {
   min-height:150px;
@@ -251,6 +250,7 @@ h1 {
 .game-emoji {
   font-size:4rem;
   filter:drop-shadow(0 8px 10px #0005);
+  user-select:none;
 }
 
 .platform-badge {
@@ -264,29 +264,11 @@ h1 {
   padding:5px 9px;
 }
 
-.game-info {
-  padding:16px;
-  overflow-wrap:anywhere;
-}
+.game-info { padding:16px;overflow-wrap:anywhere; }
+.game-info h3 { margin:0 0 8px;font-size:1.15rem; }
+.game-info p { margin:0 0 15px;color:var(--muted);font-size:.9rem; }
 
-.game-info h3 {
-  margin:0 0 8px;
-  font-size:1.15rem;
-}
-
-.game-info p {
-  margin:0 0 15px;
-  color:var(--muted);
-  font-size:.9rem;
-  overflow-wrap:anywhere;
-}
-
-.game-buttons {
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
+.game-buttons { display:flex;gap:8px;flex-wrap:wrap; }
 .game-buttons .btn { flex:1; }
 
 .maintenance-badge {
@@ -310,7 +292,6 @@ h1 {
   color:#ffe3b9;
   font-size:.88rem;
   line-height:1.6;
-  overflow-wrap:anywhere;
   white-space:pre-wrap;
 }
 
@@ -329,6 +310,7 @@ footer {
   text-align:center;
   color:var(--muted);
   line-height:1.7;
+  cursor:default;
 }
 
 footer strong { color:var(--text); }
@@ -392,31 +374,12 @@ footer strong { color:var(--text); }
   min-width:0;
 }
 
-.form-group label {
-  font-size:.9rem;
-  font-weight:800;
-  color:#f2e8fa;
-}
-
+.form-group label { font-size:.9rem;font-weight:800;color:#f2e8fa; }
 .form-group.full { grid-column:1/-1; }
+textarea.field { min-height:110px;resize:vertical; }
 
-textarea.field {
-  min-height:110px;
-  resize:vertical;
-}
-
-.form-actions {
-  display:flex;
-  gap:9px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-
-.admin-list {
-  display:grid;
-  gap:10px;
-  margin-top:18px;
-}
+.form-actions { display:flex;gap:9px;flex-wrap:wrap;margin-top:12px; }
+.admin-list { display:grid;gap:10px;margin-top:18px; }
 
 .admin-item {
   background:var(--panel2);
@@ -430,18 +393,8 @@ textarea.field {
   min-width:0;
 }
 
-.admin-item p {
-  margin:5px 0 0;
-  color:var(--muted);
-  font-size:.85rem;
-  overflow-wrap:anywhere;
-}
-
-.admin-item-actions {
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
+.admin-item p { margin:5px 0 0;color:var(--muted);font-size:.85rem;overflow-wrap:anywhere; }
+.admin-item-actions { display:flex;gap:6px;flex-wrap:wrap; }
 
 .status {
   display:inline-block;
@@ -451,26 +404,11 @@ textarea.field {
   font-weight:900;
 }
 
-.status.on {
-  color:#c9ffe6;
-  background:#1b6848;
-}
+.status.on { color:#c9ffe6;background:#1b6848; }
+.status.off { color:#ffe1e1;background:#71323a; }
+.status.maintenance { color:#ffe3b9;background:#75491d; }
 
-.status.off {
-  color:#ffe1e1;
-  background:#71323a;
-}
-
-.status.maintenance {
-  color:#ffe3b9;
-  background:#75491d;
-}
-
-.help {
-  color:var(--muted);
-  font-size:.85rem;
-  line-height:1.5;
-}
+.help { color:var(--muted);font-size:.85rem;line-height:1.5; }
 
 #gameFrame {
   width:100%;
@@ -488,49 +426,17 @@ textarea.field {
   color:#ffe3b9;
 }
 
-.compatibility-icon {
-  text-align:center;
-  font-size:3.5rem;
-  margin-bottom:12px;
-}
-
-.compatibility-message {
-  color:var(--muted);
-  line-height:1.7;
-  margin-bottom:20px;
-  white-space:pre-line;
-}
-
-.compatibility-actions {
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.compatibility-actions .btn {
-  flex:1;
-  min-width:140px;
-}
+.compatibility-icon { text-align:center;font-size:3.5rem;margin-bottom:12px; }
+.compatibility-message { color:var(--muted);line-height:1.7;margin-bottom:20px;white-space:pre-line; }
+.compatibility-actions { display:flex;gap:10px;flex-wrap:wrap; }
+.compatibility-actions .btn { flex:1;min-width:140px; }
 
 .announcement-card { --announce-color:var(--blue); }
+.announcement-card[data-type="update"] { --announce-color:var(--green); }
+.announcement-card[data-type="maintenance"] { --announce-color:var(--orange); }
+.announcement-card[data-type="issue"] { --announce-color:var(--pink); }
 
-.announcement-card[data-type="update"] {
-  --announce-color:var(--green);
-}
-
-.announcement-card[data-type="maintenance"] {
-  --announce-color:var(--orange);
-}
-
-.announcement-card[data-type="issue"] {
-  --announce-color:var(--pink);
-}
-
-.announcement-icon {
-  font-size:2.8rem;
-  margin-bottom:8px;
-}
-
+.announcement-icon { font-size:2.8rem;margin-bottom:8px; }
 .announcement-label {
   display:inline-block;
   color:var(--announce-color);
@@ -543,36 +449,12 @@ textarea.field {
   margin-bottom:10px;
 }
 
-.announcement-message {
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  line-height:1.7;
-  color:var(--muted);
-}
-
-.check-row {
-  display:flex;
-  gap:9px;
-  align-items:center;
-  margin-top:16px;
-  color:var(--muted);
-  font-size:.9rem;
-}
-
-.check-row input {
-  width:18px;
-  height:18px;
-}
-
-/* Fenêtre d'information sur les jeux open source */
-.open-source-copy {
-  color:var(--muted);
-  line-height:1.8;
-}
-
+.announcement-message { white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:var(--muted); }
+.check-row { display:flex;gap:9px;align-items:center;margin-top:16px;color:var(--muted);font-size:.9rem; }
+.check-row input { width:18px;height:18px; }
+.open-source-copy { color:var(--muted);line-height:1.8; }
 .open-source-copy strong { color:var(--text); }
 
-/* Notifications */
 .toast {
   position:fixed;
   left:50%;
@@ -592,57 +474,161 @@ textarea.field {
   transition:opacity .2s,transform .2s;
 }
 
-.toast.show {
-  opacity:1;
-  transform:translate(-50%,0);
+.toast.show { opacity:1;transform:translate(-50%,0); }
+
+/* Easter eggs */
+#eggLayer {
+  position:fixed;
+  inset:0;
+  z-index:250;
+  pointer-events:none;
+  overflow:hidden;
 }
 
+.egg-float {
+  position:absolute;
+  font-size:2rem;
+  animation:eggFall 2.8s linear forwards;
+}
+
+@keyframes eggFall {
+  0% { transform:translateY(-70px) rotate(0deg);opacity:1; }
+  100% { transform:translateY(110vh) rotate(540deg);opacity:0; }
+}
+
+body.rainbow-mode {
+  animation:rainbowBackground 5s linear infinite;
+}
+
+@keyframes rainbowBackground {
+  0% { filter:hue-rotate(0deg); }
+  100% { filter:hue-rotate(360deg); }
+}
+
+body.party-mode .game-card {
+  animation:partyBounce .7s ease-in-out infinite alternate;
+}
+
+@keyframes partyBounce {
+  to { transform:translateY(-5px) rotate(1deg); }
+}
+
+#secretBadge {
+  position:fixed;
+  right:12px;
+  bottom:12px;
+  z-index:40;
+  padding:8px 11px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:var(--panel);
+  color:var(--text);
+  font-size:.8rem;
+  box-shadow:0 5px 20px #0004;
+}
+
+#secretPanel {
+  position:fixed;
+  inset:0;
+  z-index:180;
+  display:none;
+  place-items:center;
+  padding:16px;
+  background:#08040ee8;
+  backdrop-filter:blur(10px);
+}
+
+#secretPanel.open { display:grid; }
+
+.secret-card {
+  width:min(520px,100%);
+  max-height:85vh;
+  overflow:auto;
+  padding:24px;
+  background:var(--panel);
+  border:1px solid #ffb45480;
+  border-radius:22px;
+  text-align:center;
+  box-shadow:0 20px 80px #0009;
+}
+
+.secret-card h2 { color:var(--orange); }
+
+.achievement-list {
+  display:grid;
+  gap:8px;
+  margin:18px 0;
+  text-align:left;
+}
+
+.achievement {
+  padding:10px;
+  background:var(--panel2);
+  border-radius:12px;
+  border:1px solid var(--border);
+}
+
+.achievement.locked { opacity:.45;filter:grayscale(1); }
+
+.secret-recipe {
+  display:none;
+  padding:14px;
+  margin-top:14px;
+  border:1px dashed var(--orange);
+  border-radius:12px;
+  color:var(--orange);
+}
+
+.secret-recipe.visible { display:block; }
+
 @media(max-width:800px) {
-  .hero {
-    grid-template-columns:1fr;
-    padding-top:35px;
-  }
-
-  .hero-art { display:none; }
-
-  .game-grid {
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
+  .hero { grid-template-columns:1fr;padding-top:35px; }
+  .hero-art { font-size:5rem; }
+  .game-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 
 @media(max-width:520px) {
   header { align-items:flex-start; }
   .logo { font-size:1.05rem; }
-
-  .logo-icon {
-    width:38px;
-    height:38px;
-  }
-
+  .logo-icon { width:38px;height:38px; }
   .header-actions { flex-direction:column; }
   .header-actions .btn { padding:8px 10px; }
   .game-grid { grid-template-columns:1fr; }
   .form-grid { grid-template-columns:1fr; }
   .form-group.full { grid-column:auto; }
   .modal { padding:17px; }
-
-  .admin-item {
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
+  .admin-item { align-items:flex-start;flex-direction:column; }
   .compatibility-actions { flex-direction:column; }
+  #secretBadge { font-size:.7rem; }
 }
-</style></head><body><header>
-  <div class="logo">
-    <div class="logo-icon">🍔</div>
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    scroll-behavior:auto !important;
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo" id="siteLogo" title="Psst… certains secrets sont cachés ici !">
+    <div class="logo-icon" id="logoIcon">🍔</div>
     <span>Gourmand<span class="gradient-text">.fun</span></span>
-  </div>  <div class="header-actions">
+  </div>
+
+  <div class="header-actions">
     <button class="btn secondary" id="showAnnouncementsBtn">📢 Annonces</button>
     <button class="btn secondary" id="adminLoginBtn">🔐 Administration</button>
     <button class="btn secondary" id="logoutBtn" hidden>Déconnexion</button>
   </div>
-</header><main>
+</header>
+
+<main>
   <section class="hero">
     <div>
       <span class="eyebrow">🎮 LES JEUX DU CLUB INFORMATIQUE</span>
@@ -652,316 +638,283 @@ textarea.field {
         lance une partie et amuse-toi. Il y a toujours quelque chose à tester !
       </p>
       <button class="btn" id="discoverBtn">🍟 Découvrir les jeux</button>
-    </div><div class="hero-art" aria-hidden="true">🍔🎮🍟</div>
+      <button class="btn secondary" id="achievementsBtn">🏆 Mes secrets</button>
+    </div>
 
-  </section>  <div class="notice">
+    <div class="hero-art" id="heroBurger" aria-label="Burger secret">🍔🎮🍟</div>
+  </section>
+
+  <div class="notice">
     💻 <strong>Les jeux du club informatique :</strong>
     certains jeux sont jouables directement sur le site.
     D'autres peuvent ouvrir une page externe.
     <br>
     📦 Les jeux peuvent être téléchargés lorsque leur licence et leur page
-    de distribution le permettent.<div style="margin-top:14px">
-  <button class="btn green" id="openSourceInfoBtn">
-    💚 À propos des jeux open source
-  </button>
-</div>
+    de distribution le permettent.
+    <div style="margin-top:14px">
+      <button class="btn green" id="openSourceInfoBtn">
+        💚 À propos des jeux open source
+      </button>
+    </div>
+  </div>
 
-  </div>  <section id="catalogue">
+  <section id="catalogue">
     <div class="section-title">
       <h2>🍕 Le menu des jeux</h2>
       <span class="muted" id="gameCount">Chargement…</span>
-    </div><div class="toolbar">
-  <input class="field search" id="searchInput" type="search"
-    placeholder="🔎 Chercher un jeu…">
+    </div>
 
-  <select class="field" id="platformFilter" aria-label="Filtrer par appareil">
-    <option value="all">💻 Tous les appareils</option>
-    <option value="pc">🖥️ PC uniquement</option>
-    <option value="mobile">📱 Mobile / tablette</option>
-  </select>
-</div>
+    <div class="toolbar">
+      <input class="field search" id="searchInput" type="search"
+        placeholder="🔎 Chercher un jeu…">
 
-<div class="game-grid" id="gameGrid">
-  <div class="empty">🍳 Chargement du menu…</div>
-</div>
+      <select class="field" id="platformFilter" aria-label="Filtrer par appareil">
+        <option value="all">💻 Tous les appareils</option>
+        <option value="pc">🖥️ PC uniquement</option>
+        <option value="mobile">📱 Mobile / tablette</option>
+      </select>
+    </div>
 
+    <div class="game-grid" id="gameGrid">
+      <div class="empty">🍳 Chargement du menu…</div>
+    </div>
   </section>
-</main><footer>
+</main>
+
+<footer id="siteFooter">
   <strong>🍔 Gourmand.fun</strong><br>
   Les jeux du club informatique.<br>
   <span>En cas de problème, consulte les annonces du site.</span>
-</footer><!-- Informations sur les jeux open source --><div class="overlay" id="openSourceOverlay">
-  <div class="modal" role="dialog" aria-modal="true"
-    aria-labelledby="openSourceTitle"><div class="modal-head">
-  <h2 id="openSourceTitle">💚 Les jeux du club informatique</h2>
-  <button class="close-btn" id="closeOpenSourceBtn"
-    aria-label="Fermer">✕</button>
-</div>
+  <br><small>Des secrets se cachent peut-être ici… 👀</small>
+</footer>
 
-<div class="open-source-copy">
-  <p>🎮 Les jeux présentés sur Gourmand.fun sont proposés dans le cadre du club informatique.</p>
+<div id="eggLayer" aria-hidden="true"></div>
+<div id="secretBadge">🏆 <span id="achievementCount">0</span>/16 secrets</div>
 
-  <p>📦 Lorsqu'un jeu est distribué sous une licence autorisant le partage, tu peux consulter sa page officielle pour le télécharger.</p>
-
-  <p>💻 Certains jeux sont jouables directement sur notre site.</p>
-
-  <p>⚠️ <strong>Attention :</strong> tous les jeux ne sont pas nécessairement open source. Vérifie la licence de chaque jeu avant de le télécharger, de le modifier ou de le redistribuer.</p>
-</div>
-
-<div class="form-actions">
-  <button class="btn green" id="confirmOpenSourceBtn">
-    👍 Compris !
-  </button>
-</div>
-
+<!-- Fenêtre des secrets -->
+<div id="secretPanel">
+  <div class="secret-card">
+    <div style="font-size:3rem">🕵️🍔</div>
+    <h2>Le laboratoire secret</h2>
+    <p class="muted">Les vrais gourmands trouvent tous les secrets !</p>
+    <div class="achievement-list" id="achievementList"></div>
+    <button class="btn" id="closeSecretPanel">Retour au site</button>
+    <button class="btn secondary" id="secretPartyBtn">🎉 Mode fête</button>
+    <div class="secret-recipe" id="secretRecipe">
+      📜 RECETTE ULTRA-SECRÈTE : 2 clics, 1 code mystère et beaucoup de frites.
+      <br>Ingrédient principal : le fun ! 🍟
+    </div>
   </div>
-</div><!-- Lecteur de jeu --><div class="overlay" id="gameOverlay">
+</div>
+
+<!-- Informations open source -->
+<div class="overlay" id="openSourceOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h2>💚 Les jeux du club informatique</h2>
+      <button class="close-btn" id="closeOpenSourceBtn">✕</button>
+    </div>
+    <div class="open-source-copy">
+      <p>🎮 Les jeux présentés sur Gourmand.fun sont proposés dans le cadre du club informatique.</p>
+      <p>📦 Lorsqu'un jeu est distribué sous une licence autorisant le partage, tu peux consulter sa page officielle pour le télécharger.</p>
+      <p>💻 Certains jeux sont jouables directement sur notre site.</p>
+      <p>⚠️ <strong>Attention :</strong> tous les jeux ne sont pas nécessairement open source. Vérifie la licence de chaque jeu avant de le télécharger, de le modifier ou de le redistribuer.</p>
+    </div>
+    <button class="btn green" id="confirmOpenSourceBtn">👍 Compris !</button>
+  </div>
+</div>
+
+<!-- Lecteur de jeu -->
+<div class="overlay" id="gameOverlay">
   <div class="modal wide">
     <div class="modal-head">
       <h2 id="playerTitle">🎮 Jeu</h2>
       <button class="close-btn" id="closeGameBtn">✕ Fermer</button>
-    </div><div id="gameWarning" class="game-warning" hidden></div>
-
-<iframe id="gameFrame" title="Jeu"
-  allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
-  allowfullscreen></iframe>
-
-<div class="form-actions">
-  <button class="btn secondary" id="openGameTabBtn">
-    ↗ Ouvrir dans un nouvel onglet
-  </button>
+    </div>
+    <div id="gameWarning" class="game-warning" hidden></div>
+    <iframe id="gameFrame" title="Jeu"
+      allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
+      allowfullscreen></iframe>
+    <div class="form-actions">
+      <button class="btn secondary" id="openGameTabBtn">↗ Ouvrir dans un nouvel onglet</button>
+    </div>
+  </div>
 </div>
 
-  </div>
-</div><!-- Avertissement de compatibilité --><div class="overlay" id="platformWarningOverlay">
-  <div class="modal" role="dialog" aria-modal="true"
-    aria-labelledby="platformWarningTitle">
+<!-- Avertissement compatibilité -->
+<div class="overlay" id="platformWarningOverlay">
+  <div class="modal">
     <div class="compatibility-icon" id="platformWarningIcon">⚠️</div>
     <h2 id="platformWarningTitle">Attention !</h2>
-    <div class="compatibility-message" id="platformWarningMessage"></div><div class="compatibility-actions">
-  <button class="btn secondary" id="cancelPlatformWarningBtn">❌ Annuler</button>
-  <button class="btn" id="continuePlatformWarningBtn">🎮 Continuer quand même</button>
+    <div class="compatibility-message" id="platformWarningMessage"></div>
+    <div class="compatibility-actions">
+      <button class="btn secondary" id="cancelPlatformWarningBtn">❌ Annuler</button>
+      <button class="btn" id="continuePlatformWarningBtn">🎮 Continuer quand même</button>
+    </div>
+  </div>
 </div>
 
-  </div>
-</div><!-- Connexion administrateur --><div class="overlay" id="loginOverlay">
+<!-- Connexion admin -->
+<div class="overlay" id="loginOverlay">
   <div class="modal">
     <div class="modal-head">
       <h2>🔐 Administration</h2>
       <button class="close-btn" data-close="loginOverlay">✕</button>
-    </div><p class="muted">
-  Connecte-toi avec le compte Google autorisé à administrer le site.
-</p>
-
-<button class="btn" id="googleLoginBtn">Continuer avec Google</button>
-
-<p class="help">
-  Les droits doivent également être protégés par les règles de sécurité Firebase.
-</p>
-
+    </div>
+    <p class="muted">Connecte-toi avec le compte Google autorisé à administrer le site.</p>
+    <button class="btn" id="googleLoginBtn">Continuer avec Google</button>
+    <p class="help">Les droits doivent également être protégés par les règles de sécurité Firebase.</p>
   </div>
-</div><!-- Administration --><div class="overlay" id="adminOverlay">
+</div>
+
+<!-- Administration -->
+<div class="overlay" id="adminOverlay">
   <div class="modal wide">
     <div class="modal-head">
       <h2>🧑‍🍳 Cuisine du site — Administration</h2>
       <button class="close-btn" data-close="adminOverlay">✕ Fermer</button>
-    </div><p class="muted">
-  Gère les jeux, leur maintenance et publie des annonces sans modifier le HTML.
-</p>
+    </div>
 
-<div class="section-title">
-  <h2>🎮 Ajouter ou modifier un jeu</h2>
+    <p class="muted">Gère les jeux, leur maintenance et publie des annonces sans modifier le HTML.</p>
+
+    <div class="section-title"><h2>🎮 Ajouter ou modifier un jeu</h2></div>
+
+    <form id="gameForm">
+      <input type="hidden" id="gameEditId">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="gameTitle">Nom du jeu</label>
+          <input class="field" id="gameTitle" required maxlength="80" placeholder="Ex. Snake">
+        </div>
+        <div class="form-group">
+          <label for="gameEmoji">Emoji</label>
+          <input class="field" id="gameEmoji" maxlength="12" value="🎮">
+        </div>
+        <div class="form-group">
+          <label for="gameBackground">Couleur du fond</label>
+          <select class="field" id="gameBackground">
+            <option value="linear-gradient(135deg,#55304d,#282142)">🍇 Violet</option>
+            <option value="linear-gradient(135deg,#7f303a,#3d1d38)">🍓 Rouge</option>
+            <option value="linear-gradient(135deg,#27644e,#1d3241)">🥑 Vert</option>
+            <option value="linear-gradient(135deg,#8a5929,#493047)">🍊 Orange</option>
+            <option value="linear-gradient(135deg,#235c86,#332b59)">🫐 Bleu</option>
+            <option value="linear-gradient(135deg,#735b24,#493047)">🍍 Jaune</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gamePlatform">Compatibilité</label>
+          <select class="field" id="gamePlatform">
+            <option value="all">PC, tablette et téléphone</option>
+            <option value="pc">PC uniquement</option>
+            <option value="mobile">Mobile et tablette</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gameType">Type de jeu</label>
+          <select class="field" id="gameType">
+            <option value="url">Lien vers un jeu / site</option>
+            <option value="html">Code HTML du jeu</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="gameDescription">Description du jeu</label>
+          <input class="field" id="gameDescription" maxlength="300" placeholder="Une petite description…">
+        </div>
+        <div class="form-group full">
+          <label for="gameContent">Lien ou code HTML</label>
+          <textarea class="field" id="gameContent" required placeholder="Colle ici l'URL du jeu ou son code HTML"></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn green" type="submit" id="saveGameBtn">➕ Enregistrer le jeu</button>
+        <button class="btn secondary" type="button" id="cancelGameEditBtn" hidden>Annuler la modification</button>
+      </div>
+    </form>
+
+    <div class="section-title"><h2>📚 Jeux enregistrés</h2></div>
+    <div id="adminGameList" class="admin-list"></div>
+
+    <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
+
+    <div class="section-title"><h2>📢 Publier une annonce</h2></div>
+    <p class="help">Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.</p>
+
+    <form id="announcementForm">
+      <input type="hidden" id="announcementEditId">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="announcementTitle">Titre de l'annonce</label>
+          <input class="field" id="announcementTitle" required maxlength="100" placeholder="Ex. Maintenance ce soir">
+        </div>
+        <div class="form-group">
+          <label for="announcementType">Type d'annonce</label>
+          <select class="field" id="announcementType">
+            <option value="info">ℹ️ Information</option>
+            <option value="update">🆕 Mise à jour</option>
+            <option value="maintenance">🛠️ Maintenance</option>
+            <option value="issue">🚨 Problème technique</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="announcementMessage">Message</label>
+          <textarea class="field" id="announcementMessage" required maxlength="2000" placeholder="Explique aux visiteurs ce qu'ils doivent savoir…"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="announcementExpires">Date de fin (facultative)</label>
+          <input class="field" id="announcementExpires" type="datetime-local">
+        </div>
+        <div class="form-group">
+          <label style="display:flex;gap:10px;align-items:center;padding:10px 0">
+            <input id="announcementActive" type="checkbox" checked style="width:18px;height:18px">
+            Annonce active
+          </label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn green" id="saveAnnouncementBtn" type="submit">📢 Publier l'annonce</button>
+        <button class="btn secondary" id="cancelAnnouncementEditBtn" type="button" hidden>Annuler la modification</button>
+      </div>
+    </form>
+
+    <div class="section-title"><h2>🗞️ Annonces enregistrées</h2></div>
+    <div id="adminAnnouncementList" class="admin-list"></div>
+  </div>
 </div>
 
-<form id="gameForm">
-  <input type="hidden" id="gameEditId">
-
-  <div class="form-grid">
-    <div class="form-group">
-      <label for="gameTitle">Nom du jeu</label>
-      <input class="field" id="gameTitle" required maxlength="80"
-        placeholder="Ex. Snake">
+<!-- Annonce publique -->
+<div class="overlay" id="announcementOverlay">
+  <div class="modal announcement-card" id="announcementModal" data-type="info">
+    <div class="modal-head">
+      <div class="announcement-icon" id="publicAnnouncementIcon">📢</div>
+      <button class="close-btn" id="closeAnnouncementX">✕</button>
     </div>
-
-    <div class="form-group">
-      <label for="gameEmoji">Emoji</label>
-      <input class="field" id="gameEmoji" maxlength="12" value="🎮">
-    </div>
-
-    <div class="form-group">
-      <label for="gameBackground">Couleur du fond</label>
-      <select class="field" id="gameBackground">
-        <option value="linear-gradient(135deg,#55304d,#282142)">🍇 Violet</option>
-        <option value="linear-gradient(135deg,#7f303a,#3d1d38)">🍓 Rouge</option>
-        <option value="linear-gradient(135deg,#27644e,#1d3241)">🥑 Vert</option>
-        <option value="linear-gradient(135deg,#8a5929,#493047)">🍊 Orange</option>
-        <option value="linear-gradient(135deg,#235c86,#332b59)">🫐 Bleu</option>
-        <option value="linear-gradient(135deg,#735b24,#493047)">🍍 Jaune</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="gamePlatform">Compatibilité</label>
-      <select class="field" id="gamePlatform">
-        <option value="all">PC, tablette et téléphone</option>
-        <option value="pc">PC uniquement</option>
-        <option value="mobile">Mobile et tablette</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="gameType">Type de jeu</label>
-      <select class="field" id="gameType">
-        <option value="url">Lien vers un jeu / site</option>
-        <option value="html">Code HTML du jeu</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="gameContent">Lien ou code HTML</label>
-      <textarea class="field" id="gameContent" required
-        placeholder="Colle ici l'URL du jeu ou son code HTML"></textarea>
+    <span class="announcement-label" id="publicAnnouncementType">INFORMATION</span>
+    <h2 id="publicAnnouncementTitle">Une annonce</h2>
+    <div class="announcement-message" id="publicAnnouncementMessage"></div>
+    <label class="check-row">
+      <input type="checkbox" id="neverShowAnnouncement">
+      Ne plus afficher cette annonce sur ce navigateur
+    </label>
+    <div class="form-actions">
+      <button class="btn" id="closeAnnouncementBtn">J'ai compris 👍</button>
     </div>
   </div>
-
-  <div class="form-actions">
-    <button class="btn green" type="submit" id="saveGameBtn">
-      ➕ Enregistrer le jeu
-    </button>
-
-    <button class="btn secondary" type="button"
-      id="cancelGameEditBtn" hidden>
-      Annuler la modification
-    </button>
-  </div>
-</form>
-
-<div class="section-title">
-  <h2>📚 Jeux enregistrés</h2>
 </div>
 
-<div id="adminGameList" class="admin-list"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
-
-<div class="section-title">
-  <h2>📢 Publier une annonce</h2>
-</div>
-
-<p class="help">
-  Une annonce sans date de fin reste active jusqu'à sa désactivation ou sa suppression.
-</p>
-
-<form id="announcementForm">
-  <input type="hidden" id="announcementEditId">
-
-  <div class="form-grid">
-    <div class="form-group">
-      <label for="announcementTitle">Titre de l'annonce</label>
-      <input class="field" id="announcementTitle" required maxlength="100"
-        placeholder="Ex. Maintenance ce soir">
-    </div>
-
-    <div class="form-group">
-      <label for="announcementType">Type d'annonce</label>
-      <select class="field" id="announcementType">
-        <option value="info">ℹ️ Information</option>
-        <option value="update">🆕 Mise à jour</option>
-        <option value="maintenance">🛠️ Maintenance</option>
-        <option value="issue">🚨 Problème technique</option>
-      </select>
-    </div>
-
-    <div class="form-group full">
-      <label for="announcementMessage">Message</label>
-      <textarea class="field" id="announcementMessage" required maxlength="2000"
-        placeholder="Explique aux visiteurs ce qu'ils doivent savoir…"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="announcementExpires">Date de fin (facultative)</label>
-      <input class="field" id="announcementExpires" type="datetime-local">
-      <span class="help">Laisse vide pour une annonce sans expiration automatique.</span>
-    </div>
-
-    <div class="form-group">
-      <label style="display:flex;gap:10px;align-items:center;padding:10px 0">
-        <input id="announcementActive" type="checkbox" checked
-          style="width:18px;height:18px">
-        Annonce active
-      </label>
-    </div>
-  </div>
-
-  <div class="form-actions">
-    <button class="btn green" id="saveAnnouncementBtn" type="submit">
-      📢 Publier l'annonce
-    </button>
-
-    <button class="btn secondary" id="cancelAnnouncementEditBtn"
-      type="button" hidden>
-      Annuler la modification
-    </button>
-  </div>
-</form>
-
-<div class="section-title">
-  <h2>🗞️ Annonces enregistrées</h2>
-</div>
-
-<div id="adminAnnouncementList" class="admin-list"></div>
-
-  </div>
-</div><!-- Annonce publique --><div class="overlay" id="announcementOverlay">
-  <div class="modal announcement-card" id="announcementModal"
-    data-type="info" role="dialog" aria-modal="true"
-    aria-labelledby="publicAnnouncementTitle"><div class="modal-head">
-  <div class="announcement-icon" id="publicAnnouncementIcon">📢</div>
-  <button class="close-btn" id="closeAnnouncementX"
-    aria-label="Fermer l'annonce">✕</button>
-</div>
-
-<span class="announcement-label" id="publicAnnouncementType">
-  INFORMATION
-</span>
-
-<h2 id="publicAnnouncementTitle">Une annonce</h2>
-
-<div class="announcement-message" id="publicAnnouncementMessage"></div>
-
-<label class="check-row">
-  <input type="checkbox" id="neverShowAnnouncement">
-  Ne plus afficher cette annonce sur ce navigateur
-</label>
-
-<div class="form-actions">
-  <button class="btn" id="closeAnnouncementBtn">J'ai compris 👍</button>
-</div>
-
-  </div>
-</div><div class="toast" id="toast" role="status" aria-live="polite"></div><script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
 import {
-  getFirestore,
-  collection,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  serverTimestamp
+  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+  onSnapshot, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
 import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged,
-  signOut
+  getAuth, GoogleAuthProvider, signInWithPopup,
+  onAuthStateChanged, signOut
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-/* CONFIGURATION FIREBASE */
+/* FIREBASE : configuration conservée */
 const firebaseConfig = {
   apiKey: "AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
   authDomain: "jeux-feuxxx.firebaseapp.com",
@@ -974,12 +927,10 @@ const firebaseConfig = {
 };
 
 const ADMIN_EMAIL = "x.kaboom.x02@gmail.com";
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-
 const gamesRef = collection(db, "games");
 const announcementsRef = collection(db, "announcements");
 
@@ -996,17 +947,14 @@ let announcementsLoaded = false;
 
 const shownThisPage = new Set();
 const $ = id => document.getElementById(id);
+const safeText = value => String(value ?? "");
 
 function toast(message) {
   const el = $("toast");
   el.textContent = message;
   el.classList.add("show");
-
   clearTimeout(toast.timer);
-
-  toast.timer = setTimeout(() => {
-    el.classList.remove("show");
-  }, 3500);
+  toast.timer = setTimeout(() => el.classList.remove("show"), 3500);
 }
 
 function isAdmin() {
@@ -1014,153 +962,89 @@ function isAdmin() {
     currentUser.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 }
 
-function openOverlay(id) {
-  $(id).classList.add("open");
-}
-
-function closeOverlay(id) {
-  $(id).classList.remove("open");
-}
-
-function safeText(value) {
-  return String(value ?? "");
-}
+function openOverlay(id) { $(id)?.classList.add("open"); }
+function closeOverlay(id) { $(id)?.classList.remove("open"); }
 
 /* FERMETURE DES FENÊTRES */
 document.querySelectorAll("[data-close]").forEach(button => {
-  button.addEventListener("click", () => {
-    closeOverlay(button.dataset.close);
-  });
+  button.addEventListener("click", () => closeOverlay(button.dataset.close));
 });
 
 document.querySelectorAll(".overlay").forEach(overlay => {
   overlay.addEventListener("click", event => {
     if (event.target !== overlay) return;
-
-    if (overlay.id === "gameOverlay") {
-      stopCurrentGame();
-      return;
-    }
-
-    if (overlay.id === "announcementOverlay") {
-      closePublicAnnouncement();
-      return;
-    }
-
-    if (overlay.id === "platformWarningOverlay") {
-      pendingGame = null;
-    }
-
+    if (overlay.id === "gameOverlay") return stopCurrentGame();
+    if (overlay.id === "announcementOverlay") return closePublicAnnouncement();
+    if (overlay.id === "platformWarningOverlay") pendingGame = null;
     overlay.classList.remove("open");
   });
 });
 
 document.addEventListener("keydown", event => {
-  if (event.key !== "Escape") return;
-
-  if ($("gameOverlay").classList.contains("open")) {
+  if (event.key === "Escape") {
     stopCurrentGame();
-  }
-
-  closeOverlay("loginOverlay");
-  closeOverlay("adminOverlay");
-  closeOverlay("platformWarningOverlay");
-  closeOverlay("openSourceOverlay");
-
-  pendingGame = null;
-
-  if ($("announcementOverlay").classList.contains("open")) {
-    closePublicAnnouncement();
+    ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay"]
+      .forEach(closeOverlay);
+    $("secretPanel").classList.remove("open");
+    pendingGame = null;
+    if ($("announcementOverlay").classList.contains("open")) closePublicAnnouncement();
   }
 });
 
-$("discoverBtn").addEventListener("click", () => {
-  $("catalogue").scrollIntoView({ behavior:"smooth" });
-});
+$("discoverBtn").addEventListener("click", () =>
+  $("catalogue").scrollIntoView({behavior:"smooth"})
+);
 
-/* FENÊTRE D'INFORMATION OPEN SOURCE */
-$("openSourceInfoBtn").addEventListener("click", () => {
-  openOverlay("openSourceOverlay");
-});
+$("openSourceInfoBtn").addEventListener("click", () => openOverlay("openSourceOverlay"));
+$("closeOpenSourceBtn").addEventListener("click", () => closeOverlay("openSourceOverlay"));
+$("confirmOpenSourceBtn").addEventListener("click", () => closeOverlay("openSourceOverlay"));
 
-$("closeOpenSourceBtn").addEventListener("click", () => {
-  closeOverlay("openSourceOverlay");
-});
-
-$("confirmOpenSourceBtn").addEventListener("click", () => {
-  closeOverlay("openSourceOverlay");
-});
-
-/* DÉTECTION DE L'APPAREIL */
+/* COMPATIBILITÉ */
 function detectDevice() {
   const ua = navigator.userAgent || "";
-  const uaData = navigator.userAgentData;
-
-  const isIPad =
-    /iPad/i.test(ua) ||
-    (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
-
-  if (isIPad) return "tablet";
-
-  if (uaData && uaData.mobile === true) return "phone";
-
-  if (/iPhone|iPod|Windows Phone|IEMobile/i.test(ua)) {
-    return "phone";
-  }
-
-  if (/Android/i.test(ua)) {
-    return /Mobile/i.test(ua) ? "phone" : "tablet";
-  }
-
+  if (/iPad/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return "tablet";
+  if (navigator.userAgentData?.mobile) return "phone";
+  if (/iPhone|iPod|Windows Phone|IEMobile/i.test(ua)) return "phone";
+  if (/Android/i.test(ua)) return /Mobile/i.test(ua) ? "phone" : "tablet";
   if (/Tablet|PlayBook|Silk/i.test(ua)) return "tablet";
   if (/Mobile/i.test(ua)) return "phone";
-
-  const touchPoints = navigator.maxTouchPoints || 0;
-  const smallestScreenSide = Math.min(
-    window.screen?.width || window.innerWidth,
-    window.screen?.height || window.innerHeight
-  );
-
-  if (touchPoints > 1 && smallestScreenSide < 1100) {
-    return "tablet";
-  }
-
   return "pc";
 }
 
 function deviceLabel(device) {
-  if (device === "phone") return "téléphone";
-  if (device === "tablet") return "tablette";
-  return "ordinateur";
+  return device === "phone" ? "téléphone" :
+    device === "tablet" ? "tablette" : "ordinateur";
 }
 
 function platformLabel(platform) {
-  if (platform === "pc") return "🖥️ PC uniquement";
-  if (platform === "mobile") return "📱 Mobile / tablette";
-  return "💻 Tous appareils";
+  return platform === "pc" ? "🖥️ PC uniquement" :
+    platform === "mobile" ? "📱 Mobile / tablette" : "💻 Tous appareils";
 }
 
-/* CATALOGUE DES JEUX */
+function validateGameUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return ["https:","http:"].includes(url.protocol) ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+/* CATALOGUE */
 function renderGames() {
   const search = $("searchInput").value.trim().toLowerCase();
   const platform = $("platformFilter").value;
 
   const visible = games.filter(game => {
-    const title = safeText(game.title).toLowerCase();
+    const searchable = [
+      game.title, game.description, game.emoji
+    ].map(safeText).join(" ").toLowerCase();
 
-    const matchesSearch = title.includes(search);
-
-    const matchesPlatform =
-      platform === "all" ||
-      game.platform === "all" ||
-      game.platform === platform;
-
-    return matchesSearch && matchesPlatform;
+    return searchable.includes(search) &&
+      (platform === "all" || game.platform === "all" || game.platform === platform);
   });
 
-  const maintenanceCount =
-    visible.filter(game => game.maintenance === true).length;
-
+  const maintenanceCount = visible.filter(game => game.maintenance === true).length;
   $("gameCount").textContent =
     `${visible.length} jeu${visible.length > 1 ? "x" : ""}` +
     (maintenanceCount ? ` • ${maintenanceCount} en maintenance` : "");
@@ -1171,11 +1055,9 @@ function renderGames() {
   if (!visible.length) {
     const empty = document.createElement("div");
     empty.className = "empty";
-
     empty.textContent = gamesLoaded
       ? "🍽️ Aucun jeu trouvé. Essaie une autre recherche !"
       : "🍳 Chargement du menu…";
-
     grid.append(empty);
     return;
   }
@@ -1183,25 +1065,24 @@ function renderGames() {
   visible.forEach(game => {
     const card = document.createElement("article");
     card.className = "game-card";
-
-    const inMaintenance = game.maintenance === true;
-    const admin = isAdmin();
-
-    if (inMaintenance) card.classList.add("maintenance");
+    if (game.maintenance) card.classList.add("maintenance");
 
     const cover = document.createElement("div");
     cover.className = "game-cover";
-    cover.style.background =
-      game.background || "linear-gradient(135deg,#55304d,#282142)";
+    cover.style.background = game.background || "linear-gradient(135deg,#55304d,#282142)";
 
     const emoji = document.createElement("div");
     emoji.className = "game-emoji";
     emoji.textContent = game.emoji || "🎮";
+    emoji.title = "Clique sur moi… si tu oses !";
+    emoji.addEventListener("click", () => {
+      recordEgg("emoji");
+      if (Math.random() < .25) toast("👀 Tu as trouvé un mini-secret !");
+    });
 
     const badge = document.createElement("span");
     badge.className = "platform-badge";
     badge.textContent = platformLabel(game.platform);
-
     cover.append(emoji, badge);
 
     const info = document.createElement("div");
@@ -1214,42 +1095,40 @@ function renderGames() {
     description.textContent = game.description || "Prêt à jouer ?";
 
     info.append(title, description);
-
     const buttons = document.createElement("div");
     buttons.className = "game-buttons";
 
-    if (inMaintenance) {
-      const maintenanceBadge = document.createElement("span");
-      maintenanceBadge.className = "maintenance-badge";
-      maintenanceBadge.textContent = admin
-        ? "🛠️ MAINTENANCE — MODE ADMIN"
-        : "🛠️ TEMPORAIREMENT INDISPONIBLE";
+    if (game.maintenance) {
+      const label = document.createElement("span");
+      label.className = "maintenance-badge";
+      label.textContent = isAdmin() ? "🛠️ MAINTENANCE — MODE ADMIN" : "🛠️ TEMPORAIREMENT INDISPONIBLE";
 
       const message = document.createElement("div");
       message.className = "maintenance-message";
-      message.textContent = game.maintenanceMessage ||
-        "Ce jeu est actuellement en maintenance. Reviens bientôt !";
+      message.textContent = game.maintenanceMessage || "Ce jeu est en maintenance. Reviens bientôt !";
 
-      if (admin) {
-        const testButton = document.createElement("button");
-        testButton.className = "btn";
-        testButton.textContent = "🧪 Tester en tant qu’admin";
-        testButton.addEventListener("click", () => playGame(game, true));
-        buttons.append(testButton);
+      if (isAdmin()) {
+        const test = document.createElement("button");
+        test.className = "btn";
+        test.textContent = "🧪 Tester en tant qu’admin";
+        test.addEventListener("click", () => playGame(game, true));
+        buttons.append(test);
       } else {
-        const disabledButton = document.createElement("button");
-        disabledButton.className = "btn";
-        disabledButton.textContent = "🛠️ En maintenance";
-        disabledButton.disabled = true;
-        buttons.append(disabledButton);
+        const disabled = document.createElement("button");
+        disabled.className = "btn";
+        disabled.textContent = "🛠️ En maintenance";
+        disabled.disabled = true;
+        buttons.append(disabled);
       }
-
-      info.append(maintenanceBadge, message, buttons);
+      info.append(label, message, buttons);
     } else {
       const play = document.createElement("button");
       play.className = "btn";
       play.textContent = "▶ Jouer";
-      play.addEventListener("click", () => playGame(game));
+      play.addEventListener("click", () => {
+        recordEgg("player");
+        playGame(game);
+      });
       buttons.append(play);
       info.append(buttons);
     }
@@ -1262,44 +1141,27 @@ function renderGames() {
 $("searchInput").addEventListener("input", renderGames);
 $("platformFilter").addEventListener("change", renderGames);
 
-/* COMPATIBILITÉ ET LANCEMENT DES JEUX */
 function playGame(game, adminTest = false) {
-  if (game.maintenance === true && !(adminTest && isAdmin())) {
-    toast(game.maintenanceMessage ||
-      "🛠️ Ce jeu est temporairement indisponible.");
+  if (game.maintenance && !(adminTest && isAdmin())) {
+    toast(game.maintenanceMessage || "🛠️ Ce jeu est temporairement indisponible.");
     return;
   }
 
   const device = detectDevice();
-
   const incompatible =
     (game.platform === "pc" && device !== "pc") ||
     (game.platform === "mobile" && device === "pc");
 
-  if (!incompatible) {
-    launchGame(game);
-    return;
-  }
+  if (!incompatible) return launchGame(game);
 
   pendingGame = game;
+  $("platformWarningIcon").textContent = game.platform === "pc" ? "🖥️" : "📱";
+  $("platformWarningTitle").textContent = game.platform === "pc"
+    ? "Jeu conçu pour PC" : "Jeu conçu pour mobile";
 
-  if (game.platform === "pc") {
-    $("platformWarningIcon").textContent = "🖥️";
-    $("platformWarningTitle").textContent = "Jeu conçu pour PC";
-    $("platformWarningMessage").textContent =
-      `Ton appareil semble être un ${deviceLabel(device)}.\n\n` +
-      "Ce jeu peut nécessiter un clavier, une souris ou un grand écran. " +
-      "Des ralentissements peuvent apparaître selon les capacités de ton appareil.\n\n" +
-      "Il risque de ne pas fonctionner correctement. Tu peux quand même essayer.";
-  } else {
-    $("platformWarningIcon").textContent = "📱";
-    $("platformWarningTitle").textContent = "Jeu conçu pour mobile";
-    $("platformWarningMessage").textContent =
-      "Ton appareil semble être un ordinateur.\n\n" +
-      "Ce jeu est principalement prévu pour un écran tactile. " +
-      "Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.\n\n" +
-      "Tu peux quand même essayer.";
-  }
+  $("platformWarningMessage").textContent = game.platform === "pc"
+    ? `Ton appareil semble être un ${deviceLabel(device)}.\n\nCe jeu peut nécessiter un clavier, une souris ou un grand écran. Tu peux quand même essayer.`
+    : "Ce jeu est principalement prévu pour un écran tactile. Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.";
 
   openOverlay("platformWarningOverlay");
 }
@@ -1317,48 +1179,32 @@ $("continuePlatformWarningBtn").addEventListener("click", () => {
 });
 
 function launchGame(game) {
-  if (game.maintenance === true && !isAdmin()) {
-    toast("🛠️ Ce jeu est actuellement en maintenance.");
-    return;
-  }
-
+  if (game.maintenance && !isAdmin()) return toast("🛠️ Ce jeu est en maintenance.");
   currentGame = game;
-
-  $("playerTitle").textContent =
-    `${game.emoji || "🎮"} ${game.title || "Jeu"}`;
+  $("playerTitle").textContent = `${game.emoji || "🎮"} ${game.title || "Jeu"}`;
 
   const frame = $("gameFrame");
-
   frame.src = "about:blank";
   frame.removeAttribute("srcdoc");
   frame.removeAttribute("sandbox");
 
   if (game.type === "html") {
-    frame.setAttribute(
-      "sandbox",
-      "allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals"
-    );
+    frame.setAttribute("sandbox", "allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals");
     frame.srcdoc = game.content || "<p>Ce jeu n'a pas de code.</p>";
   } else {
     const url = validateGameUrl(game.content);
-
     if (!url) {
-      toast("Le lien de ce jeu n'est pas valide.");
       currentGame = null;
-      return;
+      return toast("Le lien de ce jeu n'est pas valide.");
     }
-
     frame.src = url;
   }
 
   $("openGameTabBtn").onclick = () => {
     if (game.type === "html") {
-      toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
-      return;
+      return toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
     }
-
     const url = validateGameUrl(game.content);
-
     if (url) window.open(url, "_blank", "noopener,noreferrer");
     else toast("Le lien de ce jeu n'est pas valide.");
   };
@@ -1366,30 +1212,19 @@ function launchGame(game) {
   openOverlay("gameOverlay");
 }
 
-function validateGameUrl(value) {
-  try {
-    const url = new URL(String(value || ""));
-    if (url.protocol === "https:" || url.protocol === "http:") {
-      return url.href;
-    }
-  } catch (error) {
-    console.warn("URL de jeu invalide", error);
-  }
-
-  return null;
-}
-
 function stopCurrentGame() {
   const frame = $("gameFrame");
-  frame.src = "about:blank";
-  frame.removeAttribute("srcdoc");
+  if (frame) {
+    frame.src = "about:blank";
+    frame.removeAttribute("srcdoc");
+  }
   closeOverlay("gameOverlay");
   currentGame = null;
 }
 
 $("closeGameBtn").addEventListener("click", stopCurrentGame);
 
-/* CONNEXION ADMINISTRATEUR */
+/* AUTHENTIFICATION ADMIN */
 $("adminLoginBtn").addEventListener("click", () => {
   if (isAdmin()) {
     renderAdminGames();
@@ -1403,18 +1238,15 @@ $("adminLoginBtn").addEventListener("click", () => {
 $("googleLoginBtn").addEventListener("click", async () => {
   try {
     const result = await signInWithPopup(auth, provider);
-
     if (result.user.email?.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
       await signOut(auth);
-      toast("Ce compte Google n'est pas autorisé.");
-      return;
+      return toast("Ce compte Google n'est pas autorisé.");
     }
-
     closeOverlay("loginOverlay");
     openOverlay("adminOverlay");
     toast("Connexion administrateur réussie !");
   } catch (error) {
-    console.error("Erreur de connexion Google :", error);
+    console.error(error);
     toast("Connexion impossible. Vérifie Firebase et les fenêtres pop-up.");
   }
 });
@@ -1434,10 +1266,7 @@ $("logoutBtn").addEventListener("click", async () => {
 onAuthStateChanged(auth, user => {
   currentUser = user;
   $("logoutBtn").hidden = !user;
-
-  $("adminLoginBtn").textContent =
-    isAdmin() ? "🧑‍🍳 Administration" : "🔐 Administration";
-
+  $("adminLoginBtn").textContent = isAdmin() ? "🧑‍🍳 Administration" : "🔐 Administration";
   renderGames();
 
   if (user && !isAdmin()) {
@@ -1456,31 +1285,23 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-/* AJOUT ET MODIFICATION DES JEUX */
+/* GESTION DES JEUX */
 $("gameForm").addEventListener("submit", async event => {
   event.preventDefault();
-
-  if (!isAdmin()) {
-    toast("Accès refusé.");
-    return;
-  }
+  if (!isAdmin()) return toast("Accès refusé.");
 
   const title = $("gameTitle").value.trim();
   const content = $("gameContent").value.trim();
   const type = $("gameType").value;
 
-  if (!title || !content) {
-    toast("Remplis le nom et le contenu du jeu.");
-    return;
-  }
-
+  if (!title || !content) return toast("Remplis le nom et le contenu du jeu.");
   if (type === "url" && !validateGameUrl(content)) {
-    toast("Pour un lien, utilise une adresse commençant par https:// ou http://");
-    return;
+    return toast("Utilise une adresse commençant par https:// ou http://");
   }
 
   const data = {
     title,
+    description: $("gameDescription").value.trim(),
     emoji: $("gameEmoji").value.trim() || "🎮",
     background: $("gameBackground").value,
     type,
@@ -1489,9 +1310,7 @@ $("gameForm").addEventListener("submit", async event => {
     updatedAt: serverTimestamp()
   };
 
-  const saveButton = $("saveGameBtn");
-  saveButton.disabled = true;
-
+  $("saveGameBtn").disabled = true;
   try {
     if (editingGame) {
       await updateDoc(doc(db, "games", editingGame), data);
@@ -1500,14 +1319,14 @@ $("gameForm").addEventListener("submit", async event => {
       data.createdAt = serverTimestamp();
       await addDoc(gamesRef, data);
       toast("Jeu ajouté au menu !");
+      recordEgg("admin");
     }
-
     resetGameForm();
   } catch (error) {
-    console.error("Erreur d'enregistrement du jeu :", error);
+    console.error(error);
     toast("Impossible d'enregistrer. Vérifie les règles Firestore.");
   } finally {
-    saveButton.disabled = false;
+    $("saveGameBtn").disabled = false;
   }
 });
 
@@ -1524,14 +1343,11 @@ $("cancelGameEditBtn").addEventListener("click", resetGameForm);
 
 function renderAdminGames() {
   if (!isAdmin()) return;
-
   const list = $("adminGameList");
   list.replaceChildren();
 
   if (!games.length) {
-    list.textContent = gamesLoaded
-      ? "Aucun jeu pour le moment."
-      : "Chargement des jeux…";
+    list.textContent = gamesLoaded ? "Aucun jeu pour le moment." : "Chargement des jeux…";
     return;
   }
 
@@ -1548,17 +1364,8 @@ function renderAdminGames() {
     status.textContent = game.maintenance ? "EN MAINTENANCE" : "DISPONIBLE";
 
     const detail = document.createElement("p");
-    detail.textContent =
-      `${game.type === "html" ? "Code HTML" : "Lien"} • ` +
-      platformLabel(game.platform);
-
+    detail.textContent = `${game.type === "html" ? "Code HTML" : "Lien"} • ${platformLabel(game.platform)}`;
     left.append(title, document.createTextNode(" "), status, detail);
-
-    if (game.maintenanceMessage) {
-      const messagePreview = document.createElement("p");
-      messagePreview.textContent = `Message : ${game.maintenanceMessage}`;
-      left.append(messagePreview);
-    }
 
     const actions = document.createElement("div");
     actions.className = "admin-item-actions";
@@ -1566,96 +1373,55 @@ function renderAdminGames() {
     const edit = document.createElement("button");
     edit.className = "btn secondary small";
     edit.textContent = "✏️ Modifier";
-
     edit.onclick = () => {
       editingGame = game.id;
       $("gameEditId").value = game.id;
       $("gameTitle").value = game.title || "";
+      $("gameDescription").value = game.description || "";
       $("gameEmoji").value = game.emoji || "🎮";
-      $("gameBackground").value =
-        game.background || "linear-gradient(135deg,#55304d,#282142)";
+      $("gameBackground").value = game.background || "linear-gradient(135deg,#55304d,#282142)";
       $("gameType").value = game.type || "url";
       $("gamePlatform").value = game.platform || "all";
       $("gameContent").value = game.content || "";
       $("saveGameBtn").textContent = "💾 Enregistrer les modifications";
       $("cancelGameEditBtn").hidden = false;
-
-      $("gameForm").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-      });
+      $("gameForm").scrollIntoView({behavior:"smooth",block:"start"});
     };
 
-    const maintenanceButton = document.createElement("button");
-    maintenanceButton.className =
-      "btn small " + (game.maintenance ? "green" : "secondary");
-    maintenanceButton.textContent =
-      game.maintenance ? "🟢 Réactiver" : "🛠️ Maintenance";
-
-    maintenanceButton.onclick = async () => {
-      if (!isAdmin()) {
-        toast("Accès refusé.");
-        return;
-      }
-
-      const enablingMaintenance = !game.maintenance;
+    const maintenance = document.createElement("button");
+    maintenance.className = "btn small " + (game.maintenance ? "green" : "secondary");
+    maintenance.textContent = game.maintenance ? "🟢 Réactiver" : "🛠️ Maintenance";
+    maintenance.onclick = async () => {
+      if (!isAdmin()) return toast("Accès refusé.");
+      const enabled = !game.maintenance;
       let message = game.maintenanceMessage || "";
 
-      if (enablingMaintenance) {
-        message = prompt(
-          "Pourquoi ce jeu est-il en maintenance ?",
-          message ||
-          "Ce jeu est temporairement indisponible. Nous travaillons à son retour !"
-        );
-
+      if (enabled) {
+        message = prompt("Pourquoi ce jeu est-il en maintenance ?",
+          message || "Ce jeu est temporairement indisponible. Reviens bientôt !");
         if (message === null) return;
-
-        message = message.trim();
-
-        if (!message) {
-          message = "Ce jeu est temporairement indisponible. Reviens bientôt !";
-        }
-
-        if (message.length > 1000) {
-          toast("Le message ne doit pas dépasser 1000 caractères.");
-          return;
-        }
+        message = message.trim() || "Ce jeu est temporairement indisponible. Reviens bientôt !";
       }
-
-      maintenanceButton.disabled = true;
 
       try {
         await updateDoc(doc(db, "games", game.id), {
-          maintenance: enablingMaintenance,
-          maintenanceMessage: message,
-          updatedAt: serverTimestamp()
+          maintenance:enabled,
+          maintenanceMessage:message,
+          updatedAt:serverTimestamp()
         });
-
-        toast(enablingMaintenance
-          ? "🛠️ Jeu mis en maintenance."
-          : "🟢 Jeu réactivé !");
+        toast(enabled ? "🛠️ Jeu mis en maintenance." : "🟢 Jeu réactivé !");
       } catch (error) {
-        console.error("Erreur de maintenance :", error);
-        toast("Impossible de modifier la maintenance. Vérifie les règles Firestore.");
-      } finally {
-        maintenanceButton.disabled = false;
+        console.error(error);
+        toast("Impossible de modifier la maintenance.");
       }
     };
 
     const remove = document.createElement("button");
     remove.className = "btn red small";
     remove.textContent = "🗑️ Supprimer";
-
     remove.onclick = async () => {
-      if (!isAdmin()) {
-        toast("Accès refusé.");
-        return;
-      }
-
-      if (!confirm(`Supprimer le jeu « ${game.title || "sans nom"} » ?`)) {
-        return;
-      }
-
+      if (!isAdmin()) return toast("Accès refusé.");
+      if (!confirm(`Supprimer le jeu « ${game.title || "sans nom"} » ?`)) return;
       try {
         await deleteDoc(doc(db, "games", game.id));
         toast("Jeu supprimé.");
@@ -1665,62 +1431,44 @@ function renderAdminGames() {
       }
     };
 
-    actions.append(edit, maintenanceButton, remove);
+    actions.append(edit, maintenance, remove);
     row.append(left, actions);
     list.append(row);
   });
 }
 
-/* ANNONCES : TYPES */
+/* ANNONCES */
 const announcementTypes = {
-  info: { label:"INFORMATION", icon:"ℹ️" },
-  update: { label:"MISE À JOUR", icon:"🆕" },
-  maintenance: { label:"MAINTENANCE", icon:"🛠️" },
-  issue: { label:"PROBLÈME TECHNIQUE", icon:"🚨" }
+  info:{label:"INFORMATION",icon:"ℹ️"},
+  update:{label:"MISE À JOUR",icon:"🆕"},
+  maintenance:{label:"MAINTENANCE",icon:"🛠️"},
+  issue:{label:"PROBLÈME TECHNIQUE",icon:"🚨"}
 };
 
-/* AJOUT ET MODIFICATION DES ANNONCES */
 $("announcementForm").addEventListener("submit", async event => {
   event.preventDefault();
-
-  if (!isAdmin()) {
-    toast("Accès refusé.");
-    return;
-  }
+  if (!isAdmin()) return toast("Accès refusé.");
 
   const title = $("announcementTitle").value.trim();
   const message = $("announcementMessage").value.trim();
   const expiresInput = $("announcementExpires").value;
+  const expiresAt = expiresInput ? new Date(expiresInput).getTime() : null;
 
-  const expiresAt = expiresInput
-    ? new Date(expiresInput).getTime()
-    : null;
-
-  if (!title || !message) {
-    toast("Remplis le titre et le message.");
-    return;
-  }
-
-  if (
-    expiresAt !== null &&
-    (!Number.isFinite(expiresAt) || expiresAt <= Date.now())
-  ) {
-    toast("La date de fin doit être dans le futur.");
-    return;
+  if (!title || !message) return toast("Remplis le titre et le message.");
+  if (expiresAt !== null && (!Number.isFinite(expiresAt) || expiresAt <= Date.now())) {
+    return toast("La date de fin doit être dans le futur.");
   }
 
   const data = {
     title,
     message,
-    type: $("announcementType").value,
-    active: $("announcementActive").checked,
+    type:$("announcementType").value,
+    active:$("announcementActive").checked,
     expiresAt,
-    updatedAt: serverTimestamp()
+    updatedAt:serverTimestamp()
   };
 
-  const saveButton = $("saveAnnouncementBtn");
-  saveButton.disabled = true;
-
+  $("saveAnnouncementBtn").disabled = true;
   try {
     if (editingAnnouncement) {
       await updateDoc(doc(db, "announcements", editingAnnouncement), data);
@@ -1728,17 +1476,14 @@ $("announcementForm").addEventListener("submit", async event => {
     } else {
       data.createdAt = serverTimestamp();
       await addDoc(announcementsRef, data);
-      toast(data.active
-        ? "Annonce publiée !"
-        : "Annonce enregistrée comme inactive.");
+      toast(data.active ? "Annonce publiée !" : "Annonce enregistrée comme inactive.");
     }
-
     resetAnnouncementForm();
   } catch (error) {
     console.error(error);
-    toast("Impossible d'enregistrer l'annonce. Vérifie les règles Firestore.");
+    toast("Impossible d'enregistrer l'annonce. Vérifie Firestore.");
   } finally {
-    saveButton.disabled = false;
+    $("saveAnnouncementBtn").disabled = false;
   }
 });
 
@@ -1755,312 +1500,205 @@ $("cancelAnnouncementEditBtn").addEventListener("click", resetAnnouncementForm);
 
 function formatExpiry(value) {
   if (!value) return "Sans date de fin";
-
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "Date inconnue";
-
-  return "Fin : " + date.toLocaleString("fr-FR");
+  return Number.isNaN(date.getTime()) ? "Date inconnue" : "Fin : " + date.toLocaleString("fr-FR");
 }
 
 function renderAdminAnnouncements() {
   if (!isAdmin()) return;
-
   const list = $("adminAnnouncementList");
   list.replaceChildren();
 
   if (!announcements.length) {
-    list.textContent = announcementsLoaded
-      ? "Aucune annonce enregistrée."
-      : "Chargement des annonces…";
+    list.textContent = announcementsLoaded ? "Aucune annonce enregistrée." : "Chargement des annonces…";
     return;
   }
 
-  [...announcements]
-    .sort((a, b) => {
-      const at = a.createdAt?.toMillis?.() || 0;
-      const bt = b.createdAt?.toMillis?.() || 0;
-      return bt - at;
-    })
-    .forEach(item => {
-      const type = announcementTypes[item.type] || announcementTypes.info;
+  [...announcements].sort((a,b) =>
+    (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)
+  ).forEach(item => {
+    const type = announcementTypes[item.type] || announcementTypes.info;
+    const row = document.createElement("div");
+    row.className = "admin-item";
 
-      const row = document.createElement("div");
-      row.className = "admin-item";
+    const left = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = `${type.icon} ${item.title || "Annonce sans titre"}`;
 
-      const left = document.createElement("div");
-      const title = document.createElement("strong");
-      title.textContent = `${type.icon} ${item.title || "Annonce sans titre"}`;
+    const status = document.createElement("span");
+    status.className = `status ${item.active ? "on" : "off"}`;
+    status.textContent = item.active ? "ACTIVE" : "INACTIVE";
 
-      const status = document.createElement("span");
-      status.className = `status ${item.active ? "on" : "off"}`;
-      status.textContent = item.active ? "ACTIVE" : "INACTIVE";
+    const detail = document.createElement("p");
+    detail.textContent = `${type.label} • ${formatExpiry(item.expiresAt)}`;
 
-      const detail = document.createElement("p");
-      detail.textContent = `${type.label} • ${formatExpiry(item.expiresAt)}`;
+    const message = document.createElement("p");
+    const preview = safeText(item.message);
+    message.textContent = preview.length > 150 ? preview.slice(0,150) + "…" : preview;
+    left.append(title, document.createTextNode(" "), status, detail, message);
 
-      const message = document.createElement("p");
-      const preview = safeText(item.message);
-      message.textContent =
-        preview.length > 150 ? preview.slice(0, 150) + "…" : preview;
+    const actions = document.createElement("div");
+    actions.className = "admin-item-actions";
 
-      left.append(title, document.createTextNode(" "), status, detail, message);
+    const edit = document.createElement("button");
+    edit.className = "btn secondary small";
+    edit.textContent = "✏️ Modifier";
+    edit.onclick = () => {
+      editingAnnouncement = item.id;
+      $("announcementEditId").value = item.id;
+      $("announcementTitle").value = item.title || "";
+      $("announcementMessage").value = item.message || "";
+      $("announcementType").value = item.type || "info";
+      $("announcementActive").checked = !!item.active;
 
-      const actions = document.createElement("div");
-      actions.className = "admin-item-actions";
+      if (item.expiresAt) {
+        const d = new Date(item.expiresAt);
+        const local = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+        $("announcementExpires").value = local.toISOString().slice(0,16);
+      } else $("announcementExpires").value = "";
 
-      const edit = document.createElement("button");
-      edit.className = "btn secondary small";
-      edit.textContent = "✏️ Modifier";
+      $("saveAnnouncementBtn").textContent = "💾 Enregistrer les modifications";
+      $("cancelAnnouncementEditBtn").hidden = false;
+      $("announcementForm").scrollIntoView({behavior:"smooth",block:"start"});
+    };
 
-      edit.onclick = () => {
-        editingAnnouncement = item.id;
-        $("announcementEditId").value = item.id;
-        $("announcementTitle").value = item.title || "";
-        $("announcementMessage").value = item.message || "";
-        $("announcementType").value = item.type || "info";
-        $("announcementActive").checked = !!item.active;
-
-        if (item.expiresAt) {
-          const d = new Date(item.expiresAt);
-          const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-          $("announcementExpires").value = local.toISOString().slice(0, 16);
-        } else {
-          $("announcementExpires").value = "";
-        }
-
-        $("saveAnnouncementBtn").textContent = "💾 Enregistrer les modifications";
-        $("cancelAnnouncementEditBtn").hidden = false;
-
-        $("announcementForm").scrollIntoView({
-          behavior:"smooth",
-          block:"start"
+    const toggle = document.createElement("button");
+    toggle.className = "btn small " + (item.active ? "secondary" : "green");
+    toggle.textContent = item.active ? "⏸️ Désactiver" : "▶️ Activer";
+    toggle.onclick = async () => {
+      if (!isAdmin()) return toast("Accès refusé.");
+      try {
+        await updateDoc(doc(db,"announcements",item.id), {
+          active:!item.active,updatedAt:serverTimestamp()
         });
-      };
+        toast(item.active ? "Annonce désactivée." : "Annonce activée.");
+      } catch (error) {
+        console.error(error);
+        toast("Impossible de changer le statut.");
+      }
+    };
 
-      const toggle = document.createElement("button");
-      toggle.className = "btn small " + (item.active ? "secondary" : "green");
-      toggle.textContent = item.active ? "⏸️ Désactiver" : "▶️ Activer";
+    const remove = document.createElement("button");
+    remove.className = "btn red small";
+    remove.textContent = "🗑️ Supprimer";
+    remove.onclick = async () => {
+      if (!isAdmin()) return toast("Accès refusé.");
+      if (!confirm(`Supprimer l'annonce « ${item.title || "sans titre"} » ?`)) return;
+      try {
+        await deleteDoc(doc(db,"announcements",item.id));
+        toast("Annonce supprimée.");
+      } catch (error) {
+        console.error(error);
+        toast("Suppression impossible.");
+      }
+    };
 
-      toggle.onclick = async () => {
-        if (!isAdmin()) {
-          toast("Accès refusé.");
-          return;
-        }
-
-        try {
-          await updateDoc(doc(db, "announcements", item.id), {
-            active: !item.active,
-            updatedAt: serverTimestamp()
-          });
-
-          toast(item.active ? "Annonce désactivée." : "Annonce activée.");
-        } catch (error) {
-          console.error(error);
-          toast("Impossible de changer le statut.");
-        }
-      };
-
-      const remove = document.createElement("button");
-      remove.className = "btn red small";
-      remove.textContent = "🗑️ Supprimer";
-
-      remove.onclick = async () => {
-        if (!isAdmin()) {
-          toast("Accès refusé.");
-          return;
-        }
-
-        if (!confirm(`Supprimer l'annonce « ${item.title || "sans titre"} » ?`)) {
-          return;
-        }
-
-        try {
-          await deleteDoc(doc(db, "announcements", item.id));
-          toast("Annonce supprimée.");
-        } catch (error) {
-          console.error(error);
-          toast("Suppression impossible.");
-        }
-      };
-
-      actions.append(edit, toggle, remove);
-      row.append(left, actions);
-      list.append(row);
-    });
+    actions.append(edit,toggle,remove);
+    row.append(left,actions);
+    list.append(row);
+  });
 }
 
 /* ANNONCES PUBLIQUES */
 function getDismissedIds() {
-  try {
-    return JSON.parse(
-      localStorage.getItem("gourmandDismissedAnnouncementIds") || "[]"
-    );
-  } catch {
-    return [];
-  }
+  try { return JSON.parse(localStorage.getItem("gourmandDismissedAnnouncementIds") || "[]"); }
+  catch { return []; }
 }
 
 function saveDismissedId(id) {
   const ids = getDismissedIds();
-
   if (!ids.includes(id)) ids.push(id);
-
   try {
-    localStorage.setItem(
-      "gourmandDismissedAnnouncementIds",
-      JSON.stringify(ids)
-    );
-  } catch (error) {
-    console.warn("Impossible de mémoriser les annonces ignorées.", error);
-  }
+    localStorage.setItem("gourmandDismissedAnnouncementIds",JSON.stringify(ids));
+  } catch (error) { console.warn(error); }
 }
 
 function activeAnnouncementList() {
   const now = Date.now();
-
-  return announcements.filter(item => {
-    if (!item.active) return false;
-    if (item.expiresAt && Number(item.expiresAt) <= now) return false;
-    return true;
-  });
+  return announcements.filter(item =>
+    item.active && (!item.expiresAt || Number(item.expiresAt) > now)
+  );
 }
 
 function displayAnnouncement(item) {
   currentAnnouncement = item;
   shownThisPage.add(item.id);
-
   const type = announcementTypes[item.type] || announcementTypes.info;
-
   $("announcementModal").dataset.type = item.type || "info";
   $("publicAnnouncementIcon").textContent = type.icon;
   $("publicAnnouncementType").textContent = type.label;
   $("publicAnnouncementTitle").textContent = item.title || "Annonce";
   $("publicAnnouncementMessage").textContent = item.message || "";
   $("neverShowAnnouncement").checked = false;
-
   openOverlay("announcementOverlay");
 }
 
 function showNextAnnouncement() {
-  if (
-    !announcementsLoaded ||
-    currentAnnouncement ||
-    $("announcementOverlay").classList.contains("open")
-  ) return;
-
+  if (!announcementsLoaded || currentAnnouncement ||
+      $("announcementOverlay").classList.contains("open")) return;
   const dismissed = getDismissedIds();
-
   const next = activeAnnouncementList().find(item =>
-    !dismissed.includes(item.id) &&
-    !shownThisPage.has(item.id)
+    !dismissed.includes(item.id) && !shownThisPage.has(item.id)
   );
-
   if (next) displayAnnouncement(next);
 }
 
 function closePublicAnnouncement() {
-  if (!currentAnnouncement) {
-    closeOverlay("announcementOverlay");
-    return;
-  }
-
-  const id = currentAnnouncement.id;
-
-  if ($("neverShowAnnouncement").checked) saveDismissedId(id);
-
+  if (!currentAnnouncement) return closeOverlay("announcementOverlay");
+  if ($("neverShowAnnouncement").checked) saveDismissedId(currentAnnouncement.id);
   currentAnnouncement = null;
   closeOverlay("announcementOverlay");
-
-  setTimeout(showNextAnnouncement, 250);
+  setTimeout(showNextAnnouncement,250);
 }
 
-$("closeAnnouncementBtn").addEventListener("click", closePublicAnnouncement);
-$("closeAnnouncementX").addEventListener("click", closePublicAnnouncement);
+$("closeAnnouncementBtn").addEventListener("click",closePublicAnnouncement);
+$("closeAnnouncementX").addEventListener("click",closePublicAnnouncement);
 
-$("showAnnouncementsBtn").addEventListener("click", () => {
+$("showAnnouncementsBtn").addEventListener("click",() => {
   const active = activeAnnouncementList();
-
-  if (!active.length) {
-    toast("Aucune annonce active pour le moment.");
-    return;
-  }
-
+  if (!active.length) return toast("Aucune annonce active pour le moment.");
   const dismissed = getDismissedIds();
-
   const next = active.find(item =>
-    !shownThisPage.has(item.id) &&
-    !dismissed.includes(item.id)
+    !shownThisPage.has(item.id) && !dismissed.includes(item.id)
   ) || active[0];
-
   displayAnnouncement(next);
 });
 
-/* FIRESTORE : SYNCHRONISATION DES JEUX */
-onSnapshot(gamesRef, snapshot => {
-  games = snapshot.docs.map(item => ({
-    id:item.id,
-    ...item.data()
-  }));
-
+/* SYNCHRONISATION FIRESTORE */
+onSnapshot(gamesRef,snapshot => {
+  games = snapshot.docs.map(item => ({id:item.id,...item.data()}));
   gamesLoaded = true;
-
   renderGames();
   renderAdminGames();
 
   if (currentGame) {
-    const latestGame = games.find(game => game.id === currentGame.id);
-
-    if (latestGame?.maintenance === true && !isAdmin()) {
-      const message = latestGame.maintenanceMessage ||
-        "🛠️ Ce jeu vient d'être placé en maintenance.";
-
+    const latest = games.find(game => game.id === currentGame.id);
+    if (!latest || (latest.maintenance && !isAdmin())) {
       stopCurrentGame();
-      toast(message);
-    } else if (latestGame) {
-      currentGame = latestGame;
-    } else {
-      stopCurrentGame();
-      toast("Ce jeu a été supprimé du catalogue.");
-    }
+      toast(!latest ? "Ce jeu a été supprimé du catalogue." :
+        latest.maintenanceMessage || "Ce jeu vient d'être placé en maintenance.");
+    } else currentGame = latest;
   }
-}, error => {
-  console.error("Erreur de chargement des jeux :", error);
-
-  $("gameGrid").replaceChildren();
-
-  const errorMessage = document.createElement("div");
-  errorMessage.className = "empty";
-  errorMessage.textContent =
-    "😵 Impossible de charger les jeux. Vérifie ta connexion et les règles Firestore.";
-
-  $("gameGrid").append(errorMessage);
+},error => {
+  console.error("Erreur Firestore jeux :",error);
+  $("gameGrid").innerHTML = '<div class="empty">😵 Impossible de charger les jeux. Vérifie ta connexion et les règles Firestore.</div>';
   $("gameCount").textContent = "Erreur";
   toast("Erreur de chargement des jeux.");
 });
 
-/* FIRESTORE : SYNCHRONISATION DES ANNONCES */
-onSnapshot(announcementsRef, snapshot => {
-  announcements = snapshot.docs.map(item => ({
-    id:item.id,
-    ...item.data()
-  }));
-
+onSnapshot(announcementsRef,snapshot => {
+  announcements = snapshot.docs.map(item => ({id:item.id,...item.data()}));
   announcementsLoaded = true;
 
   if (currentAnnouncement) {
     const latest = announcements.find(item => item.id === currentAnnouncement.id);
-
-    const expired = latest?.expiresAt &&
-      Number(latest.expiresAt) <= Date.now();
-
+    const expired = latest?.expiresAt && Number(latest.expiresAt) <= Date.now();
     if (!latest || !latest.active || expired) {
       currentAnnouncement = null;
       closeOverlay("announcementOverlay");
     } else {
       currentAnnouncement = latest;
-
       const type = announcementTypes[latest.type] || announcementTypes.info;
-
       $("announcementModal").dataset.type = latest.type || "info";
       $("publicAnnouncementIcon").textContent = type.icon;
       $("publicAnnouncementType").textContent = type.label;
@@ -2071,14 +1709,220 @@ onSnapshot(announcementsRef, snapshot => {
 
   renderAdminAnnouncements();
   showNextAnnouncement();
-}, error => {
-  console.error("Erreur de chargement des annonces :", error);
+},error => {
+  console.error("Erreur Firestore annonces :",error);
   toast("Impossible de charger les annonces.");
 });
 
-/* INFORMATIONS DE DIAGNOSTIC */
-console.info("Gourmand.fun — appareil détecté :", detectDevice());
-console.info("User-Agent :", navigator.userAgent);
-console.info("Maintenance des jeux activée.");
-</script></body>
+/* ======================================================
+   🍔 LABORATOIRE DES 16 EASTER EGGS
+   Les découvertes sont enregistrées sur cet appareil.
+   ====================================================== */
+
+const eggDefinitions = [
+  ["logo","Le burger curieux","Clique plusieurs fois sur le logo."],
+  ["konami","Le joueur rétro","Entre le code Konami."],
+  ["word","Le mot magique","Tape « gourmand » au clavier."],
+  ["footer","Le bas du menu","Clique cinq fois sur le pied de page."],
+  ["hero","Le burger géant","Clique dix fois sur le burger géant."],
+  ["emoji","Le menu mystère","Clique sur un emoji de jeu."],
+  ["player","Le grand explorateur","Lance un jeu."],
+  ["admin","Le chef cuisinier","Ajoute un jeu en étant administrateur."],
+  ["midnight","Le noctambule","Visite le site entre minuit et cinq heures."],
+  ["search","Le chercheur secret","Recherche le mot « secret »."],
+  ["party","La fête des frites","Active le mode fête."],
+  ["recipe","La recette secrète","Découvre la recette cachée."],
+  ["rapid","Le clic rapide","Clique rapidement cinq fois sur le logo."],
+  ["scroll","Le grand voyage","Descends jusqu'au pied de page."],
+  ["rainbow","Le mode arc-en-ciel","Active le mode arc-en-ciel."],
+  ["console","Le développeur","Ouvre la console du navigateur."]
+];
+
+let unlockedEggs = new Set();
+try {
+  unlockedEggs = new Set(JSON.parse(localStorage.getItem("gourmandEggs") || "[]"));
+} catch {}
+
+function updateEggPanel() {
+  $("achievementCount").textContent = unlockedEggs.size;
+  const list = $("achievementList");
+  list.replaceChildren();
+
+  eggDefinitions.forEach(([id,title,description]) => {
+    const row = document.createElement("div");
+    row.className = "achievement " + (unlockedEggs.has(id) ? "" : "locked");
+    row.textContent = `${unlockedEggs.has(id) ? "🏆" : "🔒"} ${title} — ${unlockedEggs.has(id) ? "Découvert !" : description}`;
+    list.append(row);
+  });
+}
+
+function recordEgg(id) {
+  if (!eggDefinitions.some(item => item[0] === id)) return;
+  if (unlockedEggs.has(id)) return;
+
+  unlockedEggs.add(id);
+  try {
+    localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]));
+  } catch {}
+
+  updateEggPanel();
+  toast(`🏆 Secret découvert : ${eggDefinitions.find(item => item[0] === id)[1]} !`);
+}
+
+function burgerRain(count = 22) {
+  const layer = $("eggLayer");
+  const emojis = ["🍔","🍟","🍕","🌭","🍩","🧁","🍪","🥤","🍉","🍓"];
+
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const item = document.createElement("span");
+      item.className = "egg-float";
+      item.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      item.style.left = Math.random()*95 + "%";
+      item.style.animationDuration = (1.8 + Math.random()*2.2) + "s";
+      layer.append(item);
+      setTimeout(() => item.remove(),4500);
+    },i*45);
+  }
+}
+
+let logoClicks = 0;
+let logoRapidClicks = [];
+let footerClicks = 0;
+let heroClicks = 0;
+
+$("logoIcon").addEventListener("click",() => {
+  logoClicks++;
+  logoRapidClicks.push(Date.now());
+  logoRapidClicks = logoRapidClicks.filter(time => Date.now()-time < 2200);
+
+  if (logoClicks >= 7) {
+    recordEgg("logo");
+    burgerRain(35);
+    logoClicks = 0;
+  }
+
+  if (logoRapidClicks.length >= 5) {
+    recordEgg("rapid");
+    toast("🍟 ALERTE FRITES : clics rapides détectés !");
+    logoRapidClicks = [];
+  }
+});
+
+$("heroBurger").addEventListener("click",() => {
+  heroClicks++;
+  if (heroClicks >= 10) {
+    recordEgg("hero");
+    burgerRain(45);
+    toast("🍔 LE BURGER GÉANT T'AS REMARQUÉ !");
+    heroClicks = 0;
+  } else if (heroClicks === 3) {
+    toast("👀 Continue… le burger n'a pas encore fini de parler.");
+  }
+});
+
+$("siteFooter").addEventListener("click",event => {
+  if (event.target.closest("button,a")) return;
+  footerClicks++;
+  if (footerClicks >= 5) {
+    recordEgg("footer");
+    toast("💻 Le club informatique approuve ton exploration !");
+    footerClicks = 0;
+  }
+});
+
+const konamiSequence = [
+  "ArrowUp","ArrowUp","ArrowDown","ArrowDown",
+  "ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"
+];
+let konamiProgress = [];
+
+document.addEventListener("keydown",event => {
+  if (["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)) return;
+
+  konamiProgress.push(event.key.length === 1 ? event.key.toLowerCase() : event.key);
+  konamiProgress = konamiProgress.slice(-konamiSequence.length);
+
+  if (konamiProgress.join("|") === konamiSequence.join("|")) {
+    recordEgg("konami");
+    document.body.classList.toggle("rainbow-mode");
+    burgerRain(50);
+    toast("🎮 CODE KONAMI ACTIVÉ ! Bienvenue dans le mode arcade !");
+  }
+});
+
+let typedWord = "";
+document.addEventListener("keydown",event => {
+  if (event.key.length !== 1 || event.ctrlKey || event.altKey || event.metaKey) return;
+  typedWord = (typedWord + event.key.toLowerCase()).slice(-20);
+
+  if (typedWord.endsWith("gourmand")) {
+    recordEgg("word");
+    toast("✨ Mot magique détecté !");
+    burgerRain(18);
+    typedWord = "";
+  }
+});
+
+$("searchInput").addEventListener("input",() => {
+  if ($("searchInput").value.toLowerCase().includes("secret")) {
+    recordEgg("search");
+    toast("🕵️ Tu recherches les secrets ? Tu es au bon endroit !");
+  }
+});
+
+$("achievementsBtn").addEventListener("click",() => {
+  updateEggPanel();
+  $("secretPanel").classList.add("open");
+});
+
+$("secretBadge").addEventListener("click",() => {
+  updateEggPanel();
+  $("secretPanel").classList.add("open");
+});
+
+$("closeSecretPanel").addEventListener("click",() =>
+  $("secretPanel").classList.remove("open")
+);
+
+$("secretPartyBtn").addEventListener("click",() => {
+  document.body.classList.toggle("party-mode");
+  recordEgg("party");
+  toast(document.body.classList.contains("party-mode")
+    ? "🎉 MODE FÊTE ACTIVÉ ! Clique à nouveau pour l'arrêter."
+    : "La fête est terminée. Les frites vont se reposer.");
+});
+
+$("secretRecipe").addEventListener("click",() => {
+  recordEgg("recipe");
+});
+
+$("siteLogo").addEventListener("dblclick",() => {
+  $("secretRecipe").classList.toggle("visible");
+  if ($("secretRecipe").classList.contains("visible")) recordEgg("recipe");
+});
+
+if (new Date().getHours() < 5) recordEgg("midnight");
+
+window.addEventListener("scroll",() => {
+  const bottomReached = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
+  if (bottomReached) recordEgg("scroll");
+},{passive:true});
+
+/* Détection de l'ouverture de la console : déclenchement volontaire
+   via une commande simple pour éviter les faux positifs. */
+console.info("%c🍔 Gourmand.fun", "font-size:24px;font-weight:bold;color:#ff668a");
+console.info("Psst… tape gourmand() dans la console pour un petit secret.");
+window.gourmand = () => {
+  recordEgg("console");
+  burgerRain(30);
+  toast("🧑‍💻 Bonjour, explorateur du code !");
+};
+
+updateEggPanel();
+
+console.info("Gourmand.fun — appareil détecté :",detectDevice());
+</script>
+
+</body>
 </html>
