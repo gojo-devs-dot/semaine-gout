@@ -174,6 +174,8 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
 .player-stat{margin:8px 0}
 .player-rank{font-size:1.15rem;font-weight:900;min-width:34px}
 .player-details{flex:1;overflow-wrap:anywhere}
+body.banned-lock #guestLoginBtn,body.banned-lock #playerLoginBtn,
+body.banned-lock #profileBtn,body.banned-lock #logoutBtn{display:none}
 @media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:32px}.hero-art{font-size:5rem}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
   header{align-items:flex-start}.logo{font-size:1rem}.logo-icon{width:37px;height:37px}
@@ -464,6 +466,7 @@ let currentAnnouncement=null,pendingGame=null,playerProfile=null;
 let gamesLoaded=false,announcementsLoaded=false,profileLoadToken=0;
 let unsubBan=null,unsubKick=null,unsubBans=null;
 let modAction=null,modTarget=null;
+let bannedLock=null;
 const shownThisPage=new Set();
 const $=id=>document.getElementById(id);
 const safeText=value=>String(value??"");
@@ -648,6 +651,8 @@ $("searchInput").addEventListener("input",()=>{
 $("platformFilter").addEventListener("change",renderGames);
 
 function playGame(game,adminTest=false){
+  if(bannedLock)return showModScreen("🔨","Tu es banni",banText(bannedLock));
+  if(!currentUser)return toast("🎮 Connecte-toi ou clique sur « Jouer en invité » pour lancer un jeu.");
   if(game.maintenance&&!(adminTest&&isAdmin())){
     return toast(game.maintenanceMessage||"🛠️ Ce jeu est temporairement indisponible.");
   }
@@ -745,6 +750,20 @@ function showModScreen(icon,title,message){
   openOverlay("banOverlay");
 }
 
+/* Invité banni : on NE le déconnecte PAS (sinon il se recrée un compte neuf).
+   Il reste connecté avec le même identifiant, mais bloqué. */
+function lockGuest(b){
+  bannedLock=b;
+  document.body.classList.add("banned-lock");
+  showModScreen("🔨","Tu es banni",banText(b));
+}
+function unlockGuest(){
+  if(!bannedLock)return;
+  bannedLock=null;
+  document.body.classList.remove("banned-lock");
+  closeOverlay("banOverlay");
+}
+
 /* Surveille en direct le ban / kick du joueur connecté (et la liste des bans pour l'admin) */
 function watchModeration(user){
   unsubBan?.();unsubKick?.();unsubBans?.();
@@ -760,10 +779,9 @@ function watchModeration(user){
   }
 
   unsubBan=onSnapshot(doc(db,"bans",user.uid),async snap=>{
-    if(!snap.exists()||!banActive(snap.data()))return;
-    const data=snap.data();
-    try{await signOut(auth)}catch(e){console.error(e)}
-    showModScreen("🔨","Tu es banni",banText(data));
+    const data=snap.exists()?snap.data():null;
+    if(!banActive(data)){unlockGuest();return}
+    lockGuest(data);
   },e=>console.error("Ban :",e));
 
   let first=true,baseline=null;
@@ -912,6 +930,7 @@ onAuthStateChanged(auth,async user=>{
 
   if(!user){
     $("playerLoginBtn").textContent="👤 Connexion joueur";
+    unlockGuest();
     closeOverlay("adminOverlay");
     closeOverlay("playerProfileOverlay");
     renderGames();
@@ -920,13 +939,15 @@ onAuthStateChanged(auth,async user=>{
 
   closeOverlay("loginOverlay");
 
+  unlockGuest();
+
   /* Vérification du ban avant de charger le profil */
   if(!isAdmin()){
     try{
       const banSnap=await getDoc(doc(db,"bans",user.uid));
       if(banSnap.exists()&&banActive(banSnap.data())){
-        await signOut(auth);
-        showModScreen("🔨","Tu es banni",banText(banSnap.data()));
+        lockGuest(banSnap.data());
+        renderGames();
         return;
       }
     }catch(e){console.error("Vérification du ban :",e)}
