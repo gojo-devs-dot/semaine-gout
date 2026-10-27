@@ -21,7 +21,9 @@
   --border:rgba(255,255,255,.12);
 }
 
-* { box-sizing:border-box }
+* { box-sizing:border-box; }
+
+html { scroll-behavior:smooth; }
 
 body {
   margin:0;
@@ -34,8 +36,8 @@ body {
   min-height:100vh;
 }
 
-button,input,textarea,select { font:inherit }
-button { cursor:pointer }
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; }
 
 button:focus-visible,
 input:focus-visible,
@@ -111,14 +113,15 @@ header {
   border:1px solid var(--border);
 }
 
-.btn.green { background:var(--green) }
-.btn.red { background:var(--danger);color:#2b1017 }
-.btn.small { padding:7px 10px;font-size:.85rem }
+.btn.green { background:var(--green); }
+.btn.red { background:var(--danger);color:#2b1017; }
+.btn.small { padding:7px 10px;font-size:.85rem; }
 
 .gradient-text {
   background:linear-gradient(90deg,var(--orange),var(--pink));
   color:transparent;
   background-clip:text;
+  -webkit-background-clip:text;
 }
 
 main {
@@ -165,7 +168,7 @@ h1 {
 }
 
 @keyframes bob {
-  50% { transform:translateY(-10px) rotate(3deg) }
+  50% { transform:translateY(-10px) rotate(3deg); }
 }
 
 .notice {
@@ -194,8 +197,13 @@ h1 {
   border-radius:12px;
 }
 
-.toolbar .search { flex:1 1 240px }
-.toolbar select { flex:0 1 190px }
+.field option {
+  background:#241b30;
+  color:var(--text);
+}
+
+.toolbar .search { flex:1 1 240px; }
+.toolbar select { flex:0 1 190px; }
 
 .section-title {
   display:flex;
@@ -210,7 +218,7 @@ h1 {
   font-size:1.55rem;
 }
 
-.muted { color:var(--muted) }
+.muted { color:var(--muted); }
 
 .game-grid {
   display:grid;
@@ -225,6 +233,7 @@ h1 {
   border-radius:20px;
   background:linear-gradient(145deg,#ffffff0e,#ffffff05);
   transition:.2s;
+  min-width:0;
 }
 
 .game-card:hover {
@@ -232,14 +241,8 @@ h1 {
   border-color:#ffb45480;
 }
 
-/* Apparence des jeux en maintenance */
-.game-card.maintenance {
-  border-color:#ffb45480;
-}
-
-.game-card.maintenance:hover {
-  border-color:var(--orange);
-}
+.game-card.maintenance { border-color:#ffb45480; }
+.game-card.maintenance:hover { border-color:var(--orange); }
 
 .game-cover {
   min-height:150px;
@@ -265,7 +268,10 @@ h1 {
   padding:5px 9px;
 }
 
-.game-info { padding:16px }
+.game-info {
+  padding:16px;
+  overflow-wrap:anywhere;
+}
 
 .game-info h3 {
   margin:0 0 8px;
@@ -285,7 +291,7 @@ h1 {
   flex-wrap:wrap;
 }
 
-.game-buttons .btn { flex:1 }
+.game-buttons .btn { flex:1; }
 
 .maintenance-badge {
   display:inline-block;
@@ -329,7 +335,7 @@ footer {
   line-height:1.7;
 }
 
-footer strong { color:var(--text) }
+footer strong { color:var(--text); }
 
 .overlay {
   position:fixed;
@@ -343,7 +349,7 @@ footer strong { color:var(--text) }
   backdrop-filter:blur(8px);
 }
 
-.overlay.open { display:flex }
+.overlay.open { display:flex; }
 
 .modal {
   width:min(600px,100%);
@@ -356,8 +362,8 @@ footer strong { color:var(--text) }
   box-shadow:0 25px 90px #0008;
 }
 
-.modal.wide { width:min(950px,100%) }
-.modal h2 { margin:0 0 16px }
+.modal.wide { width:min(950px,100%); }
+.modal h2 { margin:0 0 16px; }
 
 .modal-head {
   display:flex;
@@ -396,7 +402,7 @@ footer strong { color:var(--text) }
   color:#f2e8fa;
 }
 
-.form-group.full { grid-column:1/-1 }
+.form-group.full { grid-column:1/-1; }
 
 textarea.field {
   min-height:110px;
@@ -425,6 +431,7 @@ textarea.field {
   justify-content:space-between;
   gap:12px;
   align-items:center;
+  min-width:0;
 }
 
 .admin-item p {
@@ -485,25 +492,6 @@ textarea.field {
   color:#ffe3b9;
 }
 
-.toast {
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:500;
-  padding:12px 18px;
-  border-radius:12px;
-  background:var(--green);
-  color:#13251d;
-  font-weight:800;
-  box-shadow:0 8px 35px #0005;
-  display:none;
-  max-width:90%;
-  text-align:center;
-}
-
-.toast.show { display:block }
-
 .compatibility-icon {
   text-align:center;
   font-size:3.5rem;
@@ -528,7 +516,7 @@ textarea.field {
   min-width:140px;
 }
 
-.announcement-card { --announce-color:var(--blue) }
+.announcement-card { --announce-color:var(--blue); }
 
 .announcement-card[data-type="update"] {
   --announce-color:var(--green);
@@ -586,7 +574,7 @@ textarea.field {
     padding-top:35px;
   }
 
-  .hero-art { display:none }
+  .hero-art { display:none; }
 
   .game-grid {
     grid-template-columns:repeat(2,minmax(0,1fr));
@@ -594,38 +582,33 @@ textarea.field {
 }
 
 @media(max-width:520px) {
-  header { align-items:flex-start }
-
-  .logo { font-size:1.05rem }
+  header { align-items:flex-start; }
+  .logo { font-size:1.05rem; }
 
   .logo-icon {
     width:38px;
     height:38px;
   }
 
-  .header-actions { flex-direction:column }
-
-  .header-actions .btn { padding:8px 10px }
-
-  .game-grid { grid-template-columns:1fr }
-
-  .form-grid { grid-template-columns:1fr }
-
-  .form-group.full { grid-column:auto }
-
-  .modal { padding:17px }
+  .header-actions { flex-direction:column; }
+  .header-actions .btn { padding:8px 10px; }
+  .game-grid { grid-template-columns:1fr; }
+  .form-grid { grid-template-columns:1fr; }
+  .form-group.full { grid-column:auto; }
+  .modal { padding:17px; }
 
   .admin-item {
     align-items:flex-start;
     flex-direction:column;
   }
 
-  .compatibility-actions { flex-direction:column }
+  .compatibility-actions { flex-direction:column; }
 }
 </style>
 </head>
 
 <body>
+
 <header>
   <div class="logo">
     <div class="logo-icon">🍔</div>
@@ -644,7 +627,10 @@ textarea.field {
     <div>
       <span class="eyebrow">🎮 LES JEUX DU CLUB INFORMATIQUE</span>
       <h1>Une petite faim de <span class="gradient-text">jeux ?</span></h1>
-      <p>Bienvenue sur Gourmand.fun ! Découvre les jeux du club informatique, lance une partie et amuse-toi. Il y a toujours quelque chose à tester !</p>
+      <p>
+        Bienvenue sur Gourmand.fun ! Découvre les jeux du club informatique,
+        lance une partie et amuse-toi. Il y a toujours quelque chose à tester !
+      </p>
       <button class="btn" id="discoverBtn">🍟 Découvrir les jeux</button>
     </div>
 
@@ -656,7 +642,8 @@ textarea.field {
     certains jeux sont jouables directement sur le site.
     D'autres peuvent ouvrir une page externe.
     <br>
-    📦 Les jeux proposés ici peuvent être téléchargés lorsque leur licence et leur page de distribution le permettent.
+    📦 Les jeux proposés ici peuvent être téléchargés lorsque leur licence
+    et leur page de distribution le permettent.
   </div>
 
   <section id="catalogue">
@@ -725,7 +712,7 @@ textarea.field {
   </div>
 </div>
 
-<!-- Connexion admin -->
+<!-- Connexion administrateur -->
 <div class="overlay" id="loginOverlay">
   <div class="modal">
     <div class="modal-head">
@@ -754,7 +741,7 @@ textarea.field {
     </div>
 
     <p class="muted">
-      Gère les jeux, leur maintenance et publie des annonces sans modifier le fichier HTML.
+      Gère les jeux, leur maintenance et publie des annonces sans modifier le HTML.
     </p>
 
     <div class="section-title">
@@ -996,8 +983,12 @@ function toast(message) {
   const el = $("toast");
   el.textContent = message;
   el.classList.add("show");
+
   clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => el.classList.remove("show"), 3500);
+
+  toast.timer = setTimeout(() => {
+    el.classList.remove("show");
+  }, 3500);
 }
 
 function isAdmin() {
@@ -1017,9 +1008,11 @@ function safeText(value) {
   return String(value ?? "");
 }
 
-/* Fermeture des fenêtres */
+/* FERMETURE DES FENÊTRES */
 document.querySelectorAll("[data-close]").forEach(button => {
-  button.addEventListener("click", () => closeOverlay(button.dataset.close));
+  button.addEventListener("click", () => {
+    closeOverlay(button.dataset.close);
+  });
 });
 
 document.querySelectorAll(".overlay").forEach(overlay => {
@@ -1028,6 +1021,7 @@ document.querySelectorAll(".overlay").forEach(overlay => {
 
     if (overlay.id === "gameOverlay") {
       stopCurrentGame();
+      return;
     }
 
     if (overlay.id === "announcementOverlay") {
@@ -1050,8 +1044,9 @@ document.addEventListener("keydown", event => {
     stopCurrentGame();
   }
 
-  ["loginOverlay", "adminOverlay", "platformWarningOverlay"]
-    .forEach(closeOverlay);
+  closeOverlay("loginOverlay");
+  closeOverlay("adminOverlay");
+  closeOverlay("platformWarningOverlay");
 
   pendingGame = null;
 
@@ -1064,7 +1059,7 @@ $("discoverBtn").addEventListener("click", () => {
   $("catalogue").scrollIntoView({ behavior:"smooth" });
 });
 
-/* Détection PC, tablette ou téléphone */
+/* DÉTECTION DE L'APPAREIL */
 function detectDevice() {
   const ua = navigator.userAgent || "";
   const uaData = navigator.userAgentData;
@@ -1114,7 +1109,7 @@ function platformLabel(platform) {
 }
 
 /* =====================================================
-   CATALOGUE DES JEUX ET MAINTENANCE
+   CATALOGUE DES JEUX
    ===================================================== */
 
 function renderGames() {
@@ -1125,6 +1120,7 @@ function renderGames() {
     const title = safeText(game.title).toLowerCase();
 
     const matchesSearch = title.includes(search);
+
     const matchesPlatform =
       platform === "all" ||
       game.platform === "all" ||
@@ -1146,6 +1142,7 @@ function renderGames() {
   if (!visible.length) {
     const empty = document.createElement("div");
     empty.className = "empty";
+
     empty.textContent = gamesLoaded
       ? "🍽️ Aucun jeu trouvé. Essaie une autre recherche !"
       : "🍳 Chargement du menu…";
@@ -1158,12 +1155,16 @@ function renderGames() {
     const card = document.createElement("article");
     card.className = "game-card";
 
-    if (game.maintenance === true) {
+    const inMaintenance = game.maintenance === true;
+    const admin = isAdmin();
+
+    if (inMaintenance) {
       card.classList.add("maintenance");
     }
 
     const cover = document.createElement("div");
     cover.className = "game-cover";
+
     cover.style.background =
       game.background || "linear-gradient(135deg,#55304d,#282142)";
 
@@ -1191,29 +1192,49 @@ function renderGames() {
     const buttons = document.createElement("div");
     buttons.className = "game-buttons";
 
-    if (game.maintenance === true) {
+    if (inMaintenance) {
       const maintenanceBadge = document.createElement("span");
       maintenanceBadge.className = "maintenance-badge";
-      maintenanceBadge.textContent = "🛠️ TEMPORAIREMENT INDISPONIBLE";
+
+      maintenanceBadge.textContent = admin
+        ? "🛠️ MAINTENANCE — MODE ADMIN"
+        : "🛠️ TEMPORAIREMENT INDISPONIBLE";
 
       const message = document.createElement("div");
       message.className = "maintenance-message";
+
       message.textContent =
         game.maintenanceMessage ||
         "Ce jeu est actuellement en maintenance. Reviens bientôt !";
 
-      const disabledButton = document.createElement("button");
-      disabledButton.className = "btn";
-      disabledButton.textContent = "🛠️ En maintenance";
-      disabledButton.disabled = true;
+      if (admin) {
+        const testButton = document.createElement("button");
+        testButton.className = "btn";
+        testButton.textContent = "🧪 Tester en tant qu’admin";
 
-      buttons.append(disabledButton);
+        testButton.addEventListener("click", () => {
+          playGame(game, true);
+        });
+
+        buttons.append(testButton);
+      } else {
+        const disabledButton = document.createElement("button");
+        disabledButton.className = "btn";
+        disabledButton.textContent = "🛠️ En maintenance";
+        disabledButton.disabled = true;
+
+        buttons.append(disabledButton);
+      }
+
       info.append(maintenanceBadge, message, buttons);
     } else {
       const play = document.createElement("button");
       play.className = "btn";
       play.textContent = "▶ Jouer";
-      play.addEventListener("click", () => playGame(game));
+
+      play.addEventListener("click", () => {
+        playGame(game);
+      });
 
       buttons.append(play);
       info.append(buttons);
@@ -1231,8 +1252,11 @@ $("platformFilter").addEventListener("change", renderGames);
    COMPATIBILITÉ ET LANCEMENT DES JEUX
    ===================================================== */
 
-function playGame(game) {
-  if (game.maintenance === true) {
+function playGame(game, adminTest = false) {
+  if (
+    game.maintenance === true &&
+    !(adminTest && isAdmin())
+  ) {
     toast(
       game.maintenanceMessage ||
       "🛠️ Ce jeu est temporairement indisponible."
@@ -1284,13 +1308,18 @@ $("cancelPlatformWarningBtn").addEventListener("click", () => {
 $("continuePlatformWarningBtn").addEventListener("click", () => {
   const game = pendingGame;
   pendingGame = null;
+
   closeOverlay("platformWarningOverlay");
 
   if (game) launchGame(game);
 });
 
 function launchGame(game) {
-  if (game.maintenance === true) {
+  /*
+   * Les visiteurs ne peuvent pas lancer un jeu en maintenance.
+   * L'administrateur connecté peut continuer à le tester.
+   */
+  if (game.maintenance === true && !isAdmin()) {
     toast("🛠️ Ce jeu est actuellement en maintenance.");
     return;
   }
@@ -1327,7 +1356,9 @@ function launchGame(game) {
 
   $("openGameTabBtn").onclick = () => {
     if (game.type === "html") {
-      toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
+      toast(
+        "Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet."
+      );
       return;
     }
 
@@ -1375,6 +1406,8 @@ $("closeGameBtn").addEventListener("click", stopCurrentGame);
 
 $("adminLoginBtn").addEventListener("click", () => {
   if (isAdmin()) {
+    renderAdminGames();
+    renderAdminAnnouncements();
     openOverlay("adminOverlay");
   } else {
     openOverlay("loginOverlay");
@@ -1406,6 +1439,7 @@ $("logoutBtn").addEventListener("click", async () => {
   try {
     await signOut(auth);
     closeOverlay("adminOverlay");
+    closeOverlay("loginOverlay");
     toast("Déconnexion réussie.");
   } catch (error) {
     console.error(error);
@@ -1417,10 +1451,17 @@ onAuthStateChanged(auth, user => {
   currentUser = user;
 
   $("logoutBtn").hidden = !user;
+
   $("adminLoginBtn").textContent =
     isAdmin() ? "🧑‍🍳 Administration" : "🔐 Administration";
 
+  // Actualise les boutons du catalogue selon le compte connecté.
+  renderGames();
+
   if (user && !isAdmin()) {
+    closeOverlay("adminOverlay");
+    closeOverlay("loginOverlay");
+
     toast("Ce compte n'a pas les droits administrateur.");
     signOut(auth).catch(console.error);
     return;
@@ -1435,7 +1476,7 @@ onAuthStateChanged(auth, user => {
 });
 
 /* =====================================================
-   GESTION DES JEUX
+   AJOUT ET MODIFICATION DES JEUX
    ===================================================== */
 
 $("gameForm").addEventListener("submit", async event => {
@@ -1470,6 +1511,9 @@ $("gameForm").addEventListener("submit", async event => {
     updatedAt: serverTimestamp()
   };
 
+  const saveButton = $("saveGameBtn");
+  saveButton.disabled = true;
+
   try {
     if (editingGame) {
       await updateDoc(doc(db, "games", editingGame), data);
@@ -1484,6 +1528,8 @@ $("gameForm").addEventListener("submit", async event => {
   } catch (error) {
     console.error("Erreur d'enregistrement du jeu :", error);
     toast("Impossible d'enregistrer. Vérifie les règles Firestore.");
+  } finally {
+    saveButton.disabled = false;
   }
 });
 
@@ -1505,7 +1551,9 @@ function renderAdminGames() {
   list.replaceChildren();
 
   if (!games.length) {
-    list.textContent = "Aucun jeu pour le moment.";
+    list.textContent = gamesLoaded
+      ? "Aucun jeu pour le moment."
+      : "Chargement des jeux…";
     return;
   }
 
@@ -1522,6 +1570,7 @@ function renderAdminGames() {
     const status = document.createElement("span");
     status.className =
       `status ${game.maintenance ? "maintenance" : "on"}`;
+
     status.textContent =
       game.maintenance ? "EN MAINTENANCE" : "DISPONIBLE";
 
@@ -1534,15 +1583,14 @@ function renderAdminGames() {
 
     if (game.maintenanceMessage) {
       const messagePreview = document.createElement("p");
-      messagePreview.textContent =
-        `Message : ${game.maintenanceMessage}`;
+      messagePreview.textContent = `Message : ${game.maintenanceMessage}`;
       left.append(messagePreview);
     }
 
     const actions = document.createElement("div");
     actions.className = "admin-item-actions";
 
-    /* Modifier un jeu */
+    /* Modifier */
     const edit = document.createElement("button");
     edit.className = "btn secondary small";
     edit.textContent = "✏️ Modifier";
@@ -1570,7 +1618,7 @@ function renderAdminGames() {
       });
     };
 
-    /* Mettre en maintenance ou réactiver */
+    /* Maintenance */
     const maintenanceButton = document.createElement("button");
 
     maintenanceButton.className =
@@ -1632,7 +1680,7 @@ function renderAdminGames() {
       }
     };
 
-    /* Supprimer un jeu */
+    /* Supprimer */
     const remove = document.createElement("button");
     remove.className = "btn red small";
     remove.textContent = "🗑️ Supprimer";
@@ -1643,7 +1691,9 @@ function renderAdminGames() {
         return;
       }
 
-      if (!confirm(`Supprimer le jeu « ${game.title} » ?`)) return;
+      if (!confirm(`Supprimer le jeu « ${game.title || "sans nom"} » ?`)) {
+        return;
+      }
 
       try {
         await deleteDoc(doc(db, "games", game.id));
@@ -1661,7 +1711,7 @@ function renderAdminGames() {
 }
 
 /* =====================================================
-   GESTION DES ANNONCES
+   ANNONCES : TYPES
    ===================================================== */
 
 const announcementTypes = {
@@ -1670,6 +1720,10 @@ const announcementTypes = {
   maintenance: { label:"MAINTENANCE", icon:"🛠️" },
   issue: { label:"PROBLÈME TECHNIQUE", icon:"🚨" }
 };
+
+/* =====================================================
+   AJOUT ET MODIFICATION DES ANNONCES
+   ===================================================== */
 
 $("announcementForm").addEventListener("submit", async event => {
   event.preventDefault();
@@ -1682,6 +1736,7 @@ $("announcementForm").addEventListener("submit", async event => {
   const title = $("announcementTitle").value.trim();
   const message = $("announcementMessage").value.trim();
   const expiresInput = $("announcementExpires").value;
+
   const expiresAt = expiresInput
     ? new Date(expiresInput).getTime()
     : null;
@@ -1708,6 +1763,9 @@ $("announcementForm").addEventListener("submit", async event => {
     updatedAt: serverTimestamp()
   };
 
+  const saveButton = $("saveAnnouncementBtn");
+  saveButton.disabled = true;
+
   try {
     if (editingAnnouncement) {
       await updateDoc(
@@ -1731,6 +1789,8 @@ $("announcementForm").addEventListener("submit", async event => {
   } catch (error) {
     console.error(error);
     toast("Impossible d'enregistrer l'annonce. Vérifie les règles Firestore.");
+  } finally {
+    saveButton.disabled = false;
   }
 });
 
@@ -1765,7 +1825,9 @@ function renderAdminAnnouncements() {
   list.replaceChildren();
 
   if (!announcements.length) {
-    list.textContent = "Aucune annonce enregistrée.";
+    list.textContent = announcementsLoaded
+      ? "Aucune annonce enregistrée."
+      : "Chargement des annonces…";
     return;
   }
 
@@ -1813,7 +1875,7 @@ function renderAdminAnnouncements() {
       const actions = document.createElement("div");
       actions.className = "admin-item-actions";
 
-      /* Modifier une annonce */
+      /* Modifier */
       const edit = document.createElement("button");
       edit.className = "btn secondary small";
       edit.textContent = "✏️ Modifier";
@@ -1892,7 +1954,7 @@ function renderAdminAnnouncements() {
           return;
         }
 
-        if (!confirm(`Supprimer l'annonce « ${item.title} » ?`)) {
+        if (!confirm(`Supprimer l'annonce « ${item.title || "sans titre"} » ?`)) {
           return;
         }
 
@@ -1928,7 +1990,9 @@ function getDismissedIds() {
 function saveDismissedId(id) {
   const ids = getDismissedIds();
 
-  if (!ids.includes(id)) ids.push(id);
+  if (!ids.includes(id)) {
+    ids.push(id);
+  }
 
   try {
     localStorage.setItem(
@@ -1946,7 +2010,10 @@ function activeAnnouncementList() {
   return announcements.filter(item => {
     if (!item.active) return false;
 
-    if (item.expiresAt && Number(item.expiresAt) <= now) {
+    if (
+      item.expiresAt &&
+      Number(item.expiresAt) <= now
+    ) {
       return false;
     }
 
@@ -1987,7 +2054,9 @@ function showNextAnnouncement() {
     !shownThisPage.has(item.id)
   );
 
-  if (next) displayAnnouncement(next);
+  if (next) {
+    displayAnnouncement(next);
+  }
 }
 
 function closePublicAnnouncement() {
@@ -2037,7 +2106,7 @@ $("showAnnouncementsBtn").addEventListener("click", () => {
 });
 
 /* =====================================================
-   FIRESTORE : SYNCHRONISATION
+   FIRESTORE : SYNCHRONISATION DES JEUX
    ===================================================== */
 
 onSnapshot(gamesRef, snapshot => {
@@ -2052,19 +2121,31 @@ onSnapshot(gamesRef, snapshot => {
   renderAdminGames();
 
   /*
-   * Si le jeu actuellement ouvert vient d'être mis en maintenance,
-   * on arrête sa partie et on informe le joueur.
+   * Si un jeu actuellement ouvert est placé en maintenance,
+   * le joueur normal est interrompu.
+   *
+   * L'administrateur peut continuer à tester le jeu.
    */
   if (currentGame) {
-    const latestGame = games.find(game => game.id === currentGame.id);
+    const latestGame = games.find(
+      game => game.id === currentGame.id
+    );
 
-    if (latestGame?.maintenance === true) {
-      stopCurrentGame();
-
-      toast(
+    if (
+      latestGame?.maintenance === true &&
+      !isAdmin()
+    ) {
+      const message =
         latestGame.maintenanceMessage ||
-        "🛠️ Ce jeu vient d'être placé en maintenance."
-      );
+        "🛠️ Ce jeu vient d'être placé en maintenance.";
+
+      stopCurrentGame();
+      toast(message);
+    } else if (latestGame) {
+      currentGame = latestGame;
+    } else {
+      stopCurrentGame();
+      toast("Ce jeu a été supprimé du catalogue.");
     }
   }
 }, error => {
@@ -2083,6 +2164,10 @@ onSnapshot(gamesRef, snapshot => {
   toast("Erreur de chargement des jeux.");
 });
 
+/* =====================================================
+   FIRESTORE : SYNCHRONISATION DES ANNONCES
+   ===================================================== */
+
 onSnapshot(announcementsRef, snapshot => {
   announcements = snapshot.docs.map(item => ({
     id:item.id,
@@ -2091,6 +2176,10 @@ onSnapshot(announcementsRef, snapshot => {
 
   announcementsLoaded = true;
 
+  /*
+   * Si l'annonce actuellement affichée a été supprimée,
+   * désactivée ou expirée, on la ferme.
+   */
   if (currentAnnouncement) {
     const latest = announcements.find(
       item => item.id === currentAnnouncement.id
@@ -2105,6 +2194,17 @@ onSnapshot(announcementsRef, snapshot => {
       closeOverlay("announcementOverlay");
     } else {
       currentAnnouncement = latest;
+
+      const type =
+        announcementTypes[latest.type] || announcementTypes.info;
+
+      $("announcementModal").dataset.type = latest.type || "info";
+      $("publicAnnouncementIcon").textContent = type.icon;
+      $("publicAnnouncementType").textContent = type.label;
+      $("publicAnnouncementTitle").textContent =
+        latest.title || "Annonce";
+      $("publicAnnouncementMessage").textContent =
+        latest.message || "";
     }
   }
 
@@ -2115,27 +2215,7 @@ onSnapshot(announcementsRef, snapshot => {
   toast("Impossible de charger les annonces.");
 });
 
-/* Vérification des dates d'expiration */
-setInterval(() => {
-  const now = Date.now();
-
-  if (currentAnnouncement) {
-    const expiresAt = Number(currentAnnouncement.expiresAt);
-
-    if (
-      currentAnnouncement.expiresAt &&
-      Number.isFinite(expiresAt) &&
-      expiresAt <= now
-    ) {
-      currentAnnouncement = null;
-      closeOverlay("announcementOverlay");
-    }
-  }
-
-  showNextAnnouncement();
-}, 15000);
-
-/* Informations de diagnostic */
+/* INFORMATIONS DE DIAGNOSTIC */
 console.info(
   "Gourmand.fun — appareil détecté :",
   detectDevice()
@@ -2143,7 +2223,7 @@ console.info(
 
 console.info("User-Agent :", navigator.userAgent);
 console.info("Maintenance des jeux activée.");
-
 </script>
+
 </body>
 </html>
