@@ -320,7 +320,7 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
 <div class="overlay" id="adminOverlay">
   <div class="modal wide">
     <div class="modal-head"><h2>🧑‍🍳 Administration</h2><button class="close-btn" data-close="adminOverlay">✕ Fermer</button></div>
-    <p class="muted">Gère les jeux, les annonces et consulte les statistiques des joueurs.</p>
+    <p class="muted">Gère les jeux, les annonces, les joueurs (kick / ban) et consulte les statistiques.</p>
 
     <div class="section-title"><h2>📊 Statistiques des joueurs</h2></div>
     <div id="adminPlayerStats" class="admin-list">Chargement…</div>
@@ -386,6 +386,41 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
   </div>
 </div>
 
+<!-- Écran affiché à un joueur banni ou expulsé -->
+<div class="overlay" id="banOverlay">
+  <div class="modal">
+    <div class="compatibility-icon" id="banIcon">🔨</div>
+    <h2 id="banTitle" style="text-align:center">Accès suspendu</h2>
+    <div class="compatibility-message" id="banMessage"></div>
+    <div class="compatibility-actions"><button class="btn" data-close="banOverlay">OK</button></div>
+  </div>
+</div>
+
+<!-- Fenêtre de modération (kick / ban) pour l'administrateur -->
+<div class="overlay" id="modOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2 id="modTitle">🔨 Bannir</h2><button class="close-btn" data-close="modOverlay">✕</button></div>
+    <p class="muted" id="modTarget"></p>
+    <div class="form-group">
+      <label for="modReason">Raison</label>
+      <input class="field" id="modReason" maxlength="200" placeholder="Ex. Pseudo inapproprié">
+    </div>
+    <div class="form-group" id="modDurationGroup">
+      <label for="modDuration">Durée du bannissement</label>
+      <select class="field" id="modDuration">
+        <option value="3600000">1 heure</option>
+        <option value="86400000">24 heures</option>
+        <option value="604800000">7 jours</option>
+        <option value="0">Définitif</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn red" id="modConfirmBtn">Confirmer</button>
+      <button class="btn secondary" data-close="modOverlay">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script type="module">
@@ -421,11 +456,14 @@ provider.setCustomParameters({prompt:"select_account"});
 const gamesRef=collection(db,"games");
 const announcementsRef=collection(db,"announcements");
 const playersRef=collection(db,"players");
+const bansRef=collection(db,"bans");
 
-let games=[],announcements=[],allPlayers=[];
+let games=[],announcements=[],allPlayers=[],allBans=[];
 let currentUser=null,currentGame=null,editingGame=null,editingAnnouncement=null;
 let currentAnnouncement=null,pendingGame=null,playerProfile=null;
 let gamesLoaded=false,announcementsLoaded=false,profileLoadToken=0;
+let unsubBan=null,unsubKick=null,unsubBans=null;
+let modAction=null,modTarget=null;
 const shownThisPage=new Set();
 const $=id=>document.getElementById(id);
 const safeText=value=>String(value??"");
@@ -472,7 +510,7 @@ document.addEventListener("keydown",e=>{
   if(e.key!=="Escape")return;
   stopCurrentGame();
   ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay",
-   "playerProfileOverlay","leaderboardOverlay"].forEach(closeOverlay);
+   "playerProfileOverlay","leaderboardOverlay","banOverlay","modOverlay"].forEach(closeOverlay);
   $("secretPanel").classList.remove("open");
   pendingGame=null;
   if($("announcementOverlay").classList.contains("open"))closePublicAnnouncement();
@@ -684,6 +722,110 @@ function stopCurrentGame(){
 }
 $("closeGameBtn").onclick=stopCurrentGame;
 
+/* ============================================================
+   Modération : kick et ban
+   - Ban : document bans/{uid} (raison, expiration, null = définitif)
+   - Kick : document kicks/{uid} avec un "nonce" qui change à chaque kick
+   ============================================================ */
+function banActive(b){
+  return !!b&&(!b.expiresAt||Number(b.expiresAt)>Date.now());
+}
+function banText(b){
+  return `Raison : ${b.reason||"non précisée"}\n`+
+    (b.expiresAt?
+      "Fin du bannissement : "+new Date(Number(b.expiresAt)).toLocaleString("fr-FR"):
+      "Bannissement définitif");
+}
+function showModScreen(icon,title,message){
+  stopCurrentGame();
+  ["playerProfileOverlay","leaderboardOverlay","platformWarningOverlay"].forEach(closeOverlay);
+  $("banIcon").textContent=icon;
+  $("banTitle").textContent=title;
+  $("banMessage").textContent=message;
+  openOverlay("banOverlay");
+}
+
+/* Surveille en direct le ban / kick du joueur connecté (et la liste des bans pour l'admin) */
+function watchModeration(user){
+  unsubBan?.();unsubKick?.();unsubBans?.();
+  unsubBan=unsubKick=unsubBans=null;
+  if(!user)return;
+
+  if(isAdmin()){
+    unsubBans=onSnapshot(bansRef,snap=>{
+      allBans=snap.docs.map(d=>({uid:d.id,...d.data()}));
+      renderAdminPlayerStats();
+    },e=>console.error("Bans :",e));
+    return;
+  }
+
+  unsubBan=onSnapshot(doc(db,"bans",user.uid),async snap=>{
+    if(!snap.exists()||!banActive(snap.data()))return;
+    const data=snap.data();
+    try{await signOut(auth)}catch(e){console.error(e)}
+    showModScreen("🔨","Tu es banni",banText(data));
+  },e=>console.error("Ban :",e));
+
+  let first=true,baseline=null;
+  unsubKick=onSnapshot(doc(db,"kicks",user.uid),async snap=>{
+    const nonce=snap.exists()?snap.data().nonce:null;
+    if(first){first=false;baseline=nonce;return}
+    if(nonce&&nonce!==baseline){
+      baseline=nonce;
+      const reason=snap.data().reason||"non précisée";
+      try{await signOut(auth)}catch(e){console.error(e)}
+      showModScreen("👢","Tu as été expulsé",`Raison : ${reason}\nTu peux te reconnecter.`);
+    }
+  },e=>console.error("Kick :",e));
+}
+
+function openMod(action,player){
+  modAction=action;
+  modTarget=player;
+  $("modTitle").textContent=action==="ban"?"🔨 Bannir un joueur":"👢 Expulser un joueur";
+  $("modTarget").textContent=player.nickname||player.uid;
+  $("modDurationGroup").style.display=action==="ban"?"":"none";
+  $("modReason").value="";
+  openOverlay("modOverlay");
+}
+
+$("modConfirmBtn").onclick=async()=>{
+  if(!isAdmin()||!modTarget)return toast("Accès refusé.");
+  if(modTarget.uid===currentUser.uid)return toast("Tu ne peux pas te sanctionner toi-même.");
+
+  const reason=$("modReason").value.trim()||"Non précisée";
+  $("modConfirmBtn").disabled=true;
+  try{
+    if(modAction==="ban"){
+      const duration=Number($("modDuration").value);
+      await setDoc(doc(db,"bans",modTarget.uid),{
+        uid:modTarget.uid,
+        nickname:modTarget.nickname||"",
+        reason,
+        expiresAt:duration?Date.now()+duration:null,
+        bannedBy:currentUser.email,
+        createdAt:serverTimestamp()
+      });
+      try{await setDoc(doc(db,"players",modTarget.uid),{banned:true},{merge:true})}catch{}
+      toast("🔨 Joueur banni.");
+    }else{
+      await setDoc(doc(db,"kicks",modTarget.uid),{
+        uid:modTarget.uid,
+        reason,
+        nonce:Date.now()+"-"+Math.random(),
+        createdAt:serverTimestamp()
+      });
+      toast("👢 Joueur expulsé.");
+    }
+    closeOverlay("modOverlay");
+  }catch(e){
+    console.error(e);
+    toast("Action impossible. Vérifie les règles Firestore (bans / kicks).");
+  }finally{
+    $("modConfirmBtn").disabled=false;
+  }
+};
+
 /* Connexion joueur et administrateur */
 $("adminLoginBtn").onclick=()=>{
   if(isAdmin()){
@@ -762,6 +904,8 @@ onAuthStateChanged(auth,async user=>{
   const token=++profileLoadToken;
   playerProfile=null;
 
+  watchModeration(user);
+
   $("logoutBtn").hidden=!user;
   $("adminLoginBtn").textContent=isAdmin()?"🧑‍🍳 Administration":"🔐 Administration";
   $("profileBtn").hidden=true;
@@ -775,6 +919,19 @@ onAuthStateChanged(auth,async user=>{
   }
 
   closeOverlay("loginOverlay");
+
+  /* Vérification du ban avant de charger le profil */
+  if(!isAdmin()){
+    try{
+      const banSnap=await getDoc(doc(db,"bans",user.uid));
+      if(banSnap.exists()&&banActive(banSnap.data())){
+        await signOut(auth);
+        showModScreen("🔨","Tu es banni",banText(banSnap.data()));
+        return;
+      }
+    }catch(e){console.error("Vérification du ban :",e)}
+    if(token!==profileLoadToken)return;
+  }
 
   if(isAdmin()){
     $("adminLoginBtn").textContent="🧑‍🍳 Administration";
@@ -963,7 +1120,7 @@ function renderLeaderboard(){
   box.replaceChildren();
 
   const sorted=[...allPlayers]
-    .filter(p=>p.nickname)
+    .filter(p=>p.nickname&&!p.banned)
     .sort((a,b)=>playerScore(b)-playerScore(a));
 
   if(!sorted.length){
@@ -1015,10 +1172,12 @@ function renderAdminPlayerStats(){
   box.replaceChildren();
 
   const totalXP=allPlayers.reduce((s,p)=>s+(Number(p.xp)||0),0);
+  const activeBans=allBans.filter(banActive).length;
   const stats=[
     ["👥 Profils joueurs",allPlayers.length],
     ["⭐ XP cumulée",totalXP],
-    ["🏆 Succès obtenus",allPlayers.reduce((s,p)=>s+achievementCount(p),0)]
+    ["🏆 Succès obtenus",allPlayers.reduce((s,p)=>s+achievementCount(p),0)],
+    ["🔨 Joueurs bannis",activeBans]
   ];
 
   stats.forEach(([label,value])=>{
@@ -1043,15 +1202,68 @@ function renderAdminPlayerStats(){
   }
 
   [...allPlayers].sort((a,b)=>(Number(b.xp)||0)-(Number(a.xp)||0)).forEach(p=>{
+    const ban=allBans.find(b=>b.uid===p.uid&&banActive(b));
+
     const row=document.createElement("div");
     row.className="admin-item";
+
     const left=document.createElement("div");
     const name=document.createElement("strong");
     name.textContent=p.nickname||"Joueur sans pseudo";
+    left.append(name);
+
+    if(ban){
+      const st=document.createElement("span");
+      st.className="status off";
+      st.textContent=ban.expiresAt?"BANNI (temporaire)":"BANNI";
+      left.append(document.createTextNode(" "),st);
+    }
+
     const detail=document.createElement("p");
     detail.textContent=`Niveau ${levelFromXP(p.xp)} • ${Number(p.xp)||0} XP • ${achievementCount(p)} succès • ${Number(p.gamesPlayed)||0} parties`;
-    left.append(name,detail);
-    row.append(left);
+    left.append(detail);
+
+    if(ban){
+      const why=document.createElement("p");
+      why.textContent="Raison : "+(ban.reason||"non précisée")+
+        (ban.expiresAt?" • fin le "+new Date(Number(ban.expiresAt)).toLocaleString("fr-FR"):" • définitif");
+      left.append(why);
+    }
+
+    const actions=document.createElement("div");
+    actions.className="admin-item-actions";
+
+    if(p.uid!==currentUser?.uid){
+      const kick=document.createElement("button");
+      kick.className="btn secondary small";
+      kick.textContent="👢 Kick";
+      kick.onclick=()=>openMod("kick",p);
+      actions.append(kick);
+
+      const banBtn=document.createElement("button");
+      if(ban){
+        banBtn.className="btn green small";
+        banBtn.textContent="✅ Débannir";
+        banBtn.onclick=async()=>{
+          if(!isAdmin()||!confirm(`Débannir « ${p.nickname||p.uid} » ?`))return;
+          try{
+            await deleteDoc(doc(db,"bans",p.uid));
+            try{await setDoc(doc(db,"players",p.uid),{banned:false},{merge:true})}catch{}
+            toast("✅ Joueur débanni.");
+          }catch(e){
+            console.error(e);
+            toast("Impossible de débannir ce joueur.");
+          }
+        };
+      }else{
+        banBtn.className="btn red small";
+        banBtn.textContent="🔨 Bannir";
+        banBtn.onclick=()=>openMod("ban",p);
+      }
+      actions.append(banBtn);
+    }
+
+    row.append(left,actions);
     box.append(row);
   });
 }
