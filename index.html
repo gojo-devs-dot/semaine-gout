@@ -177,7 +177,7 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
 @media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:32px}.hero-art{font-size:5rem}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
   header{align-items:flex-start}.logo{font-size:1rem}.logo-icon{width:37px;height:37px}
-  .header-actions{max-width:58%}.header-actions .btn{padding:8px 9px;font-size:.8rem}
+  .header-actions{max-width:65%}.header-actions .btn{padding:8px 9px;font-size:.8rem}
   .game-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}
   .modal{padding:16px}.admin-item{align-items:flex-start;flex-direction:column}
 }
@@ -194,6 +194,7 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
   <div class="header-actions">
     <button class="btn secondary" id="showAnnouncementsBtn">📢 Annonces</button>
     <button class="btn secondary" id="playerLoginBtn">👤 Connexion joueur</button>
+    <button class="btn secondary" id="guestLoginBtn">🎮 Jouer en invité</button>
     <button class="btn secondary" id="profileBtn" hidden>🏆 Mon profil</button>
     <button class="btn secondary" id="leaderboardBtn">🥇 Classement</button>
     <button class="btn secondary" id="adminLoginBtn">🔐 Administration</button>
@@ -298,7 +299,7 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
 <div class="overlay" id="playerProfileOverlay">
   <div class="modal">
     <div class="modal-head"><h2>🍔 Mon profil</h2><button class="close-btn" data-close="playerProfileOverlay">✕</button></div>
-    <div id="profileContent"><p>Connecte-toi avec Google pour créer ton profil.</p></div>
+    <div id="profileContent"><p>Connecte-toi pour créer ton profil.</p></div>
     <div class="form-group">
       <label for="playerNickname">Ton pseudo (3 à 20 caractères)</label>
       <input class="field" id="playerNickname" maxlength="20" placeholder="Ex. BurgerMaster">
@@ -391,13 +392,14 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,
-  serverTimestamp,getDoc,setDoc,query,orderBy,limit
+  serverTimestamp,getDoc,setDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import {
-  getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut
+  getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,
+  signOut,signInAnonymously
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-/* Firebase : configuration du projet existant */
+/* Configuration Firebase du projet */
 const firebaseConfig={
   apiKey:"AIzaSyAkSlA1QytOQvmhpz_eTu1I5BdN1zClpPY",
   authDomain:"jeux-feuxxx.firebaseapp.com",
@@ -408,11 +410,14 @@ const firebaseConfig={
   appId:"1:351401695038:web:dd3dbd6c5ff85aeb81fe6f",
   measurementId:"G-41PSST98ZZ"
 };
+
 const ADMIN_EMAIL="x.kaboom.x02@gmail.com";
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 const auth=getAuth(app);
 const provider=new GoogleAuthProvider();
+provider.setCustomParameters({prompt:"select_account"});
+
 const gamesRef=collection(db,"games");
 const announcementsRef=collection(db,"announcements");
 const playersRef=collection(db,"players");
@@ -426,39 +431,59 @@ const $=id=>document.getElementById(id);
 const safeText=value=>String(value??"");
 
 function toast(message){
-  const el=$("toast");el.textContent=message;el.classList.add("show");
-  clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),3300);
+  const el=$("toast");
+  el.textContent=message;
+  el.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer=setTimeout(()=>el.classList.remove("show"),3300);
 }
 function isAdmin(){
   return !!currentUser&&currentUser.email?.toLowerCase()===ADMIN_EMAIL.toLowerCase();
 }
+function isPlayer(){
+  return !!currentUser;
+}
 function openOverlay(id){$(id)?.classList.add("open")}
 function closeOverlay(id){$(id)?.classList.remove("open")}
 function escapeHTML(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
-document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>closeOverlay(b.dataset.close)));
-document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{
-  if(e.target!==o)return;
-  if(o.id==="gameOverlay")return stopCurrentGame();
-  if(o.id==="announcementOverlay")return closePublicAnnouncement();
-  if(o.id==="platformWarningOverlay")pendingGame=null;
-  o.classList.remove("open");
-}));
+function levelFromXP(xp){return Math.floor(Math.max(0,Number(xp)||0)/100)+1}
+function achievementCount(p){return Array.isArray(p?.achievements)?p.achievements.length:0}
+function playerScore(p){
+  return (Number(p.xp)||0)+achievementCount(p)*25+levelFromXP(p.xp)*10;
+}
+
+document.querySelectorAll("[data-close]").forEach(b=>{
+  b.addEventListener("click",()=>closeOverlay(b.dataset.close));
+});
+document.querySelectorAll(".overlay").forEach(o=>{
+  o.addEventListener("click",e=>{
+    if(e.target!==o)return;
+    if(o.id==="gameOverlay")return stopCurrentGame();
+    if(o.id==="announcementOverlay")return closePublicAnnouncement();
+    if(o.id==="platformWarningOverlay")pendingGame=null;
+    o.classList.remove("open");
+  });
+});
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape")return;
   stopCurrentGame();
-  ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay","playerProfileOverlay","leaderboardOverlay"].forEach(closeOverlay);
+  ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay",
+   "playerProfileOverlay","leaderboardOverlay"].forEach(closeOverlay);
   $("secretPanel").classList.remove("open");
   pendingGame=null;
   if($("announcementOverlay").classList.contains("open"))closePublicAnnouncement();
 });
+
 $("discoverBtn").onclick=()=>$("catalogue").scrollIntoView({behavior:"smooth"});
 $("openSourceInfoBtn").onclick=()=>openOverlay("openSourceOverlay");
 $("closeOpenSourceBtn").onclick=()=>closeOverlay("openSourceOverlay");
 $("confirmOpenSourceBtn").onclick=()=>closeOverlay("openSourceOverlay");
 
-/* Compatibilité appareil */
+/* Compatibilité des appareils */
 function detectDevice(){
   const ua=navigator.userAgent||"";
   if(/iPad/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1))return "tablet";
@@ -469,57 +494,113 @@ function detectDevice(){
   if(/Mobile/i.test(ua))return "phone";
   return "pc";
 }
-function deviceLabel(d){return d==="phone"?"téléphone":d==="tablet"?"tablette":"ordinateur"}
-function platformLabel(p){return p==="pc"?"🖥️ PC uniquement":p==="mobile"?"📱 Mobile / tablette":"💻 Tous appareils"}
+function deviceLabel(d){
+  return d==="phone"?"téléphone":d==="tablet"?"tablette":"ordinateur";
+}
+function platformLabel(p){
+  return p==="pc"?"🖥️ PC uniquement":
+    p==="mobile"?"📱 Mobile / tablette":"💻 Tous appareils";
+}
 function validateGameUrl(value){
-  try{const u=new URL(String(value||""));return ["https:","http:"].includes(u.protocol)?u.href:null}catch{return null}
+  try{
+    const u=new URL(String(value||""));
+    return ["https:","http:"].includes(u.protocol)?u.href:null;
+  }catch{return null}
 }
 
-/* Catalogue des jeux */
+/* Catalogue */
 function renderGames(){
   const search=$("searchInput").value.trim().toLowerCase();
   const platform=$("platformFilter").value;
   const visible=games.filter(g=>{
     const txt=[g.title,g.description,g.emoji].map(safeText).join(" ").toLowerCase();
-    return txt.includes(search)&&(platform==="all"||g.platform==="all"||g.platform===platform);
+    return txt.includes(search)&&
+      (platform==="all"||g.platform==="all"||g.platform===platform);
   });
   const mc=visible.filter(g=>g.maintenance===true).length;
-  $("gameCount").textContent=`${visible.length} jeu${visible.length>1?"x":""}`+(mc?` • ${mc} en maintenance`:"");
-  const grid=$("gameGrid");grid.replaceChildren();
+  $("gameCount").textContent=`${visible.length} jeu${visible.length>1?"x":""}`+
+    (mc?` • ${mc} en maintenance`:"");
+  const grid=$("gameGrid");
+  grid.replaceChildren();
+
   if(!visible.length){
-    const empty=document.createElement("div");empty.className="empty";
-    empty.textContent=gamesLoaded?"🍽️ Aucun jeu trouvé. Essaie une autre recherche !":"🍳 Chargement du menu…";
-    grid.append(empty);return;
+    const empty=document.createElement("div");
+    empty.className="empty";
+    empty.textContent=gamesLoaded?
+      "🍽️ Aucun jeu trouvé. Essaie une autre recherche !":"🍳 Chargement du menu…";
+    grid.append(empty);
+    return;
   }
+
   visible.forEach(game=>{
-    const card=document.createElement("article");card.className="game-card";
-    if(game.maintenance)card.classList.add("maintenance");
-    const cover=document.createElement("div");cover.className="game-cover";
+    const card=document.createElement("article");
+    card.className="game-card";
+
+    const cover=document.createElement("div");
+    cover.className="game-cover";
     cover.style.background=game.background||"linear-gradient(135deg,#55304d,#282142)";
-    const emoji=document.createElement("div");emoji.className="game-emoji";emoji.textContent=game.emoji||"🎮";
+
+    const emoji=document.createElement("div");
+    emoji.className="game-emoji";
+    emoji.textContent=game.emoji||"🎮";
     emoji.onclick=()=>recordEgg("emoji");
-    const badge=document.createElement("span");badge.className="platform-badge";badge.textContent=platformLabel(game.platform);
+
+    const badge=document.createElement("span");
+    badge.className="platform-badge";
+    badge.textContent=platformLabel(game.platform);
     cover.append(emoji,badge);
-    const info=document.createElement("div");info.className="game-info";
-    const title=document.createElement("h3");title.textContent=game.title||"Jeu sans nom";
-    const description=document.createElement("p");description.textContent=game.description||"Prêt à jouer ?";
+
+    const info=document.createElement("div");
+    info.className="game-info";
+
+    const title=document.createElement("h3");
+    title.textContent=game.title||"Jeu sans nom";
+
+    const description=document.createElement("p");
+    description.textContent=game.description||"Prêt à jouer ?";
     info.append(title,description);
-    const buttons=document.createElement("div");buttons.className="game-buttons";
+
+    const buttons=document.createElement("div");
+    buttons.className="game-buttons";
+
     if(game.maintenance){
-      const label=document.createElement("span");label.className="maintenance-badge";label.textContent=isAdmin()?"🛠️ MAINTENANCE — MODE ADMIN":"🛠️ TEMPORAIREMENT INDISPONIBLE";
-      const msg=document.createElement("div");msg.className="maintenance-message";msg.textContent=game.maintenanceMessage||"Ce jeu est en maintenance. Reviens bientôt !";
+      const label=document.createElement("span");
+      label.className="maintenance-badge";
+      label.textContent=isAdmin()?
+        "🛠️ MAINTENANCE — MODE ADMIN":"🛠️ TEMPORAIREMENT INDISPONIBLE";
+
+      const msg=document.createElement("div");
+      msg.className="maintenance-message";
+      msg.textContent=game.maintenanceMessage||"Ce jeu est en maintenance. Reviens bientôt !";
+
       if(isAdmin()){
-        const test=document.createElement("button");test.className="btn";test.textContent="🧪 Tester en tant qu’admin";test.onclick=()=>playGame(game,true);buttons.append(test);
+        const test=document.createElement("button");
+        test.className="btn";
+        test.textContent="🧪 Tester en tant qu’admin";
+        test.onclick=()=>playGame(game,true);
+        buttons.append(test);
       }else{
-        const b=document.createElement("button");b.className="btn";b.textContent="🛠️ En maintenance";b.disabled=true;buttons.append(b);
+        const b=document.createElement("button");
+        b.className="btn";
+        b.textContent="🛠️ En maintenance";
+        b.disabled=true;
+        buttons.append(b);
       }
       info.append(label,msg,buttons);
     }else{
-      const play=document.createElement("button");play.className="btn";play.textContent="▶ Jouer";
-      play.onclick=()=>{recordEgg("player");playGame(game)};
-      buttons.append(play);info.append(buttons);
+      const play=document.createElement("button");
+      play.className="btn";
+      play.textContent="▶ Jouer";
+      play.onclick=()=>{
+        recordEgg("player");
+        playGame(game);
+      };
+      buttons.append(play);
+      info.append(buttons);
     }
-    card.append(cover,info);grid.append(card);
+
+    card.append(cover,info);
+    grid.append(card);
   });
 }
 $("searchInput").addEventListener("input",()=>{
@@ -529,119 +610,222 @@ $("searchInput").addEventListener("input",()=>{
 $("platformFilter").addEventListener("change",renderGames);
 
 function playGame(game,adminTest=false){
-  if(game.maintenance&&!(adminTest&&isAdmin()))return toast(game.maintenanceMessage||"🛠️ Ce jeu est temporairement indisponible.");
+  if(game.maintenance&&!(adminTest&&isAdmin())){
+    return toast(game.maintenanceMessage||"🛠️ Ce jeu est temporairement indisponible.");
+  }
   const device=detectDevice();
-  const incompatible=(game.platform==="pc"&&device!=="pc")||(game.platform==="mobile"&&device==="pc");
+  const incompatible=(game.platform==="pc"&&device!=="pc")||
+    (game.platform==="mobile"&&device==="pc");
+
   if(!incompatible)return launchGame(game);
+
   pendingGame=game;
   $("platformWarningIcon").textContent=game.platform==="pc"?"🖥️":"📱";
-  $("platformWarningTitle").textContent=game.platform==="pc"?"Jeu conçu pour PC":"Jeu conçu pour mobile";
-  $("platformWarningMessage").textContent=game.platform==="pc"
-    ?`Ton appareil semble être un ${deviceLabel(device)}.\n\nCe jeu peut nécessiter un clavier, une souris ou un grand écran. Tu peux quand même essayer.`
-    :"Ce jeu est principalement prévu pour un écran tactile. Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.";
+  $("platformWarningTitle").textContent=game.platform==="pc"?
+    "Jeu conçu pour PC":"Jeu conçu pour mobile";
+  $("platformWarningMessage").textContent=game.platform==="pc"?
+    `Ton appareil semble être un ${deviceLabel(device)}.\n\nCe jeu peut nécessiter un clavier, une souris ou un grand écran. Tu peux quand même essayer.`:
+    "Ce jeu est principalement prévu pour un écran tactile. Ses commandes risquent d'être difficiles à utiliser au clavier ou à la souris.";
   openOverlay("platformWarningOverlay");
 }
-$("cancelPlatformWarningBtn").onclick=()=>{pendingGame=null;closeOverlay("platformWarningOverlay")};
+$("cancelPlatformWarningBtn").onclick=()=>{
+  pendingGame=null;
+  closeOverlay("platformWarningOverlay");
+};
 $("continuePlatformWarningBtn").onclick=()=>{
-  const g=pendingGame;pendingGame=null;closeOverlay("platformWarningOverlay");if(g)launchGame(g);
+  const g=pendingGame;
+  pendingGame=null;
+  closeOverlay("platformWarningOverlay");
+  if(g)launchGame(g);
 };
 
 function launchGame(game){
   if(game.maintenance&&!isAdmin())return toast("🛠️ Ce jeu est en maintenance.");
-  currentGame=game;$("playerTitle").textContent=`${game.emoji||"🎮"} ${game.title||"Jeu"}`;
-  const frame=$("gameFrame");frame.src="about:blank";frame.removeAttribute("srcdoc");frame.removeAttribute("sandbox");
+  currentGame=game;
+  $("playerTitle").textContent=`${game.emoji||"🎮"} ${game.title||"Jeu"}`;
+
+  const frame=$("gameFrame");
+  frame.src="about:blank";
+  frame.removeAttribute("srcdoc");
+  frame.removeAttribute("sandbox");
+
   if(game.type==="html"){
     frame.setAttribute("sandbox","allow-scripts allow-forms allow-pointer-lock allow-popups allow-modals");
     frame.srcdoc=game.content||"<p>Ce jeu n'a pas de code.</p>";
   }else{
     const url=validateGameUrl(game.content);
-    if(!url){currentGame=null;return toast("Le lien de ce jeu n'est pas valide.")}
+    if(!url){
+      currentGame=null;
+      return toast("Le lien de ce jeu n'est pas valide.");
+    }
     frame.src=url;
   }
+
   $("openGameTabBtn").onclick=()=>{
-    if(game.type==="html")return toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
-    const url=validateGameUrl(game.content);if(url)window.open(url,"_blank","noopener,noreferrer");else toast("Lien invalide.");
+    if(game.type==="html"){
+      return toast("Un jeu HTML intégré ne peut pas être ouvert directement dans un autre onglet.");
+    }
+    const url=validateGameUrl(game.content);
+    if(url)window.open(url,"_blank","noopener,noreferrer");
+    else toast("Lien invalide.");
   };
-  if(currentUser&&!isAdmin())awardGameXP(game.id);
+
+  if(currentUser)awardGameXP(game.id);
   openOverlay("gameOverlay");
 }
 function stopCurrentGame(){
-  const frame=$("gameFrame");if(frame){frame.src="about:blank";frame.removeAttribute("srcdoc")}
-  closeOverlay("gameOverlay");currentGame=null;
+  const frame=$("gameFrame");
+  if(frame){
+    frame.src="about:blank";
+    frame.removeAttribute("srcdoc");
+  }
+  closeOverlay("gameOverlay");
+  currentGame=null;
 }
 $("closeGameBtn").onclick=stopCurrentGame;
 
-/* Connexion admin séparée de la connexion joueur */
+/* Connexion joueur et administrateur */
 $("adminLoginBtn").onclick=()=>{
-  if(isAdmin()){renderAdminGames();renderAdminAnnouncements();renderAdminPlayerStats();openOverlay("adminOverlay")}
-  else openOverlay("loginOverlay");
+  if(isAdmin()){
+    renderAdminGames();
+    renderAdminAnnouncements();
+    renderAdminPlayerStats();
+    openOverlay("adminOverlay");
+  }else{
+    openOverlay("loginOverlay");
+  }
 };
+
 $("googleLoginBtn").onclick=async()=>{
   try{
     const result=await signInWithPopup(auth,provider);
     if(result.user.email?.toLowerCase()!==ADMIN_EMAIL.toLowerCase()){
-      await signOut(auth);return toast("Ce compte Google n'est pas autorisé à administrer le site.");
+      await signOut(auth);
+      return toast("Ce compte Google n'est pas autorisé à administrer le site.");
     }
-    closeOverlay("loginOverlay");openOverlay("adminOverlay");toast("Connexion administrateur réussie !");
-  }catch(e){console.error(e);toast("Connexion impossible. Vérifie Firebase et les fenêtres pop-up.")}
-};
-$("playerLoginBtn").onclick=async()=>{
-  if(currentUser&&!isAdmin()){openOverlay("playerProfileOverlay");renderPlayerProfile();return}
-  try{
-    await signInWithPopup(auth,provider);
-  }catch(e){console.error(e);toast("Connexion Google impossible.")}
-};
-$("logoutBtn").onclick=async()=>{
-  try{await signOut(auth);closeOverlay("adminOverlay");closeOverlay("loginOverlay");closeOverlay("playerProfileOverlay");toast("Déconnexion réussie.")}
-  catch(e){console.error(e);toast("La déconnexion a échoué.")}
+    closeOverlay("loginOverlay");
+    openOverlay("adminOverlay");
+    toast("Connexion administrateur réussie !");
+  }catch(e){
+    console.error(e);
+    toast("Connexion impossible. Vérifie Firebase et les fenêtres pop-up.");
+  }
 };
 
+/* Le bouton joueur ouvre le profil si une session existe */
+$("playerLoginBtn").onclick=async()=>{
+  if(currentUser){
+    renderPlayerProfile();
+    openOverlay("playerProfileOverlay");
+    return;
+  }
+  try{
+    await signInWithPopup(auth,provider);
+  }catch(e){
+    console.error(e);
+    toast("Connexion Google impossible. Vérifie les fenêtres pop-up.");
+  }
+};
+
+/* Connexion anonyme : permet de jouer sans compte Google */
+$("guestLoginBtn").onclick=async()=>{
+  try{
+    if(currentUser){
+      renderPlayerProfile();
+      openOverlay("playerProfileOverlay");
+      return;
+    }
+    await signInAnonymously(auth);
+    toast("🎮 Mode invité activé ! Tu peux jouer.");
+  }catch(e){
+    console.error("Connexion invité :",e);
+    toast("Impossible de se connecter en invité. Vérifie que la connexion anonyme est activée dans Firebase.");
+  }
+};
+
+$("logoutBtn").onclick=async()=>{
+  try{
+    await signOut(auth);
+    closeOverlay("adminOverlay");
+    closeOverlay("loginOverlay");
+    closeOverlay("playerProfileOverlay");
+    toast("Déconnexion réussie.");
+  }catch(e){
+    console.error(e);
+    toast("La déconnexion a échoué.");
+  }
+};
+
+/* Profil, XP et succès : l'administrateur peut aussi avoir un profil joueur */
 onAuthStateChanged(auth,async user=>{
   currentUser=user;
-  profileLoadToken++;
+  const token=++profileLoadToken;
   playerProfile=null;
+
   $("logoutBtn").hidden=!user;
   $("adminLoginBtn").textContent=isAdmin()?"🧑‍🍳 Administration":"🔐 Administration";
   $("profileBtn").hidden=true;
 
   if(!user){
     $("playerLoginBtn").textContent="👤 Connexion joueur";
-    closeOverlay("adminOverlay");closeOverlay("playerProfileOverlay");
-    renderGames();return;
-  }
-
-  if(isAdmin()){
-    $("playerLoginBtn").textContent="👤 Connexion joueur";
-    closeOverlay("loginOverlay");
-    renderAdminGames();renderAdminAnnouncements();renderAdminPlayerStats();renderGames();
+    closeOverlay("adminOverlay");
+    closeOverlay("playerProfileOverlay");
+    renderGames();
     return;
   }
 
-  closeOverlay("adminOverlay");closeOverlay("loginOverlay");
-  $("playerLoginBtn").textContent="👤 Mon compte";
-  const token=profileLoadToken;
-  await loadPlayerProfile(user,token);
+  closeOverlay("loginOverlay");
+
+  if(isAdmin()){
+    $("adminLoginBtn").textContent="🧑‍🍳 Administration";
+    renderAdminGames();
+    renderAdminAnnouncements();
+    renderAdminPlayerStats();
+  }else{
+    closeOverlay("adminOverlay");
+  }
+
+  const fallbackName=user.isAnonymous?
+    "Invité-"+user.uid.slice(0,5):"";
+  $("playerLoginBtn").textContent=user.isAnonymous?
+    "🎮 Profil invité":"👤 Mon compte";
+
+  await loadPlayerProfile(user,token,fallbackName);
   renderGames();
 });
 
-/* Profil, niveaux, XP et succès synchronisés */
-const levelFromXP=xp=>Math.floor(Math.max(0,Number(xp)||0)/100)+1;
-const achievementCount=p=>Array.isArray(p.achievements)?p.achievements.length:0;
-function playerScore(p){return (Number(p.xp)||0)+achievementCount(p)*25+levelFromXP(p.xp)*10}
-
-async function loadPlayerProfile(user,token){
+async function loadPlayerProfile(user,token,fallbackName=""){
   try{
     const ref=doc(db,"players",user.uid);
     const snap=await getDoc(ref);
     if(token!==profileLoadToken||currentUser?.uid!==user.uid)return;
+
     if(!snap.exists()){
-      const profile={uid:user.uid,nickname:"",xp:0,level:1,gamesPlayed:0,achievements:[],createdAt:Date.now()};
-      await setDoc(ref,{...profile,updatedAt:serverTimestamp(),lastSeenAt:serverTimestamp()});
+      const profile={
+        uid:user.uid,
+        nickname:fallbackName,
+        xp:0,
+        level:1,
+        gamesPlayed:0,
+        achievements:[],
+        createdAt:Date.now()
+      };
+      await setDoc(ref,{
+        ...profile,
+        updatedAt:serverTimestamp(),
+        lastSeenAt:serverTimestamp()
+      });
       playerProfile=profile;
     }else{
       playerProfile={uid:user.uid,...snap.data()};
-      await setDoc(ref,{lastSeenAt:serverTimestamp()},{merge:true});
+      await setDoc(ref,{
+        lastSeenAt:serverTimestamp(),
+        updatedAt:serverTimestamp()
+      },{merge:true});
     }
+
+    if(token!==profileLoadToken||currentUser?.uid!==user.uid)return;
+
     $("profileBtn").hidden=false;
     $("playerLoginBtn").textContent="👤 "+(playerProfile.nickname||"Mon compte");
     syncLocalAchievements();
@@ -652,22 +836,19 @@ async function loadPlayerProfile(user,token){
   }
 }
 
-function syncLocalAchievements(){
-  if(!playerProfile)return;
-  const cloud=Array.isArray(playerProfile.achievements)?playerProfile.achievements:[];
-  cloud.forEach(id=>unlockedEggs.add(id));
-  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
-  updateEggPanel();
-}
 function renderPlayerProfile(){
-  if(!currentUser||isAdmin()||!playerProfile)return;
+  if(!currentUser||!playerProfile)return;
+
   $("playerNickname").value=playerProfile.nickname||"";
-  const xp=Number(playerProfile.xp)||0,level=levelFromXP(xp),progress=xp%100;
+  const xp=Number(playerProfile.xp)||0;
+  const level=levelFromXP(xp);
+  const progress=xp%100;
+
   $("profileContent").innerHTML=`
     <div style="text-align:center;padding:10px">
       <div style="font-size:3rem">🍔</div>
       <h2>${escapeHTML(playerProfile.nickname||"Nouveau joueur")}</h2>
-      <p class="muted">Niveau ${level}</p>
+      <p class="muted">${currentUser.isAnonymous?"Mode invité • ":""}Niveau ${level}</p>
     </div>
     <div class="player-stat"><span>⭐ Expérience</span><strong>${xp} XP</strong></div>
     <div class="player-stat"><span>🎮 Jeux lancés</span><strong>${Number(playerProfile.gamesPlayed)||0}</strong></div>
@@ -677,71 +858,146 @@ function renderPlayerProfile(){
     <p class="muted">${progress}/100 XP pour le niveau suivant</p>`;
 }
 
-$("profileBtn").onclick=()=>{renderPlayerProfile();openOverlay("playerProfileOverlay")};
+$("profileBtn").onclick=()=>{
+  renderPlayerProfile();
+  openOverlay("playerProfileOverlay");
+};
 $("saveNicknameBtn").onclick=savePlayerNickname;
 
 async function savePlayerNickname(){
-  if(!currentUser||isAdmin()||!playerProfile)return toast("Connecte-toi avec un compte joueur.");
+  if(!currentUser||!playerProfile)return toast("Connecte-toi avec un compte joueur.");
+
   const nickname=$("playerNickname").value.trim();
-  if(nickname.length<3||nickname.length>20)return toast("Le pseudo doit contenir entre 3 et 20 caractères.");
-  if(!/^[\p{L}\p{N}_ -]+$/u.test(nickname))return toast("Le pseudo contient des caractères non autorisés.");
+  if(nickname.length<3||nickname.length>20){
+    return toast("Le pseudo doit contenir entre 3 et 20 caractères.");
+  }
+  if(!/^[\p{L}\p{N}_ -]+$/u.test(nickname)){
+    return toast("Le pseudo contient des caractères non autorisés.");
+  }
+
   try{
-    await setDoc(doc(db,"players",currentUser.uid),{nickname,updatedAt:serverTimestamp()},{merge:true});
+    await setDoc(doc(db,"players",currentUser.uid),{
+      nickname,updatedAt:serverTimestamp()
+    },{merge:true});
     playerProfile.nickname=nickname;
     $("playerLoginBtn").textContent="👤 "+nickname;
-    renderPlayerProfile();toast("🎉 Pseudo enregistré !");
-  }catch(e){console.error(e);toast("Impossible d'enregistrer le pseudo.")}
+    renderPlayerProfile();
+    toast("🎉 Pseudo enregistré !");
+  }catch(e){
+    console.error(e);
+    toast("Impossible d'enregistrer le pseudo. Vérifie les règles Firebase.");
+  }
 }
 
 async function awardGameXP(gameId){
-  if(!currentUser||isAdmin()||!playerProfile)return;
+  if(!currentUser||!playerProfile)return;
+
   const key=`gourmandXP_${currentUser.uid}_${gameId}`;
   let last=0;
   try{last=Number(localStorage.getItem(key)||0)}catch{}
   if(Date.now()-last<10*60*1000)return;
+
   try{
-    const ref=doc(db,"players",currentUser.uid),snap=await getDoc(ref);
+    const ref=doc(db,"players",currentUser.uid);
+    const snap=await getDoc(ref);
     if(!snap.exists())return;
-    const data=snap.data(),xp=(Number(data.xp)||0)+10;
+
+    const data=snap.data();
+    const xp=(Number(data.xp)||0)+10;
     const gamesPlayed=(Number(data.gamesPlayed)||0)+1;
-    await setDoc(ref,{xp,level:levelFromXP(xp),gamesPlayed,lastSeenAt:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true});
+
+    await setDoc(ref,{
+      xp,
+      level:levelFromXP(xp),
+      gamesPlayed,
+      lastSeenAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    },{merge:true});
+
     playerProfile={...playerProfile,...data,xp,level:levelFromXP(xp),gamesPlayed};
     try{localStorage.setItem(key,String(Date.now()))}catch{}
     renderPlayerProfile();
     toast(`⭐ +10 XP ! Niveau ${levelFromXP(xp)}`);
-  }catch(e){console.error("XP :",e)}
+  }catch(e){
+    console.error("XP :",e);
+  }
 }
 
 async function syncAchievementToAccount(id){
-  if(!currentUser||isAdmin()||!playerProfile)return;
+  if(!currentUser||!playerProfile)return;
+
   try{
-    const ref=doc(db,"players",currentUser.uid),snap=await getDoc(ref);
+    const ref=doc(db,"players",currentUser.uid);
+    const snap=await getDoc(ref);
     if(!snap.exists())return;
-    const data=snap.data(),list=Array.isArray(data.achievements)?data.achievements:[];
+
+    const data=snap.data();
+    const list=Array.isArray(data.achievements)?data.achievements:[];
     if(list.includes(id))return;
-    const updated=[...list,id],xp=(Number(data.xp)||0)+25;
-    await setDoc(ref,{achievements:updated,xp,level:levelFromXP(xp),updatedAt:serverTimestamp()},{merge:true});
-    playerProfile={...playerProfile,achievements:updated,xp,level:levelFromXP(xp)};
+
+    const updated=[...list,id];
+    const xp=(Number(data.xp)||0)+25;
+
+    await setDoc(ref,{
+      achievements:updated,
+      xp,
+      level:levelFromXP(xp),
+      updatedAt:serverTimestamp()
+    },{merge:true});
+
+    playerProfile={
+      ...playerProfile,
+      achievements:updated,
+      xp,
+      level:levelFromXP(xp)
+    };
     renderPlayerProfile();
-  }catch(e){console.error("Synchronisation du succès :",e)}
+  }catch(e){
+    console.error("Synchronisation du succès :",e);
+  }
 }
 
 /* Classement */
 function renderLeaderboard(){
-  const box=$("leaderboardContent");box.replaceChildren();
-  const sorted=[...allPlayers].filter(p=>p.nickname).sort((a,b)=>playerScore(b)-playerScore(a));
-  if(!sorted.length){box.textContent="Aucun joueur classé pour le moment.";return}
+  const box=$("leaderboardContent");
+  box.replaceChildren();
+
+  const sorted=[...allPlayers]
+    .filter(p=>p.nickname)
+    .sort((a,b)=>playerScore(b)-playerScore(a));
+
+  if(!sorted.length){
+    box.textContent="Aucun joueur classé pour le moment.";
+    return;
+  }
+
   sorted.slice(0,100).forEach((p,i)=>{
-    const row=document.createElement("div");row.className="player-stat";
-    const rank=document.createElement("span");rank.className="player-rank";rank.textContent=["🥇","🥈","🥉"][i]||`#${i+1}`;
-    const details=document.createElement("div");details.className="player-details";
-    const name=document.createElement("strong");name.textContent=p.nickname;
-    const info=document.createElement("div");info.className="muted";
+    const row=document.createElement("div");
+    row.className="player-stat";
+
+    const rank=document.createElement("span");
+    rank.className="player-rank";
+    rank.textContent=["🥇","🥈","🥉"][i]||`#${i+1}`;
+
+    const details=document.createElement("div");
+    details.className="player-details";
+
+    const name=document.createElement("strong");
+    name.textContent=p.nickname;
+
+    const info=document.createElement("div");
+    info.className="muted";
     info.textContent=`Niveau ${levelFromXP(p.xp)} • ${Number(p.xp)||0} XP • ${achievementCount(p)} succès`;
-    details.append(name,info);row.append(rank,details);box.append(row);
+
+    details.append(name,info);
+    row.append(rank,details);
+    box.append(row);
   });
 }
-$("leaderboardBtn").onclick=()=>{renderLeaderboard();openOverlay("leaderboardOverlay")};
+$("leaderboardBtn").onclick=()=>{
+  renderLeaderboard();
+  openOverlay("leaderboardOverlay");
+};
 
 onSnapshot(playersRef,snap=>{
   allPlayers=snap.docs.map(d=>({uid:d.id,...d.data()}));
@@ -754,205 +1010,455 @@ onSnapshot(playersRef,snap=>{
 
 function renderAdminPlayerStats(){
   if(!isAdmin())return;
-  const box=$("adminPlayerStats");box.replaceChildren();
+
+  const box=$("adminPlayerStats");
+  box.replaceChildren();
+
   const totalXP=allPlayers.reduce((s,p)=>s+(Number(p.xp)||0),0);
   const stats=[
-    ["👥 Comptes joueurs",allPlayers.length],
+    ["👥 Profils joueurs",allPlayers.length],
     ["⭐ XP cumulée",totalXP],
     ["🏆 Succès obtenus",allPlayers.reduce((s,p)=>s+achievementCount(p),0)]
   ];
+
   stats.forEach(([label,value])=>{
-    const row=document.createElement("div");row.className="player-stat";
-    const a=document.createElement("span");a.textContent=label;
-    const b=document.createElement("strong");b.textContent=value;
-    row.append(a,b);box.append(row);
+    const row=document.createElement("div");
+    row.className="player-stat";
+    const a=document.createElement("span");
+    a.textContent=label;
+    const b=document.createElement("strong");
+    b.textContent=value;
+    row.append(a,b);
+    box.append(row);
   });
-  const title=document.createElement("h3");title.textContent="Joueurs";box.append(title);
-  if(!allPlayers.length){const p=document.createElement("p");p.textContent="Aucun joueur enregistré.";box.append(p)}
+
+  const title=document.createElement("h3");
+  title.textContent="Joueurs";
+  box.append(title);
+
+  if(!allPlayers.length){
+    const p=document.createElement("p");
+    p.textContent="Aucun joueur enregistré.";
+    box.append(p);
+  }
+
   [...allPlayers].sort((a,b)=>(Number(b.xp)||0)-(Number(a.xp)||0)).forEach(p=>{
-    const row=document.createElement("div");row.className="admin-item";
+    const row=document.createElement("div");
+    row.className="admin-item";
     const left=document.createElement("div");
-    const name=document.createElement("strong");name.textContent=p.nickname||"Joueur sans pseudo";
-    const detail=document.createElement("p");detail.textContent=`Niveau ${levelFromXP(p.xp)} • ${Number(p.xp)||0} XP • ${achievementCount(p)} succès • ${Number(p.gamesPlayed)||0} parties`;
-    left.append(name,detail);row.append(left);box.append(row);
+    const name=document.createElement("strong");
+    name.textContent=p.nickname||"Joueur sans pseudo";
+    const detail=document.createElement("p");
+    detail.textContent=`Niveau ${levelFromXP(p.xp)} • ${Number(p.xp)||0} XP • ${achievementCount(p)} succès • ${Number(p.gamesPlayed)||0} parties`;
+    left.append(name,detail);
+    row.append(left);
+    box.append(row);
   });
 }
 
-/* Gestion des jeux dans l'administration */
+/* Administration des jeux */
 $("gameForm").onsubmit=async event=>{
-  event.preventDefault();if(!isAdmin())return toast("Accès refusé.");
-  const title=$("gameTitle").value.trim(),content=$("gameContent").value.trim(),type=$("gameType").value;
+  event.preventDefault();
+  if(!isAdmin())return toast("Accès refusé.");
+
+  const title=$("gameTitle").value.trim();
+  const content=$("gameContent").value.trim();
+  const type=$("gameType").value;
+
   if(!title||!content)return toast("Remplis le nom et le contenu.");
-  if(type==="url"&&!validateGameUrl(content))return toast("Utilise une adresse commençant par https:// ou http://");
+  if(type==="url"&&!validateGameUrl(content)){
+    return toast("Utilise une adresse commençant par https:// ou http://");
+  }
+
   const data={
-    title,description:$("gameDescription").value.trim(),emoji:$("gameEmoji").value.trim()||"🎮",
-    background:$("gameBackground").value,type,platform:$("gamePlatform").value,content,updatedAt:serverTimestamp()
+    title,
+    description:$("gameDescription").value.trim(),
+    emoji:$("gameEmoji").value.trim()||"🎮",
+    background:$("gameBackground").value,
+    type,
+    platform:$("gamePlatform").value,
+    content,
+    updatedAt:serverTimestamp()
   };
+
   $("saveGameBtn").disabled=true;
   try{
-    if(editingGame){await updateDoc(doc(db,"games",editingGame),data);toast("Jeu modifié !")}
-    else{data.createdAt=serverTimestamp();await addDoc(gamesRef,data);toast("Jeu ajouté !");recordEgg("admin")}
+    if(editingGame){
+      await updateDoc(doc(db,"games",editingGame),data);
+      toast("Jeu modifié !");
+    }else{
+      data.createdAt=serverTimestamp();
+      await addDoc(gamesRef,data);
+      toast("Jeu ajouté !");
+      recordEgg("admin");
+    }
     resetGameForm();
-  }catch(e){console.error(e);toast("Enregistrement impossible. Vérifie les règles Firestore.")}
-  finally{$("saveGameBtn").disabled=false}
+  }catch(e){
+    console.error(e);
+    toast("Enregistrement impossible. Vérifie les règles Firestore.");
+  }finally{
+    $("saveGameBtn").disabled=false;
+  }
 };
+
 function resetGameForm(){
-  editingGame=null;$("gameForm").reset();$("gameEmoji").value="🎮";$("gameEditId").value="";
-  $("saveGameBtn").textContent="➕ Enregistrer le jeu";$("cancelGameEditBtn").hidden=true;
+  editingGame=null;
+  $("gameForm").reset();
+  $("gameEmoji").value="🎮";
+  $("gameEditId").value="";
+  $("saveGameBtn").textContent="➕ Enregistrer le jeu";
+  $("cancelGameEditBtn").hidden=true;
 }
 $("cancelGameEditBtn").onclick=resetGameForm;
 
 function renderAdminGames(){
   if(!isAdmin())return;
-  const list=$("adminGameList");list.replaceChildren();
-  if(!games.length){list.textContent=gamesLoaded?"Aucun jeu enregistré.":"Chargement…";return}
+
+  const list=$("adminGameList");
+  list.replaceChildren();
+
+  if(!games.length){
+    list.textContent=gamesLoaded?"Aucun jeu enregistré.":"Chargement…";
+    return;
+  }
+
   games.forEach(game=>{
-    const row=document.createElement("div");row.className="admin-item";
-    const left=document.createElement("div"),title=document.createElement("strong");
+    const row=document.createElement("div");
+    row.className="admin-item";
+
+    const left=document.createElement("div");
+    const title=document.createElement("strong");
     title.textContent=`${game.emoji||"🎮"} ${game.title||"Jeu sans nom"}`;
-    const status=document.createElement("span");status.className=`status ${game.maintenance?"maintenance":"on"}`;status.textContent=game.maintenance?"EN MAINTENANCE":"DISPONIBLE";
-    const detail=document.createElement("p");detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${platformLabel(game.platform)}`;
+
+    const status=document.createElement("span");
+    status.className=`status ${game.maintenance?"maintenance":"on"}`;
+    status.textContent=game.maintenance?"EN MAINTENANCE":"DISPONIBLE";
+
+    const detail=document.createElement("p");
+    detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${platformLabel(game.platform)}`;
     left.append(title,document.createTextNode(" "),status,detail);
-    const actions=document.createElement("div");actions.className="admin-item-actions";
-    const edit=document.createElement("button");edit.className="btn secondary small";edit.textContent="✏️ Modifier";
+
+    const actions=document.createElement("div");
+    actions.className="admin-item-actions";
+
+    const edit=document.createElement("button");
+    edit.className="btn secondary small";
+    edit.textContent="✏️ Modifier";
     edit.onclick=()=>{
-      editingGame=game.id;$("gameEditId").value=game.id;$("gameTitle").value=game.title||"";
-      $("gameDescription").value=game.description||"";$("gameEmoji").value=game.emoji||"🎮";
+      editingGame=game.id;
+      $("gameEditId").value=game.id;
+      $("gameTitle").value=game.title||"";
+      $("gameDescription").value=game.description||"";
+      $("gameEmoji").value=game.emoji||"🎮";
       $("gameBackground").value=game.background||"linear-gradient(135deg,#55304d,#282142)";
-      $("gameType").value=game.type||"url";$("gamePlatform").value=game.platform||"all";
-      $("gameContent").value=game.content||"";$("saveGameBtn").textContent="💾 Enregistrer les modifications";
-      $("cancelGameEditBtn").hidden=false;$("gameForm").scrollIntoView({behavior:"smooth"});
+      $("gameType").value=game.type||"url";
+      $("gamePlatform").value=game.platform||"all";
+      $("gameContent").value=game.content||"";
+      $("saveGameBtn").textContent="💾 Enregistrer les modifications";
+      $("cancelGameEditBtn").hidden=false;
+      $("gameForm").scrollIntoView({behavior:"smooth"});
     };
-    const maintenance=document.createElement("button");maintenance.className="btn small "+(game.maintenance?"green":"secondary");
+
+    const maintenance=document.createElement("button");
+    maintenance.className="btn small "+(game.maintenance?"green":"secondary");
     maintenance.textContent=game.maintenance?"🟢 Réactiver":"🛠️ Maintenance";
     maintenance.onclick=async()=>{
       if(!isAdmin())return;
       let message=game.maintenanceMessage||"";
-      if(!game.maintenance){message=prompt("Pourquoi ce jeu est-il en maintenance?",message||"Ce jeu est temporairement indisponible. Reviens bientôt !");if(message===null)return;message=message.trim()||"Ce jeu est temporairement indisponible."}
-      try{await updateDoc(doc(db,"games",game.id),{maintenance:!game.maintenance,maintenanceMessage:message,updatedAt:serverTimestamp()});toast(game.maintenance?"Jeu réactivé !":"Jeu en maintenance.")}
-      catch(e){console.error(e);toast("Impossible de changer la maintenance.")}
+      if(!game.maintenance){
+        message=prompt("Pourquoi ce jeu est-il en maintenance?",message||"Ce jeu est temporairement indisponible. Reviens bientôt !");
+        if(message===null)return;
+        message=message.trim()||"Ce jeu est temporairement indisponible.";
+      }
+      try{
+        await updateDoc(doc(db,"games",game.id),{
+          maintenance:!game.maintenance,
+          maintenanceMessage:message,
+          updatedAt:serverTimestamp()
+        });
+        toast(game.maintenance?"Jeu réactivé !":"Jeu en maintenance.");
+      }catch(e){
+        console.error(e);
+        toast("Impossible de changer la maintenance.");
+      }
     };
-    const remove=document.createElement("button");remove.className="btn red small";remove.textContent="🗑️ Supprimer";
+
+    const remove=document.createElement("button");
+    remove.className="btn red small";
+    remove.textContent="🗑️ Supprimer";
     remove.onclick=async()=>{
       if(!isAdmin()||!confirm(`Supprimer « ${game.title} » ?`))return;
-      try{await deleteDoc(doc(db,"games",game.id));toast("Jeu supprimé.")}
-      catch(e){console.error(e);toast("Suppression impossible.")}
+      try{
+        await deleteDoc(doc(db,"games",game.id));
+        toast("Jeu supprimé.");
+      }catch(e){
+        console.error(e);
+        toast("Suppression impossible.");
+      }
     };
-    actions.append(edit,maintenance,remove);row.append(left,actions);list.append(row);
+
+    actions.append(edit,maintenance,remove);
+    row.append(left,actions);
+    list.append(row);
   });
 }
 
 /* Annonces */
 const announcementTypes={
-  info:{label:"INFORMATION",icon:"ℹ️"},update:{label:"MISE À JOUR",icon:"🆕"},
-  maintenance:{label:"MAINTENANCE",icon:"🛠️"},issue:{label:"PROBLÈME TECHNIQUE",icon:"🚨"}
+  info:{label:"INFORMATION",icon:"ℹ️"},
+  update:{label:"MISE À JOUR",icon:"🆕"},
+  maintenance:{label:"MAINTENANCE",icon:"🛠️"},
+  issue:{label:"PROBLÈME TECHNIQUE",icon:"🚨"}
 };
+
 $("announcementForm").onsubmit=async event=>{
-  event.preventDefault();if(!isAdmin())return toast("Accès refusé.");
-  const title=$("announcementTitle").value.trim(),message=$("announcementMessage").value.trim();
-  const exp=$("announcementExpires").value,expiresAt=exp?new Date(exp).getTime():null;
+  event.preventDefault();
+  if(!isAdmin())return toast("Accès refusé.");
+
+  const title=$("announcementTitle").value.trim();
+  const message=$("announcementMessage").value.trim();
+  const exp=$("announcementExpires").value;
+  const expiresAt=exp?new Date(exp).getTime():null;
+
   if(!title||!message)return toast("Remplis le titre et le message.");
-  if(expiresAt!==null&&(!Number.isFinite(expiresAt)||expiresAt<=Date.now()))return toast("La date de fin doit être dans le futur.");
-  const data={title,message,type:$("announcementType").value,active:$("announcementActive").checked,expiresAt,updatedAt:serverTimestamp()};
+  if(expiresAt!==null&&(!Number.isFinite(expiresAt)||expiresAt<=Date.now())){
+    return toast("La date de fin doit être dans le futur.");
+  }
+
+  const data={
+    title,
+    message,
+    type:$("announcementType").value,
+    active:$("announcementActive").checked,
+    expiresAt,
+    updatedAt:serverTimestamp()
+  };
+
   $("saveAnnouncementBtn").disabled=true;
   try{
-    if(editingAnnouncement){await updateDoc(doc(db,"announcements",editingAnnouncement),data);toast("Annonce modifiée !")}
-    else{data.createdAt=serverTimestamp();await addDoc(announcementsRef,data);toast("Annonce enregistrée !")}
+    if(editingAnnouncement){
+      await updateDoc(doc(db,"announcements",editingAnnouncement),data);
+      toast("Annonce modifiée !");
+    }else{
+      data.createdAt=serverTimestamp();
+      await addDoc(announcementsRef,data);
+      toast("Annonce enregistrée !");
+    }
     resetAnnouncementForm();
-  }catch(e){console.error(e);toast("Impossible d'enregistrer l'annonce.")}
-  finally{$("saveAnnouncementBtn").disabled=false}
+  }catch(e){
+    console.error(e);
+    toast("Impossible d'enregistrer l'annonce.");
+  }finally{
+    $("saveAnnouncementBtn").disabled=false;
+  }
 };
+
 function resetAnnouncementForm(){
-  editingAnnouncement=null;$("announcementForm").reset();$("announcementActive").checked=true;$("announcementEditId").value="";
-  $("saveAnnouncementBtn").textContent="📢 Publier l'annonce";$("cancelAnnouncementEditBtn").hidden=true;
+  editingAnnouncement=null;
+  $("announcementForm").reset();
+  $("announcementActive").checked=true;
+  $("announcementEditId").value="";
+  $("saveAnnouncementBtn").textContent="📢 Publier l'annonce";
+  $("cancelAnnouncementEditBtn").hidden=true;
 }
 $("cancelAnnouncementEditBtn").onclick=resetAnnouncementForm;
-function formatExpiry(v){if(!v)return"Sans date de fin";const d=new Date(v);return Number.isNaN(d.getTime())?"Date inconnue":"Fin : "+d.toLocaleString("fr-FR")}
+
+function formatExpiry(v){
+  if(!v)return"Sans date de fin";
+  const d=new Date(v);
+  return Number.isNaN(d.getTime())?"Date inconnue":"Fin : "+d.toLocaleString("fr-FR");
+}
+
 function renderAdminAnnouncements(){
   if(!isAdmin())return;
-  const list=$("adminAnnouncementList");list.replaceChildren();
-  if(!announcements.length){list.textContent=announcementsLoaded?"Aucune annonce.":"Chargement…";return}
+
+  const list=$("adminAnnouncementList");
+  list.replaceChildren();
+
+  if(!announcements.length){
+    list.textContent=announcementsLoaded?"Aucune annonce.":"Chargement…";
+    return;
+  }
+
   [...announcements].sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)).forEach(item=>{
     const type=announcementTypes[item.type]||announcementTypes.info;
-    const row=document.createElement("div");row.className="admin-item";
-    const left=document.createElement("div"),title=document.createElement("strong");title.textContent=`${type.icon} ${item.title||"Annonce"}`;
-    const status=document.createElement("span");status.className=`status ${item.active?"on":"off"}`;status.textContent=item.active?"ACTIVE":"INACTIVE";
-    const detail=document.createElement("p");detail.textContent=`${type.label} • ${formatExpiry(item.expiresAt)}`;
-    const msg=document.createElement("p");msg.textContent=(item.message||"").slice(0,150);
+    const row=document.createElement("div");
+    row.className="admin-item";
+
+    const left=document.createElement("div");
+    const title=document.createElement("strong");
+    title.textContent=`${type.icon} ${item.title||"Annonce"}`;
+
+    const status=document.createElement("span");
+    status.className=`status ${item.active?"on":"off"}`;
+    status.textContent=item.active?"ACTIVE":"INACTIVE";
+
+    const detail=document.createElement("p");
+    detail.textContent=`${type.label} • ${formatExpiry(item.expiresAt)}`;
+
+    const msg=document.createElement("p");
+    msg.textContent=(item.message||"").slice(0,150);
     left.append(title,document.createTextNode(" "),status,detail,msg);
-    const actions=document.createElement("div");actions.className="admin-item-actions";
-    const edit=document.createElement("button");edit.className="btn secondary small";edit.textContent="✏️ Modifier";
+
+    const actions=document.createElement("div");
+    actions.className="admin-item-actions";
+
+    const edit=document.createElement("button");
+    edit.className="btn secondary small";
+    edit.textContent="✏️ Modifier";
     edit.onclick=()=>{
-      editingAnnouncement=item.id;$("announcementEditId").value=item.id;$("announcementTitle").value=item.title||"";
-      $("announcementMessage").value=item.message||"";$("announcementType").value=item.type||"info";$("announcementActive").checked=!!item.active;
-      if(item.expiresAt){const d=new Date(item.expiresAt);const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);$("announcementExpires").value=local.toISOString().slice(0,16)}
-      else $("announcementExpires").value="";
-      $("saveAnnouncementBtn").textContent="💾 Enregistrer les modifications";$("cancelAnnouncementEditBtn").hidden=false;
+      editingAnnouncement=item.id;
+      $("announcementEditId").value=item.id;
+      $("announcementTitle").value=item.title||"";
+      $("announcementMessage").value=item.message||"";
+      $("announcementType").value=item.type||"info";
+      $("announcementActive").checked=!!item.active;
+      if(item.expiresAt){
+        const d=new Date(item.expiresAt);
+        const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+        $("announcementExpires").value=local.toISOString().slice(0,16);
+      }else{
+        $("announcementExpires").value="";
+      }
+      $("saveAnnouncementBtn").textContent="💾 Enregistrer les modifications";
+      $("cancelAnnouncementEditBtn").hidden=false;
       $("announcementForm").scrollIntoView({behavior:"smooth"});
     };
-    const toggle=document.createElement("button");toggle.className="btn small "+(item.active?"secondary":"green");toggle.textContent=item.active?"⏸️ Désactiver":"▶️ Activer";
-    toggle.onclick=async()=>{try{await updateDoc(doc(db,"announcements",item.id),{active:!item.active,updatedAt:serverTimestamp()});toast("Statut de l'annonce modifié.")}catch(e){console.error(e);toast("Impossible de modifier l'annonce.")}};
-    const remove=document.createElement("button");remove.className="btn red small";remove.textContent="🗑️ Supprimer";
-    remove.onclick=async()=>{if(!confirm(`Supprimer « ${item.title} » ?`))return;try{await deleteDoc(doc(db,"announcements",item.id));toast("Annonce supprimée.")}catch(e){console.error(e);toast("Suppression impossible.")}};
-    actions.append(edit,toggle,remove);row.append(left,actions);list.append(row);
+
+    const toggle=document.createElement("button");
+    toggle.className="btn small "+(item.active?"secondary":"green");
+    toggle.textContent=item.active?"⏸️ Désactiver":"▶️ Activer";
+    toggle.onclick=async()=>{
+      if(!isAdmin())return;
+      try{
+        await updateDoc(doc(db,"announcements",item.id),{
+          active:!item.active,updatedAt:serverTimestamp()
+        });
+        toast("Statut de l'annonce modifié.");
+      }catch(e){
+        console.error(e);
+        toast("Impossible de modifier l'annonce.");
+      }
+    };
+
+    const remove=document.createElement("button");
+    remove.className="btn red small";
+    remove.textContent="🗑️ Supprimer";
+    remove.onclick=async()=>{
+      if(!isAdmin()||!confirm(`Supprimer « ${item.title} » ?`))return;
+      try{
+        await deleteDoc(doc(db,"announcements",item.id));
+        toast("Annonce supprimée.");
+      }catch(e){
+        console.error(e);
+        toast("Suppression impossible.");
+      }
+    };
+
+    actions.append(edit,toggle,remove);
+    row.append(left,actions);
+    list.append(row);
   });
 }
 
 /* Affichage public des annonces */
-function getDismissedIds(){try{return JSON.parse(localStorage.getItem("gourmandDismissedAnnouncementIds")||"[]")}catch{return[]}}
-function saveDismissedId(id){const ids=getDismissedIds();if(!ids.includes(id))ids.push(id);try{localStorage.setItem("gourmandDismissedAnnouncementIds",JSON.stringify(ids))}catch{}}
-function activeAnnouncementList(){return announcements.filter(a=>a.active&&(!a.expiresAt||Number(a.expiresAt)>Date.now()))}
+function getDismissedIds(){
+  try{return JSON.parse(localStorage.getItem("gourmandDismissedAnnouncementIds")||"[]")}
+  catch{return[]}
+}
+function saveDismissedId(id){
+  const ids=getDismissedIds();
+  if(!ids.includes(id))ids.push(id);
+  try{localStorage.setItem("gourmandDismissedAnnouncementIds",JSON.stringify(ids))}catch{}
+}
+function activeAnnouncementList(){
+  return announcements.filter(a=>a.active&&(!a.expiresAt||Number(a.expiresAt)>Date.now()));
+}
 function displayAnnouncement(item){
-  currentAnnouncement=item;shownThisPage.add(item.id);const type=announcementTypes[item.type]||announcementTypes.info;
-  $("publicAnnouncementIcon").textContent=type.icon;$("publicAnnouncementType").textContent=type.label;
-  $("publicAnnouncementTitle").textContent=item.title||"Annonce";$("publicAnnouncementMessage").textContent=item.message||"";
-  $("neverShowAnnouncement").checked=false;openOverlay("announcementOverlay");
+  currentAnnouncement=item;
+  shownThisPage.add(item.id);
+  const type=announcementTypes[item.type]||announcementTypes.info;
+  $("publicAnnouncementIcon").textContent=type.icon;
+  $("publicAnnouncementType").textContent=type.label;
+  $("publicAnnouncementTitle").textContent=item.title||"Annonce";
+  $("publicAnnouncementMessage").textContent=item.message||"";
+  $("neverShowAnnouncement").checked=false;
+  openOverlay("announcementOverlay");
 }
 function showNextAnnouncement(){
   if(!announcementsLoaded||currentAnnouncement||$("announcementOverlay").classList.contains("open"))return;
-  const dismissed=getDismissedIds();const next=activeAnnouncementList().find(a=>!dismissed.includes(a.id)&&!shownThisPage.has(a.id));
+  const dismissed=getDismissedIds();
+  const next=activeAnnouncementList().find(a=>!dismissed.includes(a.id)&&!shownThisPage.has(a.id));
   if(next)displayAnnouncement(next);
 }
 function closePublicAnnouncement(){
-  if(currentAnnouncement&&$("neverShowAnnouncement").checked)saveDismissedId(currentAnnouncement.id);
-  currentAnnouncement=null;closeOverlay("announcementOverlay");setTimeout(showNextAnnouncement,200);
+  if(currentAnnouncement&&$("neverShowAnnouncement").checked){
+    saveDismissedId(currentAnnouncement.id);
+  }
+  currentAnnouncement=null;
+  closeOverlay("announcementOverlay");
+  setTimeout(showNextAnnouncement,200);
 }
-$("closeAnnouncementBtn").onclick=closePublicAnnouncement;$("closeAnnouncementX").onclick=closePublicAnnouncement;
+$("closeAnnouncementBtn").onclick=closePublicAnnouncement;
+$("closeAnnouncementX").onclick=closePublicAnnouncement;
 $("showAnnouncementsBtn").onclick=()=>{
-  const active=activeAnnouncementList();if(!active.length)return toast("Aucune annonce active.");
-  const dismissed=getDismissedIds();const next=active.find(a=>!shownThisPage.has(a.id)&&!dismissed.includes(a.id))||active[0];
+  const active=activeAnnouncementList();
+  if(!active.length)return toast("Aucune annonce active.");
+  const dismissed=getDismissedIds();
+  const next=active.find(a=>!shownThisPage.has(a.id)&&!dismissed.includes(a.id))||active[0];
   displayAnnouncement(next);
 };
 
 /* Écoute en direct des jeux et annonces */
 onSnapshot(gamesRef,snap=>{
-  games=snap.docs.map(d=>({id:d.id,...d.data()}));gamesLoaded=true;renderGames();renderAdminGames();
+  games=snap.docs.map(d=>({id:d.id,...d.data()}));
+  gamesLoaded=true;
+  renderGames();
+  renderAdminGames();
+
   if(currentGame){
     const latest=games.find(g=>g.id===currentGame.id);
-    if(!latest||(latest.maintenance&&!isAdmin())){stopCurrentGame();toast(!latest?"Ce jeu a été supprimé.":latest.maintenanceMessage||"Jeu en maintenance.")}
-    else currentGame=latest;
+    if(!latest||(latest.maintenance&&!isAdmin())){
+      stopCurrentGame();
+      toast(!latest?"Ce jeu a été supprimé.":latest.maintenanceMessage||"Jeu en maintenance.");
+    }else{
+      currentGame=latest;
+    }
   }
 },error=>{
-  console.error("Jeux Firestore :",error);gamesLoaded=true;
+  console.error("Jeux Firestore :",error);
+  gamesLoaded=true;
   $("gameGrid").innerHTML='<div class="empty">😵 Impossible de charger les jeux. Vérifie ta connexion et les règles Firestore.</div>';
   $("gameCount").textContent="Erreur";
 });
+
 onSnapshot(announcementsRef,snap=>{
-  announcements=snap.docs.map(d=>({id:d.id,...d.data()}));announcementsLoaded=true;
+  announcements=snap.docs.map(d=>({id:d.id,...d.data()}));
+  announcementsLoaded=true;
+
   if(currentAnnouncement){
     const latest=announcements.find(a=>a.id===currentAnnouncement.id);
     if(!latest||!latest.active||(latest.expiresAt&&Number(latest.expiresAt)<=Date.now())){
-      currentAnnouncement=null;closeOverlay("announcementOverlay");
+      currentAnnouncement=null;
+      closeOverlay("announcementOverlay");
     }else{
-      currentAnnouncement=latest;const type=announcementTypes[latest.type]||announcementTypes.info;
-      $("publicAnnouncementIcon").textContent=type.icon;$("publicAnnouncementType").textContent=type.label;
-      $("publicAnnouncementTitle").textContent=latest.title||"Annonce";$("publicAnnouncementMessage").textContent=latest.message||"";
+      currentAnnouncement=latest;
+      const type=announcementTypes[latest.type]||announcementTypes.info;
+      $("publicAnnouncementIcon").textContent=type.icon;
+      $("publicAnnouncementType").textContent=type.label;
+      $("publicAnnouncementTitle").textContent=latest.title||"Annonce";
+      $("publicAnnouncementMessage").textContent=latest.message||"";
     }
   }
-  renderAdminAnnouncements();showNextAnnouncement();
-},error=>{console.error("Annonces Firestore :",error);announcementsLoaded=true});
 
-/* Les 16 succès secrets */
+  renderAdminAnnouncements();
+  showNextAnnouncement();
+},error=>{
+  console.error("Annonces Firestore :",error);
+  announcementsLoaded=true;
+});
+
+/* Les 16 secrets */
 const eggDefinitions=[
   ["logo","Le burger curieux","Tu as beaucoup interagi avec le logo."],
   ["konami","Le joueur rétro","Tu as trouvé le code rétro caché."],
@@ -971,83 +1477,187 @@ const eggDefinitions=[
   ["rainbow","Le mode arc-en-ciel","Tu as découvert un mode coloré secret."],
   ["console","Le développeur","Tu as découvert un secret lié au code."]
 ];
+
 let unlockedEggs=new Set();
-try{unlockedEggs=new Set(JSON.parse(localStorage.getItem("gourmandEggs")||"[]").filter(id=>eggDefinitions.some(e=>e[0]===id)))}catch{}
+try{
+  unlockedEggs=new Set(JSON.parse(localStorage.getItem("gourmandEggs")||"[]")
+    .filter(id=>eggDefinitions.some(e=>e[0]===id)));
+}catch{}
+
 function updateEggPanel(){
-  $("achievementCount").textContent=unlockedEggs.size;const list=$("achievementList");list.replaceChildren();
+  $("achievementCount").textContent=unlockedEggs.size;
+  const list=$("achievementList");
+  list.replaceChildren();
+
   eggDefinitions.forEach(([id,title,description])=>{
-    const unlocked=unlockedEggs.has(id),row=document.createElement("div");row.className=`achievement ${unlocked?"unlocked":"locked"}`;
-    const head=document.createElement("div");head.className="achievement-title";
-    const icon=document.createElement("span");icon.textContent=unlocked?"🏆":"🔒";
-    const name=document.createElement("span");name.textContent=title;head.append(icon,name);row.append(head);
-    if(unlocked){const p=document.createElement("p");p.className="achievement-description";p.textContent=description;row.append(p)}
+    const unlocked=unlockedEggs.has(id);
+    const row=document.createElement("div");
+    row.className=`achievement ${unlocked?"unlocked":"locked"}`;
+
+    const head=document.createElement("div");
+    head.className="achievement-title";
+
+    const icon=document.createElement("span");
+    icon.textContent=unlocked?"🏆":"🔒";
+
+    const name=document.createElement("span");
+    name.textContent=title;
+    head.append(icon,name);
+    row.append(head);
+
+    if(unlocked){
+      const p=document.createElement("p");
+      p.className="achievement-description";
+      p.textContent=description;
+      row.append(p);
+    }
     list.append(row);
   });
 }
+
+function syncLocalAchievements(){
+  if(!playerProfile)return;
+  const cloud=Array.isArray(playerProfile.achievements)?playerProfile.achievements:[];
+  cloud.forEach(id=>unlockedEggs.add(id));
+  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
+  updateEggPanel();
+}
+
 function recordEgg(id){
-  const def=eggDefinitions.find(e=>e[0]===id);if(!def)return;
+  const def=eggDefinitions.find(e=>e[0]===id);
+  if(!def)return;
   if(id==="admin"&&!isAdmin())return;
   if(unlockedEggs.has(id))return;
+
   unlockedEggs.add(id);
   try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
-  updateEggPanel();toast(`🏆 Réussite débloquée : ${def[1]} !`);
+  updateEggPanel();
+  toast(`🏆 Réussite débloquée : ${def[1]} !`);
   syncAchievementToAccount(id);
 }
+
 function burgerRain(count=22){
-  const layer=$("eggLayer"),emojis=["🍔","🍟","🍕","🌭","🍩","🧁","🍪","🥤","🍉","🍓"];
-  for(let i=0;i<count;i++)setTimeout(()=>{
-    const el=document.createElement("span");el.className="egg-float";el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    el.style.left=Math.random()*95+"%";el.style.animationDuration=(1.8+Math.random()*2.2)+"s";
-    layer.append(el);setTimeout(()=>el.remove(),4500);
-  },i*45);
+  const layer=$("eggLayer");
+  const emojis=["🍔","🍟","🍕","🌭","🍩","🧁","🍪","🥤","🍉","🍓"];
+
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const el=document.createElement("span");
+      el.className="egg-float";
+      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left=Math.random()*95+"%";
+      el.style.animationDuration=(1.8+Math.random()*2.2)+"s";
+      layer.append(el);
+      setTimeout(()=>el.remove(),4500);
+    },i*45);
+  }
 }
+
 let logoClicks=0,rapidClicks=[],footerClicks=0,heroClicks=0;
+
 $("logoIcon").onclick=()=>{
-  logoClicks++;rapidClicks.push(Date.now());rapidClicks=rapidClicks.filter(t=>Date.now()-t<2200);
-  if(logoClicks>=7){recordEgg("logo");burgerRain(35);logoClicks=0}
-  if(rapidClicks.length>=5){recordEgg("rapid");burgerRain(12);rapidClicks=[]}
+  logoClicks++;
+  rapidClicks.push(Date.now());
+  rapidClicks=rapidClicks.filter(t=>Date.now()-t<2200);
+  if(logoClicks>=7){
+    recordEgg("logo");
+    burgerRain(35);
+    logoClicks=0;
+  }
+  if(rapidClicks.length>=5){
+    recordEgg("rapid");
+    burgerRain(12);
+    rapidClicks=[];
+  }
 };
-$("heroBurger").onclick=()=>{heroClicks++;if(heroClicks>=10){recordEgg("hero");burgerRain(45);heroClicks=0}};
+
+$("heroBurger").onclick=()=>{
+  heroClicks++;
+  if(heroClicks>=10){
+    recordEgg("hero");
+    burgerRain(45);
+    heroClicks=0;
+  }
+};
+
 $("siteFooter").onclick=e=>{
-  if(e.target.closest("button,a"))return;footerClicks++;if(footerClicks>=5){recordEgg("footer");footerClicks=0}
+  if(e.target.closest("button,a"))return;
+  footerClicks++;
+  if(footerClicks>=5){
+    recordEgg("footer");
+    footerClicks=0;
+  }
 };
+
 const konamiSequence=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
 let konamiProgress=[];
+
 document.addEventListener("keydown",e=>{
   if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName))return;
-  konamiProgress.push(e.key.length===1?e.key.toLowerCase():e.key);konamiProgress=konamiProgress.slice(-konamiSequence.length);
+  konamiProgress.push(e.key.length===1?e.key.toLowerCase():e.key);
+  konamiProgress=konamiProgress.slice(-konamiSequence.length);
+
   if(konamiProgress.join("|")===konamiSequence.join("|")){
-    recordEgg("konami");document.body.classList.toggle("rainbow-mode");burgerRain(50);konamiProgress=[];
+    recordEgg("konami");
+    document.body.classList.toggle("rainbow-mode");
+    recordEgg("rainbow");
+    burgerRain(50);
+    konamiProgress=[];
   }
 });
+
 let typedWord="";
 document.addEventListener("keydown",e=>{
   if(e.key.length!==1||e.ctrlKey||e.altKey||e.metaKey)return;
   typedWord=(typedWord+e.key.toLowerCase()).slice(-20);
-  if(typedWord.endsWith("gourmand")){recordEgg("word");burgerRain(18);typedWord=""}
+  if(typedWord.endsWith("gourmand")){
+    recordEgg("word");
+    burgerRain(18);
+    typedWord="";
+  }
 });
-function openSecretPanel(){updateEggPanel();$("secretPanel").classList.add("open")}
-$("achievementsBtn").onclick=openSecretPanel;$("secretBadge").onclick=openSecretPanel;
+
+function openSecretPanel(){
+  updateEggPanel();
+  $("secretPanel").classList.add("open");
+}
+$("achievementsBtn").onclick=openSecretPanel;
+$("secretBadge").onclick=openSecretPanel;
 $("closeSecretPanel").onclick=()=>$("secretPanel").classList.remove("open");
+
 $("secretPartyBtn").onclick=()=>{
-  document.body.classList.toggle("party-mode");recordEgg("party");
-  if(document.body.classList.contains("party-mode")){burgerRain(25);toast("🎉 Mode fête activé !")}else toast("🍟 Mode fête désactivé.");
+  document.body.classList.toggle("party-mode");
+  recordEgg("party");
+  if(document.body.classList.contains("party-mode")){
+    burgerRain(25);
+    toast("🎉 Mode fête activé !");
+  }else{
+    toast("🍟 Mode fête désactivé.");
+  }
 };
+
 $("siteLogo").ondblclick=()=>{
   $("secretRecipe").classList.toggle("visible");
   if($("secretRecipe").classList.contains("visible"))recordEgg("recipe");
 };
 $("secretRecipe").onclick=()=>recordEgg("recipe");
+
 if(new Date().getHours()<5)recordEgg("midnight");
+
 let scrollEggUnlocked=false;
 window.addEventListener("scroll",()=>{
   if(!scrollEggUnlocked&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-10){
-    scrollEggUnlocked=true;recordEgg("scroll");
+    scrollEggUnlocked=true;
+    recordEgg("scroll");
   }
 },{passive:true});
-window.gourmand=()=>{recordEgg("console");burgerRain(30)};
-updateEggPanel();
 
+window.gourmand=()=>{
+  recordEgg("console");
+  burgerRain(30);
+};
+
+updateEggPanel();
 console.info("%c🍔 Gourmand.fun","font-size:24px;font-weight:bold;color:#ff668a");
 </script>
 </body>
