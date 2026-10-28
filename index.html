@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="favicon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#17111f">
 <meta name="description" content="Gourmand.fun : les jeux du club informatique.">
 <title>Gourmand.fun — Les jeux du club informatique</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 
 <style>
 :root{
@@ -177,7 +177,7 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
 .player-rank{font-size:1.15rem;font-weight:900;min-width:34px}
 .player-details{flex:1;overflow-wrap:anywhere}
 body.banned-lock #guestLoginBtn,body.banned-lock #playerLoginBtn,
-body.banned-lock #profileBtn,body.banned-lock #logoutBtn{display:none}
+body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPanelBtn{display:none}
 @media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:32px}.hero-art{font-size:5rem}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
   header{align-items:flex-start}.logo{font-size:1rem}.logo-icon{width:37px;height:37px}
@@ -201,6 +201,7 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn{display:none}
     <button class="btn secondary" id="guestLoginBtn">🎮 Jouer en invité</button>
     <button class="btn secondary" id="profileBtn" hidden>🏆 Mon profil</button>
     <button class="btn secondary" id="leaderboardBtn">🥇 Classement</button>
+    <button class="btn secondary" id="devPanelBtn" hidden>🛠️ Mes jeux</button>
     <button class="btn secondary" id="adminLoginBtn">🔐 Administration</button>
     <button class="btn secondary" id="logoutBtn" hidden>Déconnexion</button>
   </div>
@@ -395,6 +396,52 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn{display:none}
   </div>
 </div>
 
+<!-- Panneau développeur : modifier uniquement ses propres jeux -->
+<div class="overlay" id="devOverlay">
+  <div class="modal wide">
+    <div class="modal-head"><h2>🛠️ Mes jeux</h2><button class="close-btn" data-close="devOverlay">✕</button></div>
+    <p class="muted">Tu es développeur de ces jeux : tu peux les modifier et les mettre en maintenance.</p>
+    <div id="devGameList" class="admin-list"></div>
+    <form id="devGameForm" hidden style="margin-top:18px">
+      <h3>✏️ Modifier le jeu</h3>
+      <div class="form-grid">
+        <div class="form-group"><label for="devTitle">Nom du jeu</label><input class="field" id="devTitle" required maxlength="80"></div>
+        <div class="form-group"><label for="devEmoji">Emoji</label><input class="field" id="devEmoji" maxlength="12"></div>
+        <div class="form-group"><label for="devPlatform">Compatibilité</label>
+          <select class="field" id="devPlatform">
+            <option value="all">PC, tablette et téléphone</option><option value="pc">PC uniquement</option><option value="mobile">Mobile et tablette</option>
+          </select>
+        </div>
+        <div class="form-group"><label for="devType">Type de jeu</label>
+          <select class="field" id="devType"><option value="url">Lien vers un jeu / site</option><option value="html">Code HTML du jeu</option></select>
+        </div>
+        <div class="form-group full"><label for="devDescription">Description</label><input class="field" id="devDescription" maxlength="300"></div>
+        <div class="form-group full"><label for="devContent">Lien ou code HTML</label><textarea class="field" id="devContent" required></textarea></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn green" type="submit" id="saveDevGameBtn">💾 Enregistrer</button>
+        <button class="btn secondary" type="button" id="cancelDevEditBtn">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Admin : donner / retirer les droits développeur à un joueur -->
+<div class="overlay" id="devAssignOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2>👨‍💻 Droits développeur</h2><button class="close-btn" data-close="devAssignOverlay">✕</button></div>
+    <p class="muted" id="devAssignTarget"></p>
+    <div class="form-group">
+      <label for="devAssignGame">Donner les droits sur le jeu</label>
+      <select class="field" id="devAssignGame"></select>
+    </div>
+    <div class="form-actions"><button class="btn green" id="devAssignAddBtn">➕ Donner les droits</button></div>
+    <h3 style="margin-top:20px">Jeux de ce développeur</h3>
+    <div id="devAssignList" class="admin-list"></div>
+    <p class="help">Un développeur peut changer le lien ou le code de son jeu. Donne ce droit seulement à une personne de confiance.</p>
+  </div>
+</div>
+
 <div class="overlay" id="deleteAccountOverlay">
   <div class="modal">
     <div class="modal-head"><h2>🗑️ Supprimer mon compte</h2><button class="close-btn" data-close="deleteAccountOverlay">✕</button></div>
@@ -452,7 +499,7 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn{display:none}
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,
-  serverTimestamp,getDoc,setDoc
+  serverTimestamp,getDoc,setDoc,arrayUnion,arrayRemove
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import {
   getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,
@@ -506,6 +553,19 @@ function isAdmin(){
 }
 function isPlayer(){
   return !!currentUser;
+}
+/* Droits développeur : liste d'identifiants (devUids) stockée sur chaque jeu */
+function isDevOf(game){
+  return !!currentUser&&!currentUser.isAnonymous&&
+    Array.isArray(game?.devUids)&&game.devUids.includes(currentUser.uid);
+}
+function canTest(game){return isAdmin()||isDevOf(game)}
+function myDevGames(){return games.filter(isDevOf)}
+function updateDevButton(){
+  const show=!isAdmin()&&!bannedLock&&myDevGames().length>0;
+  $("devPanelBtn").hidden=!show;
+  if(!show)closeOverlay("devOverlay");
+  else if($("devOverlay").classList.contains("open"))renderDevGames();
 }
 function openOverlay(id){$(id)?.classList.add("open")}
 function closeOverlay(id){$(id)?.classList.remove("open")}
@@ -574,6 +634,7 @@ function validateGameUrl(value){
 
 /* Catalogue */
 function renderGames(){
+  updateDevButton();
   const search=$("searchInput").value.trim().toLowerCase();
   const platform=$("platformFilter").value;
   const visible=games.filter(g=>{
@@ -630,17 +691,17 @@ function renderGames(){
     if(game.maintenance){
       const label=document.createElement("span");
       label.className="maintenance-badge";
-      label.textContent=isAdmin()?
-        "🛠️ MAINTENANCE — MODE ADMIN":"🛠️ TEMPORAIREMENT INDISPONIBLE";
+      label.textContent=canTest(game)?
+        "🛠️ MAINTENANCE — MODE TEST":"🛠️ TEMPORAIREMENT INDISPONIBLE";
 
       const msg=document.createElement("div");
       msg.className="maintenance-message";
       msg.textContent=game.maintenanceMessage||"Ce jeu est en maintenance. Reviens bientôt !";
 
-      if(isAdmin()){
+      if(canTest(game)){
         const test=document.createElement("button");
         test.className="btn";
-        test.textContent="🧪 Tester en tant qu’admin";
+        test.textContent=isAdmin()?"🧪 Tester en tant qu’admin":"🧪 Tester mon jeu";
         test.onclick=()=>playGame(game,true);
         buttons.append(test);
       }else{
@@ -676,7 +737,7 @@ $("platformFilter").addEventListener("change",renderGames);
 function playGame(game,adminTest=false){
   if(bannedLock)return showModScreen("🔨","Tu es banni",banText(bannedLock));
   if(!currentUser)return toast("🎮 Connecte-toi ou clique sur « Jouer en invité » pour lancer un jeu.");
-  if(game.maintenance&&!(adminTest&&isAdmin())){
+  if(game.maintenance&&!(adminTest&&canTest(game))){
     return toast(game.maintenanceMessage||"🛠️ Ce jeu est temporairement indisponible.");
   }
   const device=detectDevice();
@@ -706,7 +767,7 @@ $("continuePlatformWarningBtn").onclick=()=>{
 };
 
 function launchGame(game){
-  if(game.maintenance&&!isAdmin())return toast("🛠️ Ce jeu est en maintenance.");
+  if(game.maintenance&&!canTest(game))return toast("🛠️ Ce jeu est en maintenance.");
   currentGame=game;
   $("playerTitle").textContent=`${game.emoji||"🎮"} ${game.title||"Jeu"}`;
 
@@ -864,6 +925,203 @@ $("modConfirmBtn").onclick=async()=>{
     toast("Action impossible. Vérifie les règles Firestore (bans / kicks).");
   }finally{
     $("modConfirmBtn").disabled=false;
+  }
+};
+
+/* ============================================================
+   Droits développeur
+   - L'admin donne les droits sur un jeu à un joueur (devUids)
+   - Le développeur peut modifier SON jeu et le mettre en maintenance
+   ============================================================ */
+let editingDevGame=null,devTarget=null;
+
+function renderDevGames(){
+  const list=$("devGameList");
+  list.replaceChildren();
+  const mine=myDevGames();
+
+  if(!mine.length){
+    list.textContent="Aucun jeu assigné.";
+    $("devGameForm").hidden=true;
+    return;
+  }
+
+  mine.forEach(game=>{
+    const row=document.createElement("div");
+    row.className="admin-item";
+
+    const left=document.createElement("div");
+    const title=document.createElement("strong");
+    title.textContent=`${game.emoji||"🎮"} ${game.title||"Jeu sans nom"}`;
+    const status=document.createElement("span");
+    status.className=`status ${game.maintenance?"maintenance":"on"}`;
+    status.textContent=game.maintenance?"EN MAINTENANCE":"DISPONIBLE";
+    left.append(title,document.createTextNode(" "),status);
+
+    const actions=document.createElement("div");
+    actions.className="admin-item-actions";
+
+    const edit=document.createElement("button");
+    edit.className="btn secondary small";
+    edit.textContent="✏️ Modifier";
+    edit.onclick=()=>{
+      editingDevGame=game.id;
+      $("devTitle").value=game.title||"";
+      $("devEmoji").value=game.emoji||"🎮";
+      $("devPlatform").value=game.platform||"all";
+      $("devType").value=game.type||"url";
+      $("devDescription").value=game.description||"";
+      $("devContent").value=game.content||"";
+      $("devGameForm").hidden=false;
+      $("devGameForm").scrollIntoView({behavior:"smooth"});
+    };
+
+    const maintenance=document.createElement("button");
+    maintenance.className="btn small "+(game.maintenance?"green":"secondary");
+    maintenance.textContent=game.maintenance?"🟢 Réactiver":"🛠️ Maintenance";
+    maintenance.onclick=async()=>{
+      if(!isDevOf(game))return;
+      let message=game.maintenanceMessage||"";
+      if(!game.maintenance){
+        message=prompt("Pourquoi ce jeu est-il en maintenance ?",message||"Ce jeu est temporairement indisponible. Reviens bientôt !");
+        if(message===null)return;
+        message=message.trim()||"Ce jeu est temporairement indisponible.";
+      }
+      try{
+        await updateDoc(doc(db,"games",game.id),{
+          maintenance:!game.maintenance,
+          maintenanceMessage:message,
+          updatedAt:serverTimestamp()
+        });
+        toast(game.maintenance?"Jeu réactivé !":"Jeu en maintenance.");
+      }catch(e){
+        console.error(e);
+        toast("Impossible de changer la maintenance. Vérifie les règles Firestore.");
+      }
+    };
+
+    actions.append(edit,maintenance);
+    row.append(left,actions);
+    list.append(row);
+  });
+}
+
+function resetDevForm(){
+  editingDevGame=null;
+  $("devGameForm").reset();
+  $("devGameForm").hidden=true;
+}
+$("cancelDevEditBtn").onclick=resetDevForm;
+
+$("devGameForm").onsubmit=async event=>{
+  event.preventDefault();
+  const game=games.find(g=>g.id===editingDevGame);
+  if(!game||!isDevOf(game))return toast("Accès refusé.");
+
+  const title=$("devTitle").value.trim();
+  const content=$("devContent").value.trim();
+  const type=$("devType").value;
+
+  if(!title||!content)return toast("Remplis le nom et le contenu.");
+  if(type==="url"&&!validateGameUrl(content)){
+    return toast("Utilise une adresse commençant par https:// ou http://");
+  }
+
+  $("saveDevGameBtn").disabled=true;
+  try{
+    await updateDoc(doc(db,"games",game.id),{
+      title,
+      description:$("devDescription").value.trim(),
+      emoji:$("devEmoji").value.trim()||"🎮",
+      platform:$("devPlatform").value,
+      type,
+      content,
+      updatedAt:serverTimestamp()
+    });
+    toast("💾 Jeu mis à jour !");
+    resetDevForm();
+  }catch(e){
+    console.error(e);
+    toast("Enregistrement impossible. Vérifie les règles Firestore.");
+  }finally{
+    $("saveDevGameBtn").disabled=false;
+  }
+};
+
+$("devPanelBtn").onclick=()=>{
+  renderDevGames();
+  openOverlay("devOverlay");
+};
+
+/* Côté admin : attribution des droits */
+function renderDevAssign(){
+  if(!devTarget)return;
+  const hasRights=g=>Array.isArray(g.devUids)&&g.devUids.includes(devTarget.uid);
+
+  const select=$("devAssignGame");
+  select.replaceChildren();
+  const free=games.filter(g=>!hasRights(g));
+  free.forEach(g=>{
+    const o=document.createElement("option");
+    o.value=g.id;
+    o.textContent=`${g.emoji||"🎮"} ${g.title||"Jeu sans nom"}`;
+    select.append(o);
+  });
+  $("devAssignAddBtn").disabled=!free.length;
+
+  const list=$("devAssignList");
+  list.replaceChildren();
+  const mine=games.filter(hasRights);
+  if(!mine.length){
+    list.textContent="Aucun jeu pour le moment.";
+    return;
+  }
+  mine.forEach(g=>{
+    const row=document.createElement("div");
+    row.className="admin-item";
+    const name=document.createElement("strong");
+    name.textContent=`${g.emoji||"🎮"} ${g.title||"Jeu sans nom"}`;
+    const remove=document.createElement("button");
+    remove.className="btn red small";
+    remove.textContent="Retirer";
+    remove.onclick=async()=>{
+      if(!isAdmin())return;
+      try{
+        await updateDoc(doc(db,"games",g.id),{
+          devUids:arrayRemove(devTarget.uid),
+          updatedAt:serverTimestamp()
+        });
+        toast("Droits retirés.");
+      }catch(e){
+        console.error(e);
+        toast("Impossible de retirer les droits.");
+      }
+    };
+    row.append(name,remove);
+    list.append(row);
+  });
+}
+
+function openDevAssign(player){
+  devTarget=player;
+  $("devAssignTarget").textContent=player.nickname||player.uid;
+  renderDevAssign();
+  openOverlay("devAssignOverlay");
+}
+
+$("devAssignAddBtn").onclick=async()=>{
+  if(!isAdmin()||!devTarget)return toast("Accès refusé.");
+  const id=$("devAssignGame").value;
+  if(!id)return;
+  try{
+    await updateDoc(doc(db,"games",id),{
+      devUids:arrayUnion(devTarget.uid),
+      updatedAt:serverTimestamp()
+    });
+    toast("👨‍💻 Droits développeur donnés.");
+  }catch(e){
+    console.error(e);
+    toast("Impossible de donner les droits.");
   }
 };
 
@@ -1355,6 +1613,14 @@ function renderAdminPlayerStats(){
         banBtn.onclick=()=>openMod("ban",p);
       }
       actions.append(banBtn);
+
+      if(!(p.nickname||"").startsWith("Invité-")){
+        const devBtn=document.createElement("button");
+        devBtn.className="btn secondary small";
+        devBtn.textContent="👨‍💻 Dev";
+        devBtn.onclick=()=>openDevAssign(p);
+        actions.append(devBtn);
+      }
     }
 
     row.append(left,actions);
@@ -1441,7 +1707,9 @@ function renderAdminGames(){
     status.textContent=game.maintenance?"EN MAINTENANCE":"DISPONIBLE";
 
     const detail=document.createElement("p");
-    detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${platformLabel(game.platform)}`;
+    const devNames=(game.devUids||[]).map(u=>allPlayers.find(p=>p.uid===u)?.nickname||u.slice(0,6));
+    detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${platformLabel(game.platform)}`+
+      (devNames.length?` • 👨‍💻 ${devNames.join(", ")}`:"");
     left.append(title,document.createTextNode(" "),status,detail);
 
     const actions=document.createElement("div");
@@ -1721,10 +1989,11 @@ onSnapshot(gamesRef,snap=>{
   gamesLoaded=true;
   renderGames();
   renderAdminGames();
+  if($("devAssignOverlay").classList.contains("open"))renderDevAssign();
 
   if(currentGame){
     const latest=games.find(g=>g.id===currentGame.id);
-    if(!latest||(latest.maintenance&&!isAdmin())){
+    if(!latest||(latest.maintenance&&!canTest(latest))){
       stopCurrentGame();
       toast(!latest?"Ce jeu a été supprimé.":latest.maintenanceMessage||"Jeu en maintenance.");
     }else{
