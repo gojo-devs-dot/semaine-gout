@@ -348,6 +348,46 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
     <div class="section-title"><h2>🗞️ Annonces enregistrées</h2></div><div id="adminAnnouncementList" class="admin-list"></div>
 
     <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
+    <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
+
+<div class="section-title">
+  <h2>🪄 Console secrète des badges</h2>
+</div>
+
+<p class="help">
+  Console réservée à l'administrateur. Tape une commande ci-dessous.
+</p>
+
+<div class="form-group">
+  <label for="badgeCommand">Commande</label>
+  <input
+    class="field"
+    id="badgeCommand"
+    placeholder="/badge help"
+    autocomplete="off"
+  >
+</div>
+
+<div class="form-actions">
+  <button class="btn" id="badgeCommandBtn" type="button">
+    ⚡ Exécuter
+  </button>
+  <button class="btn secondary" id="badgeHelpBtn" type="button">
+    ❓ Aide
+  </button>
+</div>
+
+<pre id="badgeCommandOutput" style="
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  background:#17111f;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  margin-top:12px;
+  color:var(--green);
+  font-family:monospace;
+">Console prête. Tape /badge help</pre>
     <div class="section-title"><h2>🎃 Ajouter un événement</h2></div>
     <p class="help">Colle le JavaScript de l'événement (sans balises &lt;script&gt;). Il s'exécute chez tous les visiteurs tant que l'événement est actif. Dans le code, l'objet <code>gourmand</code> donne accès à <code>toast()</code>, <code>burgerRain()</code>, <code>recordEgg()</code>, <code>isAdmin()</code>, <code>getUser()</code>, <code>hasBadge(id)</code> et <code>giveBadge({id,name,icon,description})</code> (badge de fin de quête, +25 XP, une seule fois par joueur).</p>
     <form id="eventForm">
@@ -476,8 +516,8 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
-  getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,
-  serverTimestamp,getDoc,setDoc,arrayUnion,arrayRemove
+getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,
+getDocs,serverTimestamp,getDoc,setDoc,arrayUnion,arrayRemove
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import {
   getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,
@@ -1453,7 +1493,8 @@ async function giveBadge(badge){
     return false;
   }
 }
-
+/* Badges d'événements : donnés par le code d'un événement (gourmand.giveBadge) */
+function hasBadge(id){
 /* Classement */
 function renderLeaderboard(){
   const box=$("leaderboardContent");
