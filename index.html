@@ -1624,7 +1624,8 @@ Exemple :
 
       const targetUid=parts[2];
       const badgeId=parts[3];
-      
+
+      if(targetUid===currentUser.uid){
         return badgeConsoleMessage(
           "ℹ️ Pour te donner un badge, utilise ton propre UID dans la commande."
         );
