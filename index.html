@@ -1493,8 +1493,224 @@ async function giveBadge(badge){
     return false;
   }
 }
-/* Badges d'événements : donnés par le code d'un événement (gourmand.giveBadge) */
-function hasBadge(id){
+/* Console admin pour les badges personnalisés */
+
+function badgeConsoleMessage(message){
+  $("badgeCommandOutput").textContent=message;
+}
+
+async function runBadgeCommand(){
+  if(!isAdmin()){
+    badgeConsoleMessage("⛔ ACCÈS REFUSÉ : administrateur requis.");
+    return;
+  }
+
+  const command=$("badgeCommand").value.trim();
+  if(!command)return badgeConsoleMessage("Tape /badge help");
+
+  try{
+    // AIDE
+    if(command==="/badge help"){
+      return badgeConsoleMessage(
+`🏆 COMMANDES DES BADGES
+
+Créer un badge :
+/badge create ID | ICÔNE | NOM | DESCRIPTION
+
+Donner un badge :
+/badge give UID_DU_JOUEUR ID_DU_BADGE
+
+Lister les badges :
+/badge list
+
+Lister les joueurs et leurs UID :
+/badge players
+
+Exemple :
+/badge create roi_burger | 🍔 | Roi du Burger | Le roi des burgers`
+      );
+    }
+
+    // CRÉER UN BADGE
+    if(command.startsWith("/badge create ")){
+      const parts=command
+        .slice("/badge create ".length)
+        .split("|")
+        .map(s=>s.trim());
+
+      if(parts.length!==4){
+        return badgeConsoleMessage(
+          "❌ Format incorrect.\n/badge create ID | ICÔNE | NOM | DESCRIPTION"
+        );
+      }
+
+      const [id,icon,name,description]=parts;
+
+      if(!/^[a-z0-9_-]{2,40}$/i.test(id)){
+        return badgeConsoleMessage(
+          "❌ ID invalide : utilise 2 à 40 lettres, chiffres, tirets ou underscores."
+        );
+      }
+
+      if(!icon||!name||!description){
+        return badgeConsoleMessage("❌ Tous les champs sont obligatoires.");
+      }
+
+      const ref=doc(db,"customBadges",id);
+      const existing=await getDoc(ref);
+
+      if(existing.exists()){
+        return badgeConsoleMessage(
+          "⚠️ Ce badge existe déjà. Choisis un autre ID."
+        );
+      }
+
+      await setDoc(ref,{
+        id,
+        icon:icon.slice(0,8),
+        name:name.slice(0,40),
+        description:description.slice(0,120),
+        createdBy:currentUser.uid,
+        createdAt:serverTimestamp()
+      });
+
+      $("badgeCommand").value="";
+      return badgeConsoleMessage(
+        `✅ Badge créé !\n${icon} ${name}\nID : ${id}\n\nTu peux maintenant le donner avec :\n/badge give UID_DU_JOUEUR ${id}`
+      );
+    }
+
+    // LISTER LES BADGES
+    if(command==="/badge list"){
+      const snap=await getDocs(collection(db,"customBadges"));
+
+      if(snap.empty){
+        return badgeConsoleMessage("Aucun badge personnalisé pour le moment.");
+      }
+
+      const lines=snap.docs.map(d=>{
+        const b=d.data();
+        return `${b.icon||"🏅"} ${b.name||"Badge"} — ID : ${d.id}\n${b.description||""}`;
+      });
+
+      return badgeConsoleMessage("🏆 BADGES PERSONNALISÉS\n\n"+lines.join("\n\n"));
+    }
+
+    // LISTER LES JOUEURS
+    if(command==="/badge players"){
+      const snap=await getDocs(playersRef);
+
+      if(snap.empty){
+        return badgeConsoleMessage("Aucun joueur trouvé.");
+      }
+
+      const lines=snap.docs.map(d=>{
+        const p=d.data();
+        return `${p.nickname||"Joueur sans pseudo"} — UID : ${d.id}`;
+      });
+
+      return badgeConsoleMessage("👥 JOUEURS\n\n"+lines.join("\n"));
+    }
+
+    // DONNER UN BADGE À UN JOUEUR
+    if(command.startsWith("/badge give ")){
+      const parts=command.split(/\s+/);
+
+      if(parts.length!==4){
+        return badgeConsoleMessage(
+          "❌ Format : /badge give UID_DU_JOUEUR ID_DU_BADGE"
+        );
+      }
+
+      const targetUid=parts[2];
+      const badgeId=parts[3];
+
+      if(targetUid===currentUser.uid){
+        return badgeConsoleMessage(
+          "ℹ️ Pour te donner un badge, utilise ton propre UID dans la commande."
+        );
+      }
+
+      const badgeSnap=await getDoc(doc(db,"customBadges",badgeId));
+
+      if(!badgeSnap.exists()){
+        return badgeConsoleMessage("❌ Badge introuvable. Utilise /badge list.");
+      }
+
+      const playerRef=doc(db,"players",targetUid);
+      const playerSnap=await getDoc(playerRef);
+
+      if(!playerSnap.exists()){
+        return badgeConsoleMessage(
+          "❌ Joueur introuvable. Utilise /badge players pour consulter les UID."
+        );
+      }
+
+      const player=playerSnap.data();
+      const badge=badgeSnap.data();
+      const badges=Array.isArray(player.badges)?player.badges:[];
+
+      if(badges.some(b=>b.id===badgeId)){
+        return badgeConsoleMessage("ℹ️ Ce joueur possède déjà ce badge.");
+      }
+
+      const entry={
+        id:badgeId,
+        name:String(badge.name||"Badge").slice(0,40),
+        icon:String(badge.icon||"🏅").slice(0,8),
+        description:String(badge.description||"").slice(0,120),
+        event:"Badge personnalisé par l'administration",
+        at:Date.now()
+      };
+
+      const xp=(Number(player.xp)||0)+25;
+
+      await setDoc(playerRef,{
+        badges:[...badges,entry],
+        xp,
+        level:levelFromXP(xp),
+        updatedAt:serverTimestamp()
+      },{merge:true});
+
+      if(currentUser?.uid===targetUid&&playerProfile){
+        playerProfile={
+          ...playerProfile,
+          badges:[...badges,entry],
+          xp,
+          level:levelFromXP(xp)
+        };
+        renderPlayerProfile();
+      }
+
+      $("badgeCommand").value="";
+      return badgeConsoleMessage(
+        `✅ Badge attribué !\n${entry.icon} ${entry.name}\nJoueur : ${player.nickname||targetUid}\nBonus : +25 XP`
+      );
+    }
+
+    return badgeConsoleMessage(
+      "❓ Commande inconnue. Tape /badge help"
+    );
+
+  }catch(error){
+    console.error("Console badges :",error);
+    badgeConsoleMessage(
+      "❌ Opération refusée ou impossible.\nVérifie les règles Firestore et la console du navigateur."
+    );
+  }
+}
+
+$("badgeCommandBtn").onclick=runBadgeCommand;
+$("badgeCommand").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    runBadgeCommand();
+  }
+});
+$("badgeHelpBtn").onclick=()=>{
+  $("badgeCommand").value="/badge help";
+  runBadgeCommand();
+};
 /* Classement */
 function renderLeaderboard(){
   const box=$("leaderboardContent");
