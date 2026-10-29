@@ -139,6 +139,9 @@ body.party-mode .game-card{animation:partyBounce .7s ease-in-out infinite altern
 .player-details{flex:1;overflow-wrap:anywhere}
 body.banned-lock #guestLoginBtn,body.banned-lock #playerLoginBtn,
 body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPanelBtn{display:none}
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0 4px}
+.badge-item{padding:10px 6px;text-align:center;background:var(--panel2);border:1px solid #ffb45455;border-radius:12px;font-size:.78rem;line-height:1.35;overflow-wrap:anywhere}
+.badge-item .b-icon{display:block;font-size:2rem;margin-bottom:4px}
 @media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:32px}.hero-art{font-size:5rem}.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){
   header{align-items:flex-start}.logo{font-size:1rem}.logo-icon{width:37px;height:37px}
@@ -346,7 +349,7 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
 
     <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
     <div class="section-title"><h2>🎃 Ajouter un événement</h2></div>
-    <p class="help">Colle le JavaScript de l'événement (sans balises &lt;script&gt;). Il s'exécute chez tous les visiteurs tant que l'événement est actif. Dans le code, l'objet <code>gourmand</code> donne accès à <code>toast()</code>, <code>burgerRain()</code>, <code>recordEgg()</code>, <code>isAdmin()</code> et <code>getUser()</code>.</p>
+    <p class="help">Colle le JavaScript de l'événement (sans balises &lt;script&gt;). Il s'exécute chez tous les visiteurs tant que l'événement est actif. Dans le code, l'objet <code>gourmand</code> donne accès à <code>toast()</code>, <code>burgerRain()</code>, <code>recordEgg()</code>, <code>isAdmin()</code>, <code>getUser()</code>, <code>hasBadge(id)</code> et <code>giveBadge({id,name,icon,description})</code> (badge de fin de quête, +25 XP, une seule fois par joueur).</p>
     <form id="eventForm">
       <div class="form-grid">
         <div class="form-group"><label for="eventTitle">Nom de l'événement</label><input class="field" id="eventTitle" required maxlength="80" placeholder="Ex. Halloween 2026"></div>
@@ -1230,6 +1233,13 @@ async function loadPlayerProfile(user,token,fallbackName=""){
   }
 }
 
+function badgesHTML(p){
+  const list=Array.isArray(p?.badges)?p.badges:[];
+  if(!list.length)return `<p class="muted">🎖️ Badges d'événements : aucun pour l'instant.</p>`;
+  return `<p class="muted">🎖️ Badges d'événements (${list.length})</p><div class="badge-grid">`+
+    list.map(b=>`<div class="badge-item" title="${escapeHTML(b.description||"")}"><span class="b-icon">${escapeHTML(b.icon||"🏅")}</span>${escapeHTML(b.name||"Badge")}</div>`).join("")+`</div>`;
+}
+
 function renderPlayerProfile(){
   if(!currentUser||!playerProfile)return;
 
@@ -1248,6 +1258,7 @@ function renderPlayerProfile(){
     <div class="player-stat"><span>⭐ Expérience</span><strong>${xp} XP</strong></div>
     <div class="player-stat"><span>🎮 Jeux lancés</span><strong>${Number(playerProfile.gamesPlayed)||0}</strong></div>
     <div class="player-stat"><span>🏆 Succès</span><strong>${achievementCount(playerProfile)}/16</strong></div>
+    ${badgesHTML(playerProfile)}
     <p class="muted">Progression vers le niveau ${level+1}</p>
     <div class="player-progress"><div style="width:${progress}%"></div></div>
     <p class="muted">${progress}/100 XP pour le niveau suivant</p>`;
@@ -1393,6 +1404,56 @@ async function syncAchievementToAccount(id){
   }
 }
 
+/* Badges d'événements : donnés par le code d'un événement (gourmand.giveBadge) */
+function hasBadge(id){
+  return Array.isArray(playerProfile?.badges)&&playerProfile.badges.some(b=>b.id===id);
+}
+async function giveBadge(badge){
+  const id=String(badge?.id||"").trim().slice(0,40);
+  if(!id)return false;
+  if(bannedLock)return false;
+  if(!currentUser||!playerProfile){
+    toast("🎖️ Connecte-toi (ou joue en invité) pour gagner ce badge !");
+    return false;
+  }
+  if(hasBadge(id))return false;
+
+  const entry={
+    id,
+    name:String(badge.name||"Badge").slice(0,40),
+    icon:String(badge.icon||"🏅").slice(0,8),
+    description:String(badge.description||"").slice(0,120),
+    event:String(badge.event||"").slice(0,60),
+    at:Date.now()
+  };
+
+  try{
+    const ref=doc(db,"players",currentUser.uid);
+    const snap=await getDoc(ref);
+    if(!snap.exists())return false;
+
+    const data=snap.data();
+    const list=Array.isArray(data.badges)?data.badges:[];
+    if(list.some(b=>b.id===id)){
+      playerProfile={...playerProfile,badges:list};
+      return false;
+    }
+
+    const badges=[...list,entry];
+    const xp=(Number(data.xp)||0)+25;
+    await setDoc(ref,{badges,xp,level:levelFromXP(xp),updatedAt:serverTimestamp()},{merge:true});
+
+    playerProfile={...playerProfile,badges,xp,level:levelFromXP(xp)};
+    renderPlayerProfile();
+    toast(`🎖️ Badge obtenu : ${entry.icon} ${entry.name} ! (+25 XP)`);
+    burgerRain(25);
+    return true;
+  }catch(e){
+    console.error("Badge :",e);
+    return false;
+  }
+}
+
 /* Classement */
 function renderLeaderboard(){
   const box=$("leaderboardContent");
@@ -1419,7 +1480,8 @@ function renderLeaderboard(){
     details.className="player-details";
 
     const name=document.createElement("strong");
-    name.textContent=p.nickname;
+    const icons=(Array.isArray(p.badges)?p.badges:[]).slice(0,6).map(b=>String(b.icon||"🏅")).join("");
+    name.textContent=icons?`${p.nickname} ${icons}`:p.nickname;
 
     const info=document.createElement("div");
     info.className="muted";
@@ -1920,7 +1982,9 @@ const eventCtx={
   burgerRain:n=>burgerRain(n),
   recordEgg:id=>recordEgg(id),
   isAdmin:()=>isAdmin(),
-  getUser:()=>currentUser
+  getUser:()=>currentUser,
+  giveBadge:b=>giveBadge(b),
+  hasBadge:id=>hasBadge(id)
 };
 
 function runEventCode(title,code){
