@@ -27,6 +27,23 @@ body{
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* Bandeau du haut : Jeux du club informatique */
+.club-banner{
+  position:relative;z-index:21;
+  display:flex;justify-content:center;align-items:center;gap:10px;
+  padding:9px 4%;text-align:center;font-weight:900;color:#211526;
+  background:linear-gradient(90deg,var(--orange),var(--pink),var(--orange));
+  background-size:200% 100%;animation:bannerFlow 8s linear infinite
+}
+@keyframes bannerFlow{to{background-position:200% 0}}
+.club-banner button{
+  display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:50%;
+  font-weight:900;font-family:Georgia,serif;font-style:italic;
+  background:#211526;color:var(--text);transition:transform .15s
+}
+.club-banner button:hover{transform:scale(1.15) rotate(8deg)}
+
 header{
   position:sticky;top:0;z-index:20;padding:12px 4%;
   display:flex;align-items:center;justify-content:space-between;gap:12px;
@@ -60,13 +77,15 @@ h1{font-size:clamp(2.4rem,6vw,4.7rem);line-height:1.03;margin:18px 0;letter-spac
 .section-title h2{margin:0;font-size:1.5rem}
 .muted{color:var(--muted)}
 .game-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;padding-bottom:45px}
-.game-card{overflow:hidden;border:1px solid var(--border);border-radius:19px;background:linear-gradient(145deg,#ffffff0e,#ffffff05);transition:.2s;min-width:0}
-.game-card:hover{transform:translateY(-4px);border-color:#ffb45480}
+.game-card{overflow:hidden;border:1px solid var(--border);border-radius:19px;background:linear-gradient(145deg,#ffffff0e,#ffffff05);transition:.2s;min-width:0;box-shadow:0 8px 24px #0003}
+.game-card:hover{transform:translateY(-4px);border-color:#ffb45480;box-shadow:0 14px 34px #ff668a30}
 .game-cover{min-height:145px;display:grid;place-items:center;position:relative;background:var(--cover,linear-gradient(135deg,#55304d,#282142))}
-.game-emoji{font-size:4rem;filter:drop-shadow(0 8px 10px #0005);user-select:none}
-.platform-badge{position:absolute;left:10px;top:10px;font-size:.72rem;background:#1d1424e8;border:1px solid var(--border);border-radius:20px;padding:5px 9px}
+.game-cover::after{content:"";position:absolute;inset:auto 0 0 0;height:40%;background:linear-gradient(transparent,#0006);pointer-events:none}
+.game-emoji{font-size:4rem;filter:drop-shadow(0 8px 10px #0005);user-select:none;position:relative;z-index:1}
+.platform-badge{position:absolute;left:10px;top:10px;z-index:1;font-size:.72rem;background:#1d1424e8;border:1px solid var(--border);border-radius:20px;padding:5px 9px}
 .game-info{padding:15px;overflow-wrap:anywhere}
-.game-info h3{margin:0 0 8px;font-size:1.12rem}
+.game-info h3{margin:0 0 8px;font-size:1.12rem;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px}
+.game-dev{font-size:.78rem;font-weight:700;color:var(--blue);white-space:nowrap}
 .game-info p{margin:0 0 13px;color:var(--muted);font-size:.9rem;line-height:1.5}
 .game-buttons{display:flex;gap:8px;flex-wrap:wrap}
 .game-buttons .btn{flex:1}
@@ -148,11 +167,17 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
   .header-actions{max-width:65%}.header-actions .btn{padding:8px 9px;font-size:.8rem}
   .game-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}
   .modal{padding:16px}.admin-item{align-items:flex-start;flex-direction:column}
+  .club-banner{font-size:.88rem}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
+
+<div class="club-banner">
+  <span>💻 Jeux du club informatique</span>
+  <button type="button" id="clubInfoBtn" aria-label="Infos sur le club informatique" title="Infos sur le club">i</button>
+</div>
 
 <header>
   <div class="logo" id="siteLogo" title="Gourmand.fun">
@@ -220,6 +245,18 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
     <button class="btn" id="closeSecretPanel">Retour au site</button>
     <button class="btn secondary" id="secretPartyBtn">🎉 Mode fête</button>
     <div class="secret-recipe" id="secretRecipe">📜 RECETTE ULTRA-SECRÈTE : 2 clics, 1 code mystère et beaucoup de frites.<br>Ingrédient principal : le fun ! 🍟</div>
+  </div>
+</div>
+
+<div class="overlay" id="clubInfoOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head"><h2>💻 Le club informatique</h2><button class="close-btn" data-close="clubInfoOverlay">✕</button></div>
+    <div class="open-source-copy">
+      <p>🎮 Tous les jeux de Gourmand.fun sont créés par les membres du club informatique.</p>
+      <p>👨‍💻 Le nom du développeur est affiché à côté du nom de chaque jeu.</p>
+      <p>⭐ Lance des jeux pour gagner de l'XP, débloquer des succès et grimper dans le classement !</p>
+    </div>
+    <button class="btn green" data-close="clubInfoOverlay">👍 Compris !</button>
   </div>
 </div>
 
@@ -322,7 +359,8 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
         <div class="form-group"><label for="gameType">Type de jeu</label>
           <select class="field" id="gameType"><option value="url">Lien vers un jeu / site</option><option value="html">Code HTML du jeu</option></select>
         </div>
-        <div class="form-group"><label for="gameDescription">Description</label><input class="field" id="gameDescription" maxlength="300" placeholder="Description…"></div>
+        <div class="form-group"><label for="gameDeveloper">Développeur</label><input class="field" id="gameDeveloper" maxlength="40" placeholder="Ex. Maël"></div>
+        <div class="form-group full"><label for="gameDescription">Description</label><input class="field" id="gameDescription" maxlength="300" placeholder="Description…"></div>
         <div class="form-group full"><label for="gameContent">Lien ou code HTML</label><textarea class="field" id="gameContent" required placeholder="Colle ici l'URL ou le code HTML"></textarea></div>
       </div>
       <div class="form-actions"><button class="btn green" type="submit" id="saveGameBtn">➕ Enregistrer le jeu</button><button class="btn secondary" type="button" id="cancelGameEditBtn" hidden>Annuler</button></div>
@@ -348,46 +386,20 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
     <div class="section-title"><h2>🗞️ Annonces enregistrées</h2></div><div id="adminAnnouncementList" class="admin-list"></div>
 
     <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
+
+    <div class="section-title"><h2>🪄 Console secrète des badges</h2></div>
+    <p class="help">Console réservée à l'administrateur. Tape une commande ci-dessous.</p>
+    <div class="form-group">
+      <label for="badgeCommand">Commande</label>
+      <input class="field" id="badgeCommand" placeholder="/badge help" autocomplete="off">
+    </div>
+    <div class="form-actions">
+      <button class="btn" id="badgeCommandBtn" type="button">⚡ Exécuter</button>
+      <button class="btn secondary" id="badgeHelpBtn" type="button">❓ Aide</button>
+    </div>
+    <pre id="badgeCommandOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#17111f;border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:12px;color:var(--green);font-family:monospace">Console prête. Tape /badge help</pre>
+
     <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
-
-<div class="section-title">
-  <h2>🪄 Console secrète des badges</h2>
-</div>
-
-<p class="help">
-  Console réservée à l'administrateur. Tape une commande ci-dessous.
-</p>
-
-<div class="form-group">
-  <label for="badgeCommand">Commande</label>
-  <input
-    class="field"
-    id="badgeCommand"
-    placeholder="/badge help"
-    autocomplete="off"
-  >
-</div>
-
-<div class="form-actions">
-  <button class="btn" id="badgeCommandBtn" type="button">
-    ⚡ Exécuter
-  </button>
-  <button class="btn secondary" id="badgeHelpBtn" type="button">
-    ❓ Aide
-  </button>
-</div>
-
-<pre id="badgeCommandOutput" style="
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  background:#17111f;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
-  margin-top:12px;
-  color:var(--green);
-  font-family:monospace;
-">Console prête. Tape /badge help</pre>
     <div class="section-title"><h2>🎃 Ajouter un événement</h2></div>
     <p class="help">Colle le JavaScript de l'événement (sans balises &lt;script&gt;). Il s'exécute chez tous les visiteurs tant que l'événement est actif. Dans le code, l'objet <code>gourmand</code> donne accès à <code>toast()</code>, <code>burgerRain()</code>, <code>recordEgg()</code>, <code>isAdmin()</code>, <code>getUser()</code>, <code>hasBadge(id)</code> et <code>giveBadge({id,name,icon,description})</code> (badge de fin de quête, +25 XP, une seule fois par joueur).</p>
     <form id="eventForm">
@@ -608,7 +620,7 @@ document.querySelectorAll(".overlay").forEach(o=>{
 document.addEventListener("keydown",e=>{
   if(e.key!=="Escape")return;
   stopCurrentGame();
-  ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay",
+  ["loginOverlay","adminOverlay","platformWarningOverlay","openSourceOverlay","clubInfoOverlay",
    "playerProfileOverlay","leaderboardOverlay","banOverlay","modOverlay"].forEach(closeOverlay);
   $("secretPanel").classList.remove("open");
   pendingGame=null;
@@ -619,6 +631,7 @@ $("discoverBtn").onclick=()=>$("catalogue").scrollIntoView({behavior:"smooth"});
 $("openSourceInfoBtn").onclick=()=>openOverlay("openSourceOverlay");
 $("closeOpenSourceBtn").onclick=()=>closeOverlay("openSourceOverlay");
 $("confirmOpenSourceBtn").onclick=()=>closeOverlay("openSourceOverlay");
+$("clubInfoBtn").onclick=()=>openOverlay("clubInfoOverlay");
 
 /* Compatibilité des appareils */
 function detectDevice(){
@@ -642,13 +655,22 @@ function validateGameUrl(value){
   }catch{return null}
 }
 
+/* Développeur d'un jeu : le nom saisi dans l'admin est prioritaire,
+   sinon on affiche les pseudos des joueurs ayant les droits « Dev » */
+function devLabel(g){
+  if(g.developer)return g.developer;
+  return (g.devUids||[])
+    .map(u=>allPlayers.find(p=>p.uid===u)?.nickname)
+    .filter(Boolean).join(", ");
+}
+
 /* Catalogue */
 function renderGames(){
   updateDevButton();
   const search=$("searchInput").value.trim().toLowerCase();
   const platform=$("platformFilter").value;
   const visible=games.filter(g=>{
-    const txt=[g.title,g.description,g.emoji].map(safeText).join(" ").toLowerCase();
+    const txt=[g.title,g.description,g.emoji,g.developer].map(safeText).join(" ").toLowerCase();
     return txt.includes(search)&&(platform==="all"||g.platform==="all"||g.platform===platform);
   });
   const mc=visible.filter(g=>g.maintenance===true).length;
@@ -687,6 +709,13 @@ function renderGames(){
 
     const title=document.createElement("h3");
     title.textContent=game.title||"Jeu sans nom";
+    const dev=devLabel(game);
+    if(dev){
+      const by=document.createElement("span");
+      by.className="game-dev";
+      by.textContent="par "+dev;
+      title.append(by);
+    }
 
     const description=document.createElement("p");
     description.textContent=game.description||"Prêt à jouer ?";
@@ -767,7 +796,8 @@ $("continuePlatformWarningBtn").onclick=()=>{
 function launchGame(game){
   if(game.maintenance&&!canTest(game))return toast("🛠️ Ce jeu est en maintenance.");
   currentGame=game;
-  $("playerTitle").textContent=`${game.emoji||"🎮"} ${game.title||"Jeu"}`;
+  const dev=devLabel(game);
+  $("playerTitle").textContent=`${game.emoji||"🎮"} ${game.title||"Jeu"}`+(dev?` — par ${dev}`:"");
 
   const frame=$("gameFrame");
   frame.src="about:blank";
@@ -1493,8 +1523,8 @@ async function giveBadge(badge){
     return false;
   }
 }
-/* Console admin pour les badges personnalisés */
 
+/* Console admin pour les badges personnalisés */
 function badgeConsoleMessage(message){
   $("badgeCommandOutput").textContent=message;
 }
@@ -1705,6 +1735,7 @@ $("badgeHelpBtn").onclick=()=>{
   $("badgeCommand").value="/badge help";
   runBadgeCommand();
 };
+
 /* Classement */
 function renderLeaderboard(){
   const box=$("leaderboardContent");
@@ -1751,6 +1782,7 @@ $("leaderboardBtn").onclick=()=>{
 onSnapshot(playersRef,snap=>{
   allPlayers=snap.docs.map(d=>({uid:d.id,...d.data()}));
   renderLeaderboard();
+  renderGames();
   if(isAdmin())renderAdminPlayerStats();
 },error=>{
   console.error("Classement :",error);
@@ -1885,6 +1917,7 @@ $("gameForm").onsubmit=async event=>{
   const data={
     title,
     description:$("gameDescription").value.trim(),
+    developer:$("gameDeveloper").value.trim(),
     emoji:$("gameEmoji").value.trim()||"🎮",
     background:$("gameBackground").value,
     type,
@@ -1949,6 +1982,7 @@ function renderAdminGames(){
     const detail=document.createElement("p");
     const devNames=(game.devUids||[]).map(u=>allPlayers.find(p=>p.uid===u)?.nickname||u.slice(0,6));
     detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${platformLabel(game.platform)}`+
+      (game.developer?` • ✍️ ${game.developer}`:"")+
       (devNames.length?` • 👨‍💻 ${devNames.join(", ")}`:"");
     left.append(title,document.createTextNode(" "),status,detail);
 
@@ -1963,6 +1997,7 @@ function renderAdminGames(){
       $("gameEditId").value=game.id;
       $("gameTitle").value=game.title||"";
       $("gameDescription").value=game.description||"";
+      $("gameDeveloper").value=game.developer||"";
       $("gameEmoji").value=game.emoji||"🎮";
       $("gameBackground").value=game.background||"linear-gradient(135deg,#55304d,#282142)";
       $("gameType").value=game.type||"url";
@@ -2481,192 +2516,4 @@ const eggDefinitions=[
   ["party","La fête des frites","Tu as activé le mode fête."],
   ["recipe","La recette secrète","Tu as découvert la recette cachée."],
   ["rapid","Le clic rapide","Tu as réalisé une série de clics rapides."],
-  ["scroll","Le grand voyage","Tu as exploré la page jusqu'en bas."],
-  ["rainbow","Le mode arc-en-ciel","Tu as découvert un mode coloré secret."],
-  ["console","Le développeur","Tu as découvert un secret lié au code."]
-];
-
-let unlockedEggs=new Set();
-try{
-  unlockedEggs=new Set(JSON.parse(localStorage.getItem("gourmandEggs")||"[]")
-    .filter(id=>eggDefinitions.some(e=>e[0]===id)));
-}catch{}
-
-function updateEggPanel(){
-  $("achievementCount").textContent=unlockedEggs.size;
-  const list=$("achievementList");
-  list.replaceChildren();
-
-  eggDefinitions.forEach(([id,title,description])=>{
-    const unlocked=unlockedEggs.has(id);
-    const row=document.createElement("div");
-    row.className=`achievement ${unlocked?"unlocked":"locked"}`;
-
-    const head=document.createElement("div");
-    head.className="achievement-title";
-
-    const icon=document.createElement("span");
-    icon.textContent=unlocked?"🏆":"🔒";
-
-    const name=document.createElement("span");
-    name.textContent=title;
-    head.append(icon,name);
-    row.append(head);
-
-    if(unlocked){
-      const p=document.createElement("p");
-      p.className="achievement-description";
-      p.textContent=description;
-      row.append(p);
-    }
-    list.append(row);
-  });
-}
-
-function syncLocalAchievements(){
-  if(!playerProfile)return;
-  const cloud=Array.isArray(playerProfile.achievements)?playerProfile.achievements:[];
-  cloud.forEach(id=>unlockedEggs.add(id));
-  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
-  updateEggPanel();
-}
-
-function recordEgg(id){
-  const def=eggDefinitions.find(e=>e[0]===id);
-  if(!def)return;
-  if(id==="admin"&&!isAdmin())return;
-  if(unlockedEggs.has(id))return;
-
-  unlockedEggs.add(id);
-  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
-  updateEggPanel();
-  toast(`🏆 Réussite débloquée : ${def[1]} !`);
-  syncAchievementToAccount(id);
-}
-
-function burgerRain(count=22){
-  const layer=$("eggLayer");
-  const emojis=["🍔","🍟","🍕","🌭","🍩","🧁","🍪","🥤","🍉","🍓"];
-
-  for(let i=0;i<count;i++){
-    setTimeout(()=>{
-      const el=document.createElement("span");
-      el.className="egg-float";
-      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-      el.style.left=Math.random()*95+"%";
-      el.style.animationDuration=(1.8+Math.random()*2.2)+"s";
-      layer.append(el);
-      setTimeout(()=>el.remove(),4500);
-    },i*45);
-  }
-}
-
-let logoClicks=0,rapidClicks=[],footerClicks=0,heroClicks=0;
-
-$("logoIcon").onclick=()=>{
-  logoClicks++;
-  rapidClicks.push(Date.now());
-  rapidClicks=rapidClicks.filter(t=>Date.now()-t<2200);
-  if(logoClicks>=7){
-    recordEgg("logo");
-    burgerRain(35);
-    logoClicks=0;
-  }
-  if(rapidClicks.length>=5){
-    recordEgg("rapid");
-    burgerRain(12);
-    rapidClicks=[];
-  }
-};
-
-$("heroBurger").onclick=()=>{
-  heroClicks++;
-  if(heroClicks>=10){
-    recordEgg("hero");
-    burgerRain(45);
-    heroClicks=0;
-  }
-};
-
-$("siteFooter").onclick=e=>{
-  if(e.target.closest("button,a"))return;
-  footerClicks++;
-  if(footerClicks>=5){
-    recordEgg("footer");
-    footerClicks=0;
-  }
-};
-
-const konamiSequence=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
-let konamiProgress=[];
-
-document.addEventListener("keydown",e=>{
-  if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName))return;
-  konamiProgress.push(e.key.length===1?e.key.toLowerCase():e.key);
-  konamiProgress=konamiProgress.slice(-konamiSequence.length);
-
-  if(konamiProgress.join("|")===konamiSequence.join("|")){
-    recordEgg("konami");
-    document.body.classList.toggle("rainbow-mode");
-    recordEgg("rainbow");
-    burgerRain(50);
-    konamiProgress=[];
-  }
-});
-
-let typedWord="";
-document.addEventListener("keydown",e=>{
-  if(e.key.length!==1||e.ctrlKey||e.altKey||e.metaKey)return;
-  typedWord=(typedWord+e.key.toLowerCase()).slice(-20);
-  if(typedWord.endsWith("gourmand")){
-    recordEgg("word");
-    burgerRain(18);
-    typedWord="";
-  }
-});
-
-function openSecretPanel(){
-  updateEggPanel();
-  $("secretPanel").classList.add("open");
-}
-$("achievementsBtn").onclick=openSecretPanel;
-$("secretBadge").onclick=openSecretPanel;
-$("closeSecretPanel").onclick=()=>$("secretPanel").classList.remove("open");
-
-$("secretPartyBtn").onclick=()=>{
-  document.body.classList.toggle("party-mode");
-  recordEgg("party");
-  if(document.body.classList.contains("party-mode")){
-    burgerRain(25);
-    toast("🎉 Mode fête activé !");
-  }else{
-    toast("🍟 Mode fête désactivé.");
-  }
-};
-
-$("siteLogo").ondblclick=()=>{
-  $("secretRecipe").classList.toggle("visible");
-  if($("secretRecipe").classList.contains("visible"))recordEgg("recipe");
-};
-$("secretRecipe").onclick=()=>recordEgg("recipe");
-
-if(new Date().getHours()<5)recordEgg("midnight");
-
-let scrollEggUnlocked=false;
-window.addEventListener("scroll",()=>{
-  if(!scrollEggUnlocked&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-10){
-    scrollEggUnlocked=true;
-    recordEgg("scroll");
-  }
-},{passive:true});
-
-window.gourmand=()=>{
-  recordEgg("console");
-  burgerRain(30);
-};
-
-updateEggPanel();
-console.info("%c🍔 Gourmand.fun","font-size:24px;font-weight:bold;color:#ff668a");
-</script>
-</body>
-</html>
+  ["scroll","Le
