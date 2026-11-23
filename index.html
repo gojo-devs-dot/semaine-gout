@@ -59,6 +59,15 @@ h1{font-size:clamp(2.4rem,6vw,4.7rem);line-height:1.03;margin:18px 0;letter-spac
 .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:25px 0 16px}
 .section-title h2{margin:0;font-size:1.5rem}
 .muted{color:var(--muted)}
+
+/* Catégories */
+.cat-bar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.cat-chip{border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:30px;padding:8px 14px;font-weight:800;font-size:.85rem;transition:transform .15s,filter .15s}
+.cat-chip:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.cat-chip.active{background:linear-gradient(135deg,var(--orange),var(--pink));color:#211526;border-color:transparent}
+.cat-chip .cat-count{opacity:.7;font-weight:700;margin-left:4px}
+.cat-tag{display:inline-block;margin-bottom:8px;padding:4px 9px;border-radius:20px;background:#7dd3fc1f;border:1px solid #7dd3fc40;color:var(--blue);font-size:.74rem;font-weight:800}
+
 .game-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;padding-bottom:45px}
 .game-card{overflow:hidden;border:1px solid var(--border);border-radius:19px;background:linear-gradient(145deg,#ffffff0e,#ffffff05);transition:.2s;min-width:0}
 .game-card:hover{transform:translateY(-4px);border-color:#ffb45480}
@@ -148,6 +157,8 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
   .header-actions{max-width:65%}.header-actions .btn{padding:8px 9px;font-size:.8rem}
   .game-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}
   .modal{padding:16px}.admin-item{align-items:flex-start;flex-direction:column}
+  .cat-bar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+  .cat-chip{flex:0 0 auto}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
@@ -200,6 +211,7 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
         <option value="mobile">📱 Mobile / tablette</option>
       </select>
     </div>
+    <div class="cat-bar" id="catBar" role="group" aria-label="Catégories de jeux"></div>
     <div class="game-grid" id="gameGrid"><div class="empty">🍳 Chargement du menu…</div></div>
   </section>
 </main>
@@ -314,6 +326,9 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
             <option value="linear-gradient(135deg,#235c86,#332b59)">🫐 Bleu</option>
           </select>
         </div>
+        <div class="form-group"><label for="gameCategory">Catégorie</label>
+          <select class="field" id="gameCategory"></select>
+        </div>
         <div class="form-group"><label for="gamePlatform">Compatibilité</label>
           <select class="field" id="gamePlatform">
             <option value="all">PC, tablette et téléphone</option><option value="pc">PC uniquement</option><option value="mobile">Mobile et tablette</option>
@@ -322,7 +337,7 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
         <div class="form-group"><label for="gameType">Type de jeu</label>
           <select class="field" id="gameType"><option value="url">Lien vers un jeu / site</option><option value="html">Code HTML du jeu</option></select>
         </div>
-        <div class="form-group"><label for="gameDescription">Description</label><input class="field" id="gameDescription" maxlength="300" placeholder="Description…"></div>
+        <div class="form-group full"><label for="gameDescription">Description</label><input class="field" id="gameDescription" maxlength="300" placeholder="Description…"></div>
         <div class="form-group full"><label for="gameContent">Lien ou code HTML</label><textarea class="field" id="gameContent" required placeholder="Colle ici l'URL ou le code HTML"></textarea></div>
       </div>
       <div class="form-actions"><button class="btn green" type="submit" id="saveGameBtn">➕ Enregistrer le jeu</button><button class="btn secondary" type="button" id="cancelGameEditBtn" hidden>Annuler</button></div>
@@ -348,46 +363,21 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
     <div class="section-title"><h2>🗞️ Annonces enregistrées</h2></div><div id="adminAnnouncementList" class="admin-list"></div>
 
     <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
-    <hr style="border:0;border-top:1px solid var(--border);margin:30px 0">
 
-<div class="section-title">
-  <h2>🪄 Console secrète des badges</h2>
-</div>
+    <div class="section-title">
+      <h2>🪄 Console secrète des badges</h2>
+    </div>
+    <p class="help">Console réservée à l'administrateur. Tape une commande ci-dessous.</p>
+    <div class="form-group">
+      <label for="badgeCommand">Commande</label>
+      <input class="field" id="badgeCommand" placeholder="/badge help" autocomplete="off">
+    </div>
+    <div class="form-actions">
+      <button class="btn" id="badgeCommandBtn" type="button">⚡ Exécuter</button>
+      <button class="btn secondary" id="badgeHelpBtn" type="button">❓ Aide</button>
+    </div>
+    <pre id="badgeCommandOutput" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#17111f;border:1px solid var(--border);border-radius:12px;padding:14px;margin-top:12px;color:var(--green);font-family:monospace;">Console prête. Tape /badge help</pre>
 
-<p class="help">
-  Console réservée à l'administrateur. Tape une commande ci-dessous.
-</p>
-
-<div class="form-group">
-  <label for="badgeCommand">Commande</label>
-  <input
-    class="field"
-    id="badgeCommand"
-    placeholder="/badge help"
-    autocomplete="off"
-  >
-</div>
-
-<div class="form-actions">
-  <button class="btn" id="badgeCommandBtn" type="button">
-    ⚡ Exécuter
-  </button>
-  <button class="btn secondary" id="badgeHelpBtn" type="button">
-    ❓ Aide
-  </button>
-</div>
-
-<pre id="badgeCommandOutput" style="
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  background:#17111f;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
-  margin-top:12px;
-  color:var(--green);
-  font-family:monospace;
-">Console prête. Tape /badge help</pre>
     <div class="section-title"><h2>🎃 Ajouter un événement</h2></div>
     <p class="help">Colle le JavaScript de l'événement (sans balises &lt;script&gt;). Il s'exécute chez tous les visiteurs tant que l'événement est actif. Dans le code, l'objet <code>gourmand</code> donne accès à <code>toast()</code>, <code>burgerRain()</code>, <code>recordEgg()</code>, <code>isAdmin()</code>, <code>getUser()</code>, <code>hasBadge(id)</code> et <code>giveBadge({id,name,icon,description})</code> (badge de fin de quête, +25 XP, une seule fois par joueur).</p>
     <form id="eventForm">
@@ -428,6 +418,9 @@ body.banned-lock #profileBtn,body.banned-lock #logoutBtn,body.banned-lock #devPa
       <div class="form-grid">
         <div class="form-group"><label for="devTitle">Nom du jeu</label><input class="field" id="devTitle" required maxlength="80"></div>
         <div class="form-group"><label for="devEmoji">Emoji</label><input class="field" id="devEmoji" maxlength="12"></div>
+        <div class="form-group"><label for="devCategory">Catégorie</label>
+          <select class="field" id="devCategory"></select>
+        </div>
         <div class="form-group"><label for="devPlatform">Compatibilité</label>
           <select class="field" id="devPlatform">
             <option value="all">PC, tablette et téléphone</option><option value="pc">PC uniquement</option><option value="mobile">Mobile et tablette</option>
@@ -642,14 +635,86 @@ function validateGameUrl(value){
   }catch{return null}
 }
 
+/* ============================================================
+   Catégories de jeux
+   - Chaque jeu a un champ "category" (identifiant ci-dessous)
+   - Les jeux sans catégorie valide sont rangés dans "Autre"
+   ============================================================ */
+const CATEGORIES=[
+  ["action","⚡ Action"],
+  ["arcade","🕹️ Arcade"],
+  ["puzzle","🧩 Puzzle"],
+  ["aventure","🗺️ Aventure"],
+  ["strategie","♟️ Stratégie"],
+  ["quiz","❓ Quiz"],
+  ["educatif","📚 Éducatif"],
+  ["autre","🎲 Autre"]
+];
+let activeCategory="all";
+
+function catLabel(id){
+  return (CATEGORIES.find(c=>c[0]===id)||CATEGORIES[CATEGORIES.length-1])[1];
+}
+function gameCat(game){
+  return CATEGORIES.some(c=>c[0]===game?.category)?game.category:"autre";
+}
+function fillCategorySelects(){
+  ["gameCategory","devCategory"].forEach(id=>{
+    const select=$(id);
+    select.replaceChildren();
+    CATEGORIES.forEach(([value,label])=>{
+      const o=document.createElement("option");
+      o.value=value;
+      o.textContent=label;
+      select.append(o);
+    });
+    select.value="autre";
+  });
+}
+fillCategorySelects();
+
+function renderCatBar(){
+  const bar=$("catBar");
+  bar.replaceChildren();
+
+  const counts={};
+  games.forEach(g=>{const c=gameCat(g);counts[c]=(counts[c]||0)+1});
+
+  const chips=[["all","🍽️ Tous"],...CATEGORIES.filter(c=>counts[c[0]])];
+  chips.forEach(([id,label])=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="cat-chip"+(activeCategory===id?" active":"");
+    b.setAttribute("aria-pressed",activeCategory===id?"true":"false");
+    b.textContent=label;
+
+    const n=document.createElement("span");
+    n.className="cat-count";
+    n.textContent=id==="all"?games.length:counts[id];
+    b.append(n);
+
+    b.onclick=()=>{activeCategory=id;renderGames()};
+    bar.append(b);
+  });
+  bar.hidden=games.length===0;
+}
+
 /* Catalogue */
 function renderGames(){
   updateDevButton();
+
+  if(activeCategory!=="all"&&!games.some(g=>gameCat(g)===activeCategory)){
+    activeCategory="all";
+  }
+  renderCatBar();
+
   const search=$("searchInput").value.trim().toLowerCase();
   const platform=$("platformFilter").value;
   const visible=games.filter(g=>{
-    const txt=[g.title,g.description,g.emoji].map(safeText).join(" ").toLowerCase();
-    return txt.includes(search)&&(platform==="all"||g.platform==="all"||g.platform===platform);
+    const txt=[g.title,g.description,g.emoji,catLabel(gameCat(g))].map(safeText).join(" ").toLowerCase();
+    return txt.includes(search)&&
+      (platform==="all"||g.platform==="all"||g.platform===platform)&&
+      (activeCategory==="all"||gameCat(g)===activeCategory);
   });
   const mc=visible.filter(g=>g.maintenance===true).length;
   $("gameCount").textContent=`${visible.length} jeu${visible.length>1?"x":""}`+(mc?` • ${mc} en maintenance`:"");
@@ -659,7 +724,7 @@ function renderGames(){
   if(!visible.length){
     const empty=document.createElement("div");
     empty.className="empty";
-    empty.textContent=gamesLoaded?"🍽️ Aucun jeu trouvé. Essaie une autre recherche !":"🍳 Chargement du menu…";
+    empty.textContent=gamesLoaded?"🍽️ Aucun jeu trouvé. Essaie une autre recherche ou une autre catégorie !":"🍳 Chargement du menu…";
     grid.append(empty);
     return;
   }
@@ -684,6 +749,11 @@ function renderGames(){
 
     const info=document.createElement("div");
     info.className="game-info";
+
+    const tag=document.createElement("span");
+    tag.className="cat-tag";
+    tag.textContent=catLabel(gameCat(game));
+    info.append(tag);
 
     const title=document.createElement("h3");
     title.textContent=game.title||"Jeu sans nom";
@@ -958,6 +1028,7 @@ function renderDevGames(){
       editingDevGame=game.id;
       $("devTitle").value=game.title||"";
       $("devEmoji").value=game.emoji||"🎮";
+      $("devCategory").value=gameCat(game);
       $("devPlatform").value=game.platform||"all";
       $("devType").value=game.type||"url";
       $("devDescription").value=game.description||"";
@@ -999,6 +1070,7 @@ function renderDevGames(){
 function resetDevForm(){
   editingDevGame=null;
   $("devGameForm").reset();
+  $("devCategory").value="autre";
   $("devGameForm").hidden=true;
 }
 $("cancelDevEditBtn").onclick=resetDevForm;
@@ -1023,6 +1095,7 @@ $("devGameForm").onsubmit=async event=>{
       title,
       description:$("devDescription").value.trim(),
       emoji:$("devEmoji").value.trim()||"🎮",
+      category:$("devCategory").value,
       platform:$("devPlatform").value,
       type,
       content,
@@ -1493,8 +1566,8 @@ async function giveBadge(badge){
     return false;
   }
 }
-/* Console admin pour les badges personnalisés */
 
+/* Console admin pour les badges personnalisés */
 function badgeConsoleMessage(message){
   $("badgeCommandOutput").textContent=message;
 }
@@ -1705,6 +1778,7 @@ $("badgeHelpBtn").onclick=()=>{
   $("badgeCommand").value="/badge help";
   runBadgeCommand();
 };
+
 /* Classement */
 function renderLeaderboard(){
   const box=$("leaderboardContent");
@@ -1887,6 +1961,7 @@ $("gameForm").onsubmit=async event=>{
     description:$("gameDescription").value.trim(),
     emoji:$("gameEmoji").value.trim()||"🎮",
     background:$("gameBackground").value,
+    category:$("gameCategory").value,
     type,
     platform:$("gamePlatform").value,
     content,
@@ -1917,6 +1992,7 @@ function resetGameForm(){
   editingGame=null;
   $("gameForm").reset();
   $("gameEmoji").value="🎮";
+  $("gameCategory").value="autre";
   $("gameEditId").value="";
   $("saveGameBtn").textContent="➕ Enregistrer le jeu";
   $("cancelGameEditBtn").hidden=true;
@@ -1948,7 +2024,7 @@ function renderAdminGames(){
 
     const detail=document.createElement("p");
     const devNames=(game.devUids||[]).map(u=>allPlayers.find(p=>p.uid===u)?.nickname||u.slice(0,6));
-    detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${platformLabel(game.platform)}`+
+    detail.textContent=`${game.type==="html"?"Code HTML":"Lien"} • ${catLabel(gameCat(game))} • ${platformLabel(game.platform)}`+
       (devNames.length?` • 👨‍💻 ${devNames.join(", ")}`:"");
     left.append(title,document.createTextNode(" "),status,detail);
 
@@ -1965,6 +2041,7 @@ function renderAdminGames(){
       $("gameDescription").value=game.description||"";
       $("gameEmoji").value=game.emoji||"🎮";
       $("gameBackground").value=game.background||"linear-gradient(135deg,#55304d,#282142)";
+      $("gameCategory").value=gameCat(game);
       $("gameType").value=game.type||"url";
       $("gamePlatform").value=game.platform||"all";
       $("gameContent").value=game.content||"";
@@ -2472,201 +2549,4 @@ const eggDefinitions=[
   ["konami","Le joueur rétro","Tu as trouvé le code rétro caché."],
   ["word","Le mot magique","Tu as découvert le mot magique."],
   ["footer","Le bas du menu","Tu as insisté au pied de page."],
-  ["hero","Le burger géant","Tu as réussi à réveiller le burger géant."],
-  ["emoji","Le menu mystère","Tu as exploré un emoji du menu."],
-  ["player","Le grand explorateur","Tu as lancé un jeu."],
-  ["admin","Le chef cuisinier","Tu as ajouté un jeu avec un compte administrateur autorisé."],
-  ["midnight","Le noctambule","Tu as visité le site pendant la nuit."],
-  ["search","Le chercheur secret","Tu as trouvé quelque chose en effectuant une recherche."],
-  ["party","La fête des frites","Tu as activé le mode fête."],
-  ["recipe","La recette secrète","Tu as découvert la recette cachée."],
-  ["rapid","Le clic rapide","Tu as réalisé une série de clics rapides."],
-  ["scroll","Le grand voyage","Tu as exploré la page jusqu'en bas."],
-  ["rainbow","Le mode arc-en-ciel","Tu as découvert un mode coloré secret."],
-  ["console","Le développeur","Tu as découvert un secret lié au code."]
-];
-
-let unlockedEggs=new Set();
-try{
-  unlockedEggs=new Set(JSON.parse(localStorage.getItem("gourmandEggs")||"[]")
-    .filter(id=>eggDefinitions.some(e=>e[0]===id)));
-}catch{}
-
-function updateEggPanel(){
-  $("achievementCount").textContent=unlockedEggs.size;
-  const list=$("achievementList");
-  list.replaceChildren();
-
-  eggDefinitions.forEach(([id,title,description])=>{
-    const unlocked=unlockedEggs.has(id);
-    const row=document.createElement("div");
-    row.className=`achievement ${unlocked?"unlocked":"locked"}`;
-
-    const head=document.createElement("div");
-    head.className="achievement-title";
-
-    const icon=document.createElement("span");
-    icon.textContent=unlocked?"🏆":"🔒";
-
-    const name=document.createElement("span");
-    name.textContent=title;
-    head.append(icon,name);
-    row.append(head);
-
-    if(unlocked){
-      const p=document.createElement("p");
-      p.className="achievement-description";
-      p.textContent=description;
-      row.append(p);
-    }
-    list.append(row);
-  });
-}
-
-function syncLocalAchievements(){
-  if(!playerProfile)return;
-  const cloud=Array.isArray(playerProfile.achievements)?playerProfile.achievements:[];
-  cloud.forEach(id=>unlockedEggs.add(id));
-  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
-  updateEggPanel();
-}
-
-function recordEgg(id){
-  const def=eggDefinitions.find(e=>e[0]===id);
-  if(!def)return;
-  if(id==="admin"&&!isAdmin())return;
-  if(unlockedEggs.has(id))return;
-
-  unlockedEggs.add(id);
-  try{localStorage.setItem("gourmandEggs",JSON.stringify([...unlockedEggs]))}catch{}
-  updateEggPanel();
-  toast(`🏆 Réussite débloquée : ${def[1]} !`);
-  syncAchievementToAccount(id);
-}
-
-function burgerRain(count=22){
-  const layer=$("eggLayer");
-  const emojis=["🍔","🍟","🍕","🌭","🍩","🧁","🍪","🥤","🍉","🍓"];
-
-  for(let i=0;i<count;i++){
-    setTimeout(()=>{
-      const el=document.createElement("span");
-      el.className="egg-float";
-      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-      el.style.left=Math.random()*95+"%";
-      el.style.animationDuration=(1.8+Math.random()*2.2)+"s";
-      layer.append(el);
-      setTimeout(()=>el.remove(),4500);
-    },i*45);
-  }
-}
-
-let logoClicks=0,rapidClicks=[],footerClicks=0,heroClicks=0;
-
-$("logoIcon").onclick=()=>{
-  logoClicks++;
-  rapidClicks.push(Date.now());
-  rapidClicks=rapidClicks.filter(t=>Date.now()-t<2200);
-  if(logoClicks>=7){
-    recordEgg("logo");
-    burgerRain(35);
-    logoClicks=0;
-  }
-  if(rapidClicks.length>=5){
-    recordEgg("rapid");
-    burgerRain(12);
-    rapidClicks=[];
-  }
-};
-
-$("heroBurger").onclick=()=>{
-  heroClicks++;
-  if(heroClicks>=10){
-    recordEgg("hero");
-    burgerRain(45);
-    heroClicks=0;
-  }
-};
-
-$("siteFooter").onclick=e=>{
-  if(e.target.closest("button,a"))return;
-  footerClicks++;
-  if(footerClicks>=5){
-    recordEgg("footer");
-    footerClicks=0;
-  }
-};
-
-const konamiSequence=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
-let konamiProgress=[];
-
-document.addEventListener("keydown",e=>{
-  if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName))return;
-  konamiProgress.push(e.key.length===1?e.key.toLowerCase():e.key);
-  konamiProgress=konamiProgress.slice(-konamiSequence.length);
-
-  if(konamiProgress.join("|")===konamiSequence.join("|")){
-    recordEgg("konami");
-    document.body.classList.toggle("rainbow-mode");
-    recordEgg("rainbow");
-    burgerRain(50);
-    konamiProgress=[];
-  }
-});
-
-let typedWord="";
-document.addEventListener("keydown",e=>{
-  if(e.key.length!==1||e.ctrlKey||e.altKey||e.metaKey)return;
-  typedWord=(typedWord+e.key.toLowerCase()).slice(-20);
-  if(typedWord.endsWith("gourmand")){
-    recordEgg("word");
-    burgerRain(18);
-    typedWord="";
-  }
-});
-
-function openSecretPanel(){
-  updateEggPanel();
-  $("secretPanel").classList.add("open");
-}
-$("achievementsBtn").onclick=openSecretPanel;
-$("secretBadge").onclick=openSecretPanel;
-$("closeSecretPanel").onclick=()=>$("secretPanel").classList.remove("open");
-
-$("secretPartyBtn").onclick=()=>{
-  document.body.classList.toggle("party-mode");
-  recordEgg("party");
-  if(document.body.classList.contains("party-mode")){
-    burgerRain(25);
-    toast("🎉 Mode fête activé !");
-  }else{
-    toast("🍟 Mode fête désactivé.");
-  }
-};
-
-$("siteLogo").ondblclick=()=>{
-  $("secretRecipe").classList.toggle("visible");
-  if($("secretRecipe").classList.contains("visible"))recordEgg("recipe");
-};
-$("secretRecipe").onclick=()=>recordEgg("recipe");
-
-if(new Date().getHours()<5)recordEgg("midnight");
-
-let scrollEggUnlocked=false;
-window.addEventListener("scroll",()=>{
-  if(!scrollEggUnlocked&&window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-10){
-    scrollEggUnlocked=true;
-    recordEgg("scroll");
-  }
-},{passive:true});
-
-window.gourmand=()=>{
-  recordEgg("console");
-  burgerRain(30);
-};
-
-updateEggPanel();
-console.info("%c🍔 Gourmand.fun","font-size:24px;font-weight:bold;color:#ff668a");
-</script>
-</body>
-</html>
+ 
